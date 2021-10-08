@@ -26,6 +26,9 @@
     "doctrine/dbal": {
         "version": "2.10.4"
     },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.0",
         "recipe": {
@@ -77,6 +80,9 @@
     },
     "doctrine/sql-formatter": {
         "version": "1.1.1"
+    },
+    "dyg81/modal-bundle": {
+        "version": "v2.0.3"
     },
     "egulias/email-validator": {
         "version": "2.1.25"
@@ -351,6 +357,9 @@
     },
     "symfony/polyfill-php80": {
         "version": "v1.22.1"
+    },
+    "symfony/polyfill-php81": {
+        "version": "v1.23.0"
     },
     "symfony/process": {
         "version": "v4.4.19"
