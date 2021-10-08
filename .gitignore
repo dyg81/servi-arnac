@@ -1,3 +1,6 @@
+###> symfony binary ###
+symfony.exe
+###> symfony binary ###
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -14,3 +17,7 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+###> idea/phpstorm ###
+.idea
+###> idea/phpstorm ###
