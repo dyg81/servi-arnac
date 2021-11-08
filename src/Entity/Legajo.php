@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\EstanteRepository;
+use App\Repository\LegajoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=EstanteRepository::class)
- * @ORM\Table(name="sac_estante")
+ * @ORM\Entity(repositoryClass=LegajoRepository::class)
+ * @ORM\Table(name="sac_legajo")
  */
-class Estante
+class Legajo
 {
     /**
      * @ORM\Id
@@ -19,12 +19,12 @@ class Estante
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=2, unique=true)
+     * @ORM\Column(type="string", length=3, unique=true)
      */
-    private $numero;
+    private $legajo;
 
     /**
-     * @ORM\Column(type="string", length=5)
+     * @ORM\Column(type="string", length=6)
      */
     private $identificador;
 
@@ -39,18 +39,18 @@ class Estante
     /**
      * @return string|null
      */
-    public function getNumero(): ?string
+    public function getLegajo(): ?string
     {
-        return $this->numero;
+        return $this->legajo;
     }
 
     /**
-     * @param string $numero
+     * @param string $legajo
      * @return $this
      */
-    public function setNumero(string $numero): self
+    public function setLegajo(string $legajo): self
     {
-        $this->numero = $numero;
+        $this->legajo = $legajo;
 
         return $this;
     }

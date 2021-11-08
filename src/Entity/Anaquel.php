@@ -28,16 +28,26 @@ class Anaquel
      */
     private $identificador;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getNumero(): ?string
     {
         return $this->numero;
     }
 
+    /**
+     * @param string $numero
+     * @return $this
+     */
     public function setNumero(string $numero): self
     {
         $this->numero = $numero;
@@ -45,11 +55,18 @@ class Anaquel
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getIdentificador(): ?string
     {
         return $this->identificador;
     }
 
+    /**
+     * @param string $identificador
+     * @return $this
+     */
     public function setIdentificador(string $identificador): self
     {
         $this->identificador = $identificador;
