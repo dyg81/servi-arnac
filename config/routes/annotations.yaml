@@ -5,3 +5,7 @@ controllers:
 kernel:
     resource: ../../src/Kernel.php
     type: annotation
+
+dyg81modalbundle:
+    resource: "@Dyg81ModalBundle/src/Controller/"
+    type:     annotation

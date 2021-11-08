@@ -1,0 +1,27 @@
+{% extends '@Dyg81Modal/baseModal.html.twig' %}
+
+{% block modalBackdrop %}
+    data-backdrop="static"
+{% endblock %}
+
+{% block modalContent %}
+    {{ form_start(form) }}
+    <div class="modal-header">
+        <h5 class="modal-title m-0 font-weight-bold text-secondary"><i class="fa fa-exclamation-triangle text-danger"></i>
+            Advertencia</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="callout callout-danger mt-3">
+            <h6>Está seguro que desea eliminar el fondo: <span class="font-weight-bold">{{ fondo.nombre }}</span></h6>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-danger mr-2">Eliminar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+
