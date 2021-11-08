@@ -1,0 +1,162 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    SAC | Fondos
+{% endblock %}
+
+{% block menu %}
+    <div class="sidebar text-sm">
+        <!-- Sidebar Menu -->
+        <nav class="mt-4">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
+                <li class="nav-item">
+                    <a href="{{ path('listar_depositos') }}" class="nav-link">
+                        <i class="nav-icon far fa-building"></i>
+                        <p>
+                            Depósitos
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('listar_estantes') }}" class="nav-link">
+                        <i class="nav-icon far fa-line-columns"></i>
+                        <p>
+                            Estantes
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('listar_anaqueles') }}" class="nav-link">
+                        <i class="nav-icon far fa-bars"></i>
+                        <p>
+                            Anaqueles
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="" class="nav-link active">
+                        <i class="nav-icon far fa-clipboard"></i>
+                        <p>
+                            Fondos Documentales
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="" class="nav-link">
+                        <i class="nav-icon far fa-folder-open"></i>
+                        <p>
+                            Legajos
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="" class="nav-link">
+                        <i class="nav-icon far fa-file-alt"></i>
+                        <p>
+                            Expedientes
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="" class="nav-link">
+                        <i class="nav-icon far fa-book-alt"></i>
+                        <p>
+                            Libros
+                        </p>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-primary card-outline mt-2">
+                        <div id="table_wrapper" class="card-body">
+                            <div class="float-right pr-2">
+                                <a href="{{ path('agregar_fondo') }}" class="btn btn-primary btn-sm btn-icon-split modal-open"
+                                   data-toggle="modal" data-target="#modal-example">
+                                    <span class="icon text-white-50"><i class="fas fa-share-square"></i></span>
+                                    <span class="text"> Agregar</span>
+                                </a>
+                            </div>
+                            <table id="sac" class="table table-hover display nowrap" style="width: 100%;">
+                                <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Depósito(s)</th>
+                                    <th style="width: 10px"></th>
+                                    <th style="width: 10px"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for fondo in fondos %}
+                                    <tr>
+                                        <td>{{ fondo.nombre }}</td>
+                                        <td>{{ fondo.descripcion }}</td>
+                                        <td>
+                                            {% for deposito in fondo.depositos %}
+                                                {% if loop.last %}
+                                                    {{ deposito.identificador }}
+                                                {% else %}
+                                                    {{ deposito.identificador }},&nbsp;
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('editar_fondo', { 'id': fondo.id }) }}" class="text-muted modal-open">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('eliminar_fondo', { 'id': fondo.id }) }}" class="text-muted mr-2 modal-open">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        $('#sac').DataTable({
+            "ordering": false,
+            "pageResize": true,
+            "scrollX": "100%",
+            "pagingType": "full_numbers",
+            "language": {
+                "url": "{{ asset('assets/plugins/datatables/spanish.json') }}"
+            },
+            dom: `<'row'<'col-sm-6 text-left'><'col-sm-6 text-right'f>>
+              <'row'<'col-sm-12'tr>>
+              <'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>`,
+        });
+
+        {% for type, msgs in app.session.flashBag.all() %}
+        {% for msg in msgs %}
+        Toast.fire({
+            icon: '{{ type }}',
+            title: '{{ msg }}'
+        });
+        {% endfor %}
+        {% endfor %}
+    </script>
+{% endblock %}

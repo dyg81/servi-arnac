@@ -1,19 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {# Run `composer require symfony/webpack-encore-bundle`
-           and uncomment the following Encore helpers to start using Symfony UX #}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets/dist/img/apple-icon.png') }}">
+        <link rel="icon" type="image/png" href="{{ asset('assets/dist/img/favicon.png') }}">
+        <title>
+            {% block title %}Servi ARNAC{% endblock %}
+        </title>
         {% block stylesheets %}
-            {#{{ encore_entry_link_tags('app') }}#}
-        {% endblock %}
-
-        {% block javascripts %}
-            {#{{ encore_entry_script_tags('app') }}#}
+            <!-- Nimrod Font Face -->
+            <link rel="stylesheet" href="{{ asset('assets/dist/fonts/nimrod-mt/nimrod-mt.css') }}">
+            <!-- Font Awesome Icons -->
+            <link rel="stylesheet" href="{{ asset('assets/plugins/fontawesome-icons/css/all.min.css') }}">
+            <!-- Data Tables -->
+            <link rel="stylesheet" href="{{ asset('assets/plugins/datatables/css/dataTables.bootstrap4.min.css') }}">
+            <!-- Select2 -->
+            <link rel="stylesheet" href="{{ asset('assets/plugins/select2/dist/css/select2.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('assets/plugins/select2-bs4-theme/dist/select2-bootstrap4.min.css') }}">
+            <!-- Sweetalert2 -->
+            <link rel="stylesheet" href="{{ asset('assets/plugins/sweetalert2-bs4-theme/bootstrap-4.min.css') }}">
+            <!-- Dual Listbox -->
+            <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.css') }}">
+            <!-- Theme style -->
+            <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.min.css') }}">
+            <!-- Custom style -->
+            <link rel="stylesheet" href="{{ asset('assets/dist/css/custom.css') }}">
         {% endblock %}
     </head>
-    <body>
+    <body class="sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed dark-mode">
         {% block body %}{% endblock %}
+        {% block javascripts %}
+            <!-- jQuery -->
+            <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+            <!-- jQuery Validation -->
+            <script src="{{ asset('assets/plugins/jquery-validation/dist/jquery.validate.min.js') }}"></script>
+            <!-- Bootstrap 4 -->
+            <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+            <!-- DataTables -->
+            <script src="{{ asset('assets/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+            <script src="{{ asset('assets/plugins/datatables/js/dataTables.bootstrap4.min.js') }}"></script>
+            <script src="{{ asset('assets/plugins/datatables/js/dataTables.pageResize.min.js') }}"></script>
+            <!-- Select2 -->
+            <script src="{{ asset('assets/plugins/select2/dist/js/select2.full.min.js') }}"></script>
+            <!-- Sweetalert2 -->
+            <script src="{{ asset('assets/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+            <!-- Dual Listbox -->
+            <script src="{{ asset('assets/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.js') }}"></script>
+            <!-- AdminLTE App -->
+            <script src="{{ asset('assets/dist/js/adminlte.min.js') }}"></script>
+            <!-- Textarea Autosize -->
+            <script src="{{ asset('assets/plugins/textarea-autosize/dist/autosize.min.js') }}"></script>
+            <!-- Modal Bundle -->
+            <script src="{{ asset('bundles/dyg81modal/js/scripts.js') }}"></script>
+            <!-- Custom JS -->
+            <script src="{{ asset('assets/dist/js/custom.js') }}"></script>
+        {% endblock %}
     </body>
 </html>

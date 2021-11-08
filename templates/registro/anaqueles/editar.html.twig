@@ -1,0 +1,71 @@
+{% extends '@Dyg81Modal/baseModal.html.twig' %}
+
+{% block modalBackdrop %}
+    data-backdrop="static"
+{% endblock %}
+
+{% block modalContent %}
+    {{ form_start(form, {'action': path('editar_anaquel', {'id': anaquel.id})}) }}
+    <div class="modal-header">
+        <h5 class="modal-title text-muted pl-2"><span class="fa fa-check-circle pr-2"></span>
+            Anaquel</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group sac-form-group">
+            <span class="far fa-building form-control-feedback"></span>
+            {{ form_widget(form.numero) }}
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary btn-save mr-2">Guardar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $(".btn-save").click(function (e) {
+                if (!$('#sac-form').valid()) {
+                    e.preventDefault()
+                }
+            });
+
+            $("#sac-form").validate({
+                rules: {
+                    'anaquel[numero]': {
+                        required: true,
+                        digits: true,
+                    }
+                },
+                messages: {
+                    'anaquel[numero]': {
+                        required: "Este campo es obligatorio.",
+                        digits: "Solo se permiten dígitos.",
+                    }
+                },
+                errorElement: "em",
+                errorPlacement: function (error, element) {
+                    error.addClass("invalid-feedback");
+
+                    if (element.hasClass("select2-hidden-accessible")) {
+                        error.insertAfter(element.next(".select2-container"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                success: function (label, element) {
+                    $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                },
+                highlight: function (element) {
+                    $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+                },
+                unhighlight: function (element) {
+                    $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                },
+            });
+        });
+    </script>
+    {{ form_end(form) }}
+{% endblock %}
