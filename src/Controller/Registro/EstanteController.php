@@ -93,6 +93,9 @@ class EstanteController extends AbstractController
 
     /**
      * @Route("/eliminar/{id}", name="eliminar_estante", methods={"GET", "DELETE"})
+     * @param Request $request
+     * @param Estante $estante
+     * @return Response
      */
     public function eliminarDeposito(Request $request, Estante $estante): Response
     {
@@ -107,9 +110,9 @@ class EstanteController extends AbstractController
 
                 try {
                     $entityManager->flush();
-                    $this->addFlash('success', 'El estantes '.$estante->getNumero().' ha sido eliminado correctamente.');
+                    $this->addFlash('success', 'El estante '.$estante->getNumero().' ha sido eliminado correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'El estantes '.$estante->getNumero().' no ha podido ser eliminado.');
+                    $this->addFlash('error', 'El estante '.$estante->getNumero().' no ha podido ser eliminado.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('listar_estantes'));

@@ -18,34 +18,27 @@ class LegajoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('legajo')
-            ->add('identificador')
-        ;
-
-        $builder
             ->add('legajo', null, [
-                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Legajo'],
-                //'required' => false,
+                'attr' => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificador']
+
             ])
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
                 /** @var $legajo */
                 $legajo = $event->getData();
 
                 if (null !== $legajoNombre = $legajo->getLegajo()) {
-                    if ( intval($legajoNombre) ) {
-                        if ( strlen($legajoNombre) == 1 ) {
-                            $legajoNombre = '0'.$legajoNombre;
-                        }
-                        elseif (strlen($legajoNombre) == 2) {
-                            $legajoNombre = '00'.$legajoNombre;
+                    if (intval($legajoNombre)) {
+                        if (strlen($legajoNombre) == 1) {
+                            $legajoNombre = '00' . $legajoNombre;
+                        } elseif (strlen($legajoNombre) == 2) {
+                            $legajoNombre = '0' . $legajoNombre;
                         }
                     }
 
-                    $legajo->setLegajo($legajoNombre);
-                    $legajo->setIdentificador('LEG-' . strtoupper(str_replace(' ', '', $legajoNombre)));
+                    $legajo->setLegajo(strtoupper($legajoNombre));
+                    $legajo->setIdentificador('LEG_' . strtoupper(str_replace(' ', '', $legajoNombre)));
                 }
-            })
-        ;
+            });
     }
 
     /**

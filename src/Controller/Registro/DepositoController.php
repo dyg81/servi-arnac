@@ -65,6 +65,9 @@ class DepositoController extends AbstractController
 
     /**
      * @Route("/editar/{id}", name="editar_deposito", methods={"GET","POST"})
+     * @param Request $request
+     * @param Deposito $deposito
+     * @return Response
      */
     public function editarDeposito(Request $request, Deposito $deposito): Response
     {
@@ -92,6 +95,9 @@ class DepositoController extends AbstractController
 
     /**
      * @Route("/eliminar/{id}", name="eliminar_deposito", methods={"GET", "DELETE"})
+     * @param Request $request
+     * @param Deposito $deposito
+     * @return Response
      */
     public function eliminarDeposito(Request $request, Deposito $deposito): Response
     {

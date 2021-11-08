@@ -2,9 +2,7 @@
 
 {% block body %}
     <div class="wrapper">
-        <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-dark">
-            <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto mr-3">
                 <li class="theme-switch-wrapper mr-2">
                     <label class="theme-switch" for="checkbox">
@@ -17,7 +15,6 @@
                         <i class="fas fa-expand-arrows-alt mt-1" data-toggle="tooltip" title="Sasa!!!"></i>
                     </a>
                 </li>
-                <!-- Messages Dropdown Menu -->
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
                         <i class="fas fa-bell mt-1"></i>
@@ -25,7 +22,6 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
                             <div class="media">
                                 <img src="{{ asset('assets/dist/img/warning-red.png') }}" alt="Warning Symbol" class="img-size-50 mr-3 mt-1 img-circle">
                                 <div class="media-body">
@@ -37,11 +33,9 @@
                                     <p class="text-xs text-muted"><i class="far fa-envelope mr-1"></i> 4 restantes</p>
                                 </div>
                             </div>
-                            <!-- Message End -->
                         </a>
                         <div class="dropdown-divider"></div>
                         <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
                             <div class="media">
                                 <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol" class="img-size-50 mr-3 mt-1 img-circle">
                                 <div class="media-body">
@@ -53,7 +47,6 @@
                                     <p class="text-xs text-muted"><i class="far fa-envelope mr-1"></i> 14 restantes</p>
                                 </div>
                             </div>
-                            <!-- Message End -->
                         </a>
                     </div>
                 </li>
@@ -63,9 +56,7 @@
                         <img src="{{ asset('assets/dist/img/user2-160x160.jpg') }}" class="user-image img-circle elevation-2"
                              alt="User Image">
                     </a>
-
                     <ul class="dropdown-menu dropdown-menu-right">
-                        <!-- User image -->
                         <li class="user-header bg-secondary">
                             <img src="{{ asset('assets/dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
                             <p>
@@ -73,7 +64,6 @@
                                 <small>Desarrollador Principal</small>
                             </p>
                         </li>
-                        <!-- Menu Footer-->
                         <li class="user-footer">
                             <a href="#" class="btn btn-default">Perfil</a>
                             <a href="#" class="btn btn-default float-right">Cerrar</a>
@@ -82,36 +72,24 @@
                 </li>
             </ul>
         </nav>
-        <!-- /.navbar -->
 
-        <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <!-- Brand Logo -->
             <span class="brand-link pl-2">
             <img src="{{ asset('assets/dist/img/arnac-logo-white.png') }}" alt="ARNAC Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
             <span class="brand-text font-weight-light font-italic pl-3">Servi ARNAC</span>
         </span>
 
-            <!-- Sidebar -->
             {% block menu %}{% endblock %}
-            <!-- /.sidebar -->
         </aside>
 
-        <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper text-xs">
-            <!-- Main content -->
             {% block content %}{% endblock %}
-            <!-- /.content -->
         </div>
-        <!-- /.content-wrapper -->
 
-        <!-- Main Footer -->
         <footer class="main-footer text-xs">
-            <!-- To the right -->
             <div class="float-right d-none d-sm-inline">
                 Todos los derechos reservados.
             </div>
-            <!-- Default to the left -->
             &copy; 2021 <strong>TITOTorres & Grupo de Desarrollo ARTAX Tech.</strong>
         </footer>
     </div>

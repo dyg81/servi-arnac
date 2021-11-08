@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 
 {% block title %}
-    SAC | Depositos
+    SAC | Legajos
 {% endblock %}
 
 {% block menu %}
@@ -10,7 +10,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 <li class="nav-item">
-                    <a href="javascript:void(0)" class="nav-link active">
+                    <a href="{{ path('listar_depositos') }}" class="nav-link">
                         <i class="nav-icon far fa-building"></i>
                         <p>
                             Depósitos
@@ -42,7 +42,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ path('listar_legajos') }}" class="nav-link">
+                    <a href="javascript:void(0)" class="nav-link active">
                         <i class="nav-icon far fa-folder-open"></i>
                         <p>
                             Legajos
@@ -78,7 +78,7 @@
                     <div class="card card-primary card-outline mt-2">
                         <div id="table_wrapper" class="card-body">
                             <div class="float-right pr-2">
-                                <a href="{{ path('agregar_deposito') }}" class="btn btn-primary btn-sm btn-icon-split modal-open"
+                                <a href="{{ path('agregar_legajo') }}" class="btn btn-primary btn-sm btn-icon-split modal-open"
                                    data-toggle="modal" data-target="#modal-example">
                                     <span class="icon text-white-50"><i class="fas fa-share-square"></i></span>
                                     <span class="text"> Agregar</span>
@@ -87,25 +87,25 @@
                             <table id="sac" class="table table-hover display nowrap" style="width: 100%;">
                                 <thead>
                                 <tr>
-                                    <th>Número</th>
+                                    <th>Legajo</th>
                                     <th>Identificador</th>
                                     <th style="width: 10px"></th>
                                     <th style="width: 10px"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for deposito in depositos %}
+                                {% for legajo in legajos %}
                                     <tr>
-                                        <td>{{ deposito.numero }}</td>
-                                        <td>{{ deposito.identificador }}</td>
+                                        <td>{{ legajo.legajo }}</td>
+                                        <td>{{ legajo.identificador }}</td>
                                         <td>
-                                            <a href="{{ path('editar_deposito', { 'id': deposito.id }) }}" class="text-muted modal-open">
+                                            <a href="{{ path('editar_legajo', { 'id': legajo.id }) }}" class="text-muted modal-open">
                                                 <i class="fas fa-edit"></i>
                                             </a>
 
                                         </td>
                                         <td>
-                                            <a href="{{ path('eliminar_deposito', { 'id': deposito.id }) }}" class="text-muted mr-2 modal-open">
+                                            <a href="{{ path('eliminar_legajo', { 'id': legajo.id }) }}" class="text-muted mr-2 modal-open">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </td>

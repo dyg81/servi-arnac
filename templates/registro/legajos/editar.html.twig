@@ -9,22 +9,22 @@
 {% endblock %}
 
 {% block modalContent %}
-    {{ form_start(form, {'action': path('agregar_estante')}) }}
+    {{ form_start(form, {'action': path('editar_legajo', {'id': legajo.id})}) }}
     <div class="modal-header">
-        <h5 class="modal-title text-muted pl-2"><span class="fa fa-plus-circle pr-2"></span>
-            Estante</h5>
+        <h5 class="modal-title text-muted pl-2"><span class="fa fa-check-circle pr-2"></span>
+            Legajo</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
         </button>
     </div>
     <div class="modal-body text-xs">
         <div class="form-group sac-form-group">
-            <span class="far fa-line-columns form-control-feedback"></span>
-            {{ form_widget(form.numero) }}
+            <span class="far fa-folder-open form-control-feedback"></span>
+            {{ form_widget(form.legajo) }}
         </div>
     </div>
     <div class="modal-footer">
-        <button type="submit" class="btn btn-sm btn-primary btn-save">Guardar</button>
+        <button type="submit" class="btn btn-sm btn-primary btn-save mr-2">Guardar</button>
         <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>
     </div>
 
@@ -37,16 +37,15 @@
             });
 
             $("#sac-form").validate({
+                ignore: '.select2-input, .select2-focusser',
                 rules: {
-                    'estante[numero]': {
+                    'legajo[legajo]': {
                         required: true,
-                        digits: true,
                     }
                 },
                 messages: {
-                    'estante[numero]': {
+                    'legajo[legajo]': {
                         required: "Este campo es obligatorio.",
-                        digits: "Solo se permiten dígitos.",
                     }
                 },
                 errorElement: "em",

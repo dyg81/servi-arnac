@@ -26,7 +26,7 @@ class Deposito
     private $numero;
 
     /**
-     * @ORM\Column(type="string", length=8)
+     * @ORM\Column(type="string", length=9)
      */
     private $identificador;
 

@@ -63,6 +63,9 @@ class FondoController extends AbstractController
 
     /**
      * @Route("/editar/{id}", name="editar_fondo", methods={"GET","POST"})
+     * @param Request $request
+     * @param Fondo $fondo
+     * @return Response
      */
     public function edit(Request $request, Fondo $fondo): Response
     {

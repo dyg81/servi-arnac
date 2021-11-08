@@ -4,6 +4,10 @@
     data-backdrop="static"
 {% endblock %}
 
+{% block modalSize %}
+    modal-sm
+{% endblock %}
+
 {% block modalContent %}
     {{ form_start(form, {'action': path('editar_deposito', {'id': deposito.id})}) }}
     <div class="modal-header">
@@ -13,15 +17,15 @@
             <span aria-hidden="true">×</span>
         </button>
     </div>
-    <div class="modal-body">
+    <div class="modal-body text-xs">
         <div class="form-group sac-form-group">
             <span class="far fa-building form-control-feedback"></span>
             {{ form_widget(form.numero) }}
         </div>
     </div>
     <div class="modal-footer">
-        <button type="submit" class="btn btn-primary btn-save mr-2">Guardar</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-sm btn-primary btn-save mr-2">Guardar</button>
+        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>
     </div>
 
     <script>

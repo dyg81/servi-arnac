@@ -19,7 +19,7 @@ class EstanteType extends AbstractType
     {
         $builder
             ->add('numero', null, [
-                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Número del estante'],
+                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificador'],
                 //'required' => false,
             ])
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
@@ -33,7 +33,7 @@ class EstanteType extends AbstractType
                     }
 
                     $estante->setNumero($estanteNumero);
-                    $estante->setIdentificador('EST' . strtoupper(str_replace(' ', '', $estanteNumero)));
+                    $estante->setIdentificador('EST_' . strtoupper(str_replace(' ', '', $estanteNumero)));
                 }
             })
         ;

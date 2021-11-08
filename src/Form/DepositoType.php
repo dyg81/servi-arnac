@@ -19,7 +19,7 @@ class DepositoType extends AbstractType
     {
         $builder
             ->add('numero', null, [
-                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Número del depósito'],
+                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificador'],
                 //'required' => false,
             ])
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
@@ -33,7 +33,7 @@ class DepositoType extends AbstractType
                     }
 
                     $deposito->setNumero($depositoNumero);
-                    $deposito->setIdentificador('DNAVE' . strtoupper(str_replace(' ', '', $depositoNumero)));
+                    $deposito->setIdentificador('DNAVE_' . strtoupper(str_replace(' ', '', $depositoNumero)));
                 }
             })
         ;
