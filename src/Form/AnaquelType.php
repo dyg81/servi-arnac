@@ -19,7 +19,7 @@ class AnaquelType extends AbstractType
     {
         $builder
             ->add('numero', null, [
-                'attr' => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Número del anaquel'],
+                'attr' => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificador'],
                 //'required' => false,
             ])
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
@@ -33,7 +33,7 @@ class AnaquelType extends AbstractType
                     }
 
                     $anaquel->setNumero($anaquelNumero);
-                    $anaquel->setIdentificador('ANA' . strtoupper(str_replace(' ', '', $anaquelNumero)));
+                    $anaquel->setIdentificador('ANA_' . strtoupper(str_replace(' ', '', $anaquelNumero)));
                 }
             });
     }

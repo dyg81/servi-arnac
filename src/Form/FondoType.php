@@ -20,7 +20,7 @@ class FondoType extends AbstractType
     {
         $builder
             ->add('nombre', null, [
-                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Nombre del fondo'],
+                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificador'],
                 //'required' => false,
             ])
             ->add('descripcion', null, [

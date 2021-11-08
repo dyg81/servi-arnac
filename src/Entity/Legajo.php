@@ -24,7 +24,7 @@ class Legajo
     private $legajo;
 
     /**
-     * @ORM\Column(type="string", length=6)
+     * @ORM\Column(type="string", length=7)
      */
     private $identificador;
 
