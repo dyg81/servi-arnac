@@ -40,21 +40,34 @@ class Fondo
      */
     private $identificador;
 
+    /**
+     * Init the depositos array collection for every new fondo
+     */
     public function __construct()
     {
         $this->depositos = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getNombre(): ?string
     {
         return $this->nombre;
     }
 
+    /**
+     * @param string $nombre
+     * @return $this
+     */
     public function setNombre(string $nombre): self
     {
         $this->nombre = $nombre;
@@ -62,11 +75,18 @@ class Fondo
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getDescripcion(): ?string
     {
         return $this->descripcion;
     }
 
+    /**
+     * @param string $descripcion
+     * @return $this
+     */
     public function setDescripcion(string $descripcion): self
     {
         $this->descripcion = $descripcion;
@@ -82,6 +102,10 @@ class Fondo
         return $this->depositos;
     }
 
+    /**
+     * @param Deposito $deposito
+     * @return $this
+     */
     public function addDeposito(Deposito $deposito): self
     {
         if (!$this->depositos->contains($deposito)) {
@@ -91,6 +115,10 @@ class Fondo
         return $this;
     }
 
+    /**
+     * @param Deposito $deposito
+     * @return $this
+     */
     public function removeDeposito(Deposito $deposito): self
     {
         $this->depositos->removeElement($deposito);
@@ -98,11 +126,18 @@ class Fondo
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getIdentificador(): ?string
     {
         return $this->identificador;
     }
 
+    /**
+     * @param string $identificador
+     * @return $this
+     */
     public function setIdentificador(string $identificador): self
     {
         $this->identificador = $identificador;

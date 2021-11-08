@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Legajo index{% endblock %}
+
+{% block body %}
+    <h1>Legajo index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Legajo</th>
+                <th>Identificador</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for legajo in legajos %}
+            <tr>
+                <td>{{ legajo.id }}</td>
+                <td>{{ legajo.legajo }}</td>
+                <td>{{ legajo.identificador }}</td>
+                <td>
+                    <a href="{{ path('registro_legajo_show', {'id': legajo.id}) }}">show</a>
+                    <a href="{{ path('registro_legajo_edit', {'id': legajo.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('registro_legajo_new') }}">Create new</a>
+{% endblock %}

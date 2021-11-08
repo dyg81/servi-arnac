@@ -35,26 +35,42 @@ class Deposito
      */
     private $fondos;
 
+    /**
+     * Init the fondos array collection for every new deposito
+     */
     public function __construct()
     {
         $this->fondos = new ArrayCollection();
     }
 
+    /**
+     * @return string|null
+     */
     public function __toString()
     {
         return $this->getIdentificador();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getNumero(): ?string
     {
         return $this->numero;
     }
 
+    /**
+     * @param string $numero
+     * @return $this
+     */
     public function setNumero(string $numero): self
     {
         $this->numero = $numero;
@@ -62,11 +78,18 @@ class Deposito
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getIdentificador(): ?string
     {
         return $this->identificador;
     }
 
+    /**
+     * @param string $identificador
+     * @return $this
+     */
     public function setIdentificador(string $identificador): self
     {
         $this->identificador = $identificador;
@@ -82,6 +105,10 @@ class Deposito
         return $this->fondos;
     }
 
+    /**
+     * @param Fondo $fondo
+     * @return $this
+     */
     public function addFondo(Fondo $fondo): self
     {
         if (!$this->fondos->contains($fondo)) {
@@ -92,6 +119,10 @@ class Deposito
         return $this;
     }
 
+    /**
+     * @param Fondo $fondo
+     * @return $this
+     */
     public function removeFondo(Fondo $fondo): self
     {
         if ($this->fondos->removeElement($fondo)) {
