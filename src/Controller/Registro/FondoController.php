@@ -9,6 +9,7 @@ use Doctrine\DBAL\Exception;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -47,9 +48,9 @@ class FondoController extends AbstractController
 
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El fondo '.$fondo->getNombre().' ha sido creado correctamente.');
+                $this->addFlash('success', 'El fondo ' . $fondo->getNombre() . ' ha sido creado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El fondo '.$fondo->getNombre().' no ha podido ser creado.');
+                $this->addFlash('error', 'El fondo ' . $fondo->getNombre() . ' no ha podido ser creado.');
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_fondos'));
@@ -77,9 +78,9 @@ class FondoController extends AbstractController
 
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El fondo '.$fondo->getNombre().' ha sido editado correctamente.');
+                $this->addFlash('success', 'El fondo ' . $fondo->getNombre() . ' ha sido editado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El fondo '.$fondo->getNombre().' no ha podido ser editado.');
+                $this->addFlash('error', 'El fondo ' . $fondo->getNombre() . ' no ha podido ser editado.');
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_fondos'));
@@ -110,9 +111,9 @@ class FondoController extends AbstractController
 
                 try {
                     $entityManager->flush();
-                    $this->addFlash('success', 'El fondo '.$fondo->getNombre().' ha sido eliminado correctamente.');
+                    $this->addFlash('success', 'El fondo ' . $fondo->getNombre() . ' ha sido eliminado correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'El fondo '.$fondo->getNombre().' no ha podido ser eliminado.');
+                    $this->addFlash('error', 'El fondo ' . $fondo->getNombre() . ' no ha podido ser eliminado.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('listar_fondos'));
@@ -134,7 +135,6 @@ class FondoController extends AbstractController
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('eliminar_fondo', array('id' => $fondo->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-            ;
+            ->getForm();
     }
 }

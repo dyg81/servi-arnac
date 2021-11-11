@@ -33,7 +33,7 @@ class AnaquelType extends AbstractType
                     }
 
                     $anaquel->setNumero($anaquelNumero);
-                    $anaquel->setIdentificador('ANA_' . strtoupper(str_replace(' ', '', $anaquelNumero)));
+                    $anaquel->setIdentificador('ANA' . strtoupper(str_replace(' ', '', $anaquelNumero)));
                 }
             });
     }

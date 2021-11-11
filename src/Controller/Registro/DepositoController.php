@@ -9,6 +9,7 @@ use Doctrine\DBAL\Exception;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -138,5 +139,26 @@ class DepositoController extends AbstractController
             ->setMethod('DELETE')
             ->getForm()
             ;
+    }
+
+    /**
+     * @Route("/obtener-depositos", name="obtener_depositos")
+     * @param DepositoRepository $depositoRepository
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function obtenerDepositos(DepositoRepository $depositoRepository, Request $request)
+    {
+        $depositosArray = array();
+        $depositosAsociados = $depositoRepository->findAllByFondo($request->query->get('fondoid'));
+
+        foreach ($depositosAsociados as $deposito) {
+            $depositosArray[] = array(
+                "id" => $deposito->getId(),
+                "numero" => $deposito->getIdentificador(),
+            );
+        }
+
+        return new JsonResponse($depositosArray);
     }
 }

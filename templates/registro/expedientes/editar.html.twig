@@ -1,0 +1,233 @@
+{% extends '@Dyg81Modal/baseModal.html.twig' %}
+
+{% block modalBackdrop %}
+    data-backdrop="static"
+{% endblock %}
+
+{% block modalSize %}
+{% endblock %}
+
+{% block modalContent %}
+    {{ form_start(form, {'action': path('editar_expediente', {'id': expediente.id})}) }}
+    <div class="modal-header">
+        <h5 class="modal-title text-muted pl-2"><span class="fa fa-check-circle pr-2"></span>
+            Expediente</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body text-xs">
+        <div class="row">
+            <div class="form-group sac-form-group col-6">
+                <span class="far fa-file-alt form-control-feedback"></span>
+                {{ form_widget(form.numero) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group sac-form-group col-12">
+                <span class="far fa-comment-alt-lines form-control-feedback"></span>
+                {{ form_widget(form.descripcion) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-12">
+                {{ form_widget(form.fondo) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-6">
+                {{ form_widget(form.deposito) }}
+            </div>
+            <div class="form-group col-6">
+                {{ form_widget(form.estante) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-6">
+                {{ form_widget(form.anaquel) }}
+            </div>
+            <div class="form-group col-6">
+                {{ form_widget(form.legajo) }}
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-sm btn-primary btn-save mr-2">Guardar</button>
+        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>
+    </div>
+
+    <script>
+        $('#expediente_fondo').change(function () {
+            let expedienteSelector = $(this);
+
+            $.ajax({
+                url: "{{ path('obtener_depositos') }}",
+                type: "GET",
+                dataType: "JSON",
+                data: {
+                    fondoid: expedienteSelector.val()
+                },
+
+                success: function (depositos) {
+                    let depositosSelect = $("#expediente_deposito");
+
+                    depositosSelect.prop('disabled', false);
+
+                    depositosSelect.html('');
+                    depositosSelect.append('<option value="" selected="selected"></option>');
+
+                    $.each(depositos, function (key, deposito) {
+                        depositosSelect.append('<option value="' + deposito.id + '">' + deposito.numero + '</option>');
+                    });
+                },
+
+                error: function (err) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Ha ocurrido un error desconocido mientras se cargaban los datos.'
+                    })
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            autosize($('textarea'));
+
+            $.fn.modal.Constructor.prototype._enforceFocus = function () {};
+
+            const select_fondo = $('#expediente_fondo').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-clipboard\"></i>&nbsp;&nbsp;&nbsp; Fondos",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            const select_deposito = $('#expediente_deposito').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-building\"></i>&nbsp;&nbsp;&nbsp; Depositos",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            const select_estante = $('#expediente_estante').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-line-columns\"></i>&nbsp;&nbsp;&nbsp; Estantes",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            const select_anaquel = $('#expediente_anaquel').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-bars\"></i>&nbsp;&nbsp;&nbsp; Anaqueles",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            const select_legajo = $('#expediente_legajo').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-folder-open\"></i>&nbsp;&nbsp;&nbsp; Legajos",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            $(".btn-save").click(function (e) {
+                if (!$('#sac-form').valid()) {
+                    e.preventDefault()
+                }
+            });
+
+            select_fondo.add(select_deposito).add(select_estante).add(select_anaquel).add(select_legajo).on("change", function () {
+                $(this).trigger('blur');
+            });
+
+            $("#sac-form").validate({
+                ignore: '.select2-input, .select2-focusser',
+                rules: {
+                    'expediente[numero]': {
+                        required: true,
+                        digits: true,
+                    },
+                    'expediente[descripcion]': {
+                        required: true,
+                    },
+                    'expediente[fondo]': {
+                        required: true,
+                    },
+                    'expediente[deposito]': {
+                        required: true,
+                    },
+                    'expediente[estante]': {
+                        required: true,
+                    },
+                    'expediente[anaquel]': {
+                        required: true,
+                    },
+                    'expediente[legajo]': {
+                        required: true,
+                    },
+                },
+                messages: {
+                    'expediente[numero]': {
+                        required: "Esta campo es obligatorio",
+                        digits: "Solo se permiten números",
+                    },
+                    'expediente[descripcion]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                    'expediente[fondo]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                    'expediente[deposito]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                    'expediente[estante]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                    'expediente[anaquel]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                    'expediente[legajo]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                },
+                errorElement: "em",
+                errorPlacement: function (error, element) {
+                    error.addClass("invalid-feedback");
+
+                    if (element.hasClass("select2-hidden-accessible")) {
+                        error.insertAfter(element.next(".select2-container"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                success: function (label, element) {
+                    $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                },
+                highlight: function (element) {
+                    $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+                },
+                unhighlight: function (element) {
+                    $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                },
+            });
+        });
+    </script>
+    {{ form_end(form) }}
+{% endblock %}
