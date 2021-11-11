@@ -27,13 +27,13 @@ class LegajoType extends AbstractType
                 $legajo = $event->getData();
 
                 if (null !== $legajoNombre = $legajo->getLegajo()) {
-                    if (intval($legajoNombre)) {
+                    /*if (intval($legajoNombre)) {
                         if (strlen($legajoNombre) == 1) {
                             $legajoNombre = '00' . $legajoNombre;
                         } elseif (strlen($legajoNombre) == 2) {
                             $legajoNombre = '0' . $legajoNombre;
                         }
-                    }
+                    }*/
 
                     $legajo->setLegajo(strtoupper($legajoNombre));
                     $legajo->setIdentificador('LEG_' . strtoupper(str_replace(' ', '', $legajoNombre)));

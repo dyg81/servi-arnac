@@ -41,11 +41,25 @@ class Fondo
     private $identificador;
 
     /**
-     * Init the depositos array collection for every new fondo
+     * @ORM\OneToMany(targetEntity=Expediente::class, mappedBy="fondo")
+     */
+    private $expedientes;
+
+    /**
+     * Init the array's collections for every new fondo
      */
     public function __construct()
     {
         $this->depositos = new ArrayCollection();
+        $this->expedientes = new ArrayCollection();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function __toString()
+    {
+        return $this->nombre;
     }
 
     /**
@@ -141,6 +155,44 @@ class Fondo
     public function setIdentificador(string $identificador): self
     {
         $this->identificador = $identificador;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Expediente[]
+     */
+    public function getExpedientes(): Collection
+    {
+        return $this->expedientes;
+    }
+
+    /**
+     * @param Expediente $expediente
+     * @return $this
+     */
+    public function addExpediente(Expediente $expediente): self
+    {
+        if (!$this->expedientes->contains($expediente)) {
+            $this->expedientes[] = $expediente;
+            $expediente->setFondo($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Expediente $expediente
+     * @return $this
+     */
+    public function removeExpediente(Expediente $expediente): self
+    {
+        if ($this->expedientes->removeElement($expediente)) {
+            // set the owning side to null (unless already changed)
+            if ($expediente->getFondo() === $this) {
+                $expediente->setFondo(null);
+            }
+        }
 
         return $this;
     }

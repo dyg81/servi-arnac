@@ -33,7 +33,7 @@ class EstanteType extends AbstractType
                     }
 
                     $estante->setNumero($estanteNumero);
-                    $estante->setIdentificador('EST_' . strtoupper(str_replace(' ', '', $estanteNumero)));
+                    $estante->setIdentificador('EST' . strtoupper(str_replace(' ', '', $estanteNumero)));
                 }
             })
         ;

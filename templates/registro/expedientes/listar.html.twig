@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 
 {% block title %}
-    SAC | Anaqueles
+    SAC | Expedientes
 {% endblock %}
 
 {% block menu %}
@@ -26,7 +26,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="javascript:void(0)" class="nav-link active">
+                    <a href="{{ path('listar_anaqueles') }}" class="nav-link">
                         <i class="nav-icon far fa-bars"></i>
                         <p>
                             Anaqueles
@@ -50,7 +50,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ path('listar_expedientes') }}" class="nav-link">
+                    <a href="javascript:void(0)" class="nav-link active">
                         <i class="nav-icon far fa-file-alt"></i>
                         <p>
                             Expedientes
@@ -78,8 +78,7 @@
                     <div class="card card-primary card-outline mt-2">
                         <div id="table_wrapper" class="card-body">
                             <div class="float-right pr-2">
-                                <a href="{{ path('agregar_anaquel') }}" class="btn btn-primary btn-sm btn-icon-split modal-open"
-                                   data-toggle="modal" data-target="#modal-example">
+                                <a href="{{ path('agregar_expediente') }}" class="btn btn-primary btn-sm btn-icon-split modal-open">
                                     <span class="icon text-white-50"><i class="fas fa-share-square"></i></span>
                                     <span class="text"> Agregar</span>
                                 </a>
@@ -88,24 +87,26 @@
                                 <thead>
                                 <tr>
                                     <th>Número</th>
-                                    <th>Identificador</th>
+                                    <th>Fondo</th>
+                                    <th>Ubicación</th>
                                     <th style="width: 10px"></th>
                                     <th style="width: 10px"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for anaquel in anaqueles %}
+                                {% for expediente in expedientes %}
                                     <tr>
-                                        <td>{{ anaquel.numero }}</td>
-                                        <td>{{ anaquel.identificador }}</td>
+                                        <td>{{ expediente.numero }}</td>
+                                        <td>{{ expediente.fondo }}</td>
+                                        <td>{{ expediente.deposito }} / {{ expediente.estante }} / {{ expediente.anaquel }} / {{ expediente.legajo }}</td>
                                         <td>
-                                            <a href="{{ path('editar_anaquel', { 'id': anaquel.id }) }}" class="text-muted modal-open">
+                                            <a href="{{ path('editar_expediente', { 'id': expediente.id }) }}" class="text-muted modal-open">
                                                 <i class="fas fa-edit"></i>
                                             </a>
 
                                         </td>
                                         <td>
-                                            <a href="{{ path('eliminar_anaquel', { 'id': anaquel.id }) }}" class="text-muted mr-2 modal-open">
+                                            <a href="{{ path('eliminar_expediente', { 'id': expediente.id }) }}" class="text-muted mr-2 modal-open">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </td>

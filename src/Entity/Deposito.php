@@ -26,7 +26,7 @@ class Deposito
     private $numero;
 
     /**
-     * @ORM\Column(type="string", length=9)
+     * @ORM\Column(type="string", length=7)
      */
     private $identificador;
 
@@ -36,11 +36,17 @@ class Deposito
     private $fondos;
 
     /**
-     * Init the fondos array collection for every new deposito
+     * @ORM\OneToMany(targetEntity=Expediente::class, mappedBy="deposito")
+     */
+    private $expedientes;
+
+    /**
+     * Init the array's collections for every new deposito
      */
     public function __construct()
     {
         $this->fondos = new ArrayCollection();
+        $this->expedientes = new ArrayCollection();
     }
 
     /**
@@ -127,6 +133,36 @@ class Deposito
     {
         if ($this->fondos->removeElement($fondo)) {
             $fondo->removeDeposito($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Expediente[]
+     */
+    public function getExpedientes(): Collection
+    {
+        return $this->expedientes;
+    }
+
+    public function addExpediente(Expediente $expediente): self
+    {
+        if (!$this->expedientes->contains($expediente)) {
+            $this->expedientes[] = $expediente;
+            $expediente->setDeposito($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExpediente(Expediente $expediente): self
+    {
+        if ($this->expedientes->removeElement($expediente)) {
+            // set the owning side to null (unless already changed)
+            if ($expediente->getDeposito() === $this) {
+                $expediente->setDeposito(null);
+            }
         }
 
         return $this;

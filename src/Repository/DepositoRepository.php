@@ -34,6 +34,20 @@ class DepositoRepository extends ServiceEntityRepository
             ;
     }
 
+    /**
+     * @param $fondo_id
+     * @return Deposito[]
+     */
+    public function findAllByFondo($fondo_id)
+    {
+        return $this->createQueryBuilder("d")
+            ->innerJoin('d.fondos', 'fondo', 'WITH', 'fondo.id = :fondoid')
+            ->setParameter("fondoid", $fondo_id)
+            ->orderBy('d.numero', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return Deposito[] Returns an array of Deposito objects
     //  */

@@ -33,7 +33,7 @@ class DepositoType extends AbstractType
                     }
 
                     $deposito->setNumero($depositoNumero);
-                    $deposito->setIdentificador('DNAVE_' . strtoupper(str_replace(' ', '', $depositoNumero)));
+                    $deposito->setIdentificador('DNAVE' . strtoupper(str_replace(' ', '', $depositoNumero)));
                 }
             })
         ;

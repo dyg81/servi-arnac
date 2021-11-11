@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EstanteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -24,9 +26,30 @@ class Estante
     private $numero;
 
     /**
-     * @ORM\Column(type="string", length=6)
+     * @ORM\Column(type="string", length=5)
      */
     private $identificador;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Expediente::class, mappedBy="estante")
+     */
+    private $expedientes;
+
+    /**
+     * Init the array's collections for every new estante
+     */
+    public function __construct()
+    {
+        $this->expedientes = new ArrayCollection();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function __toString()
+    {
+        return $this->identificador;
+    }
 
     /**
      * @return int|null
@@ -70,6 +93,44 @@ class Estante
     public function setIdentificador(string $identificador): self
     {
         $this->identificador = $identificador;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Expediente[]
+     */
+    public function getExpedientes(): Collection
+    {
+        return $this->expedientes;
+    }
+
+    /**
+     * @param Expediente $expediente
+     * @return $this
+     */
+    public function addExpediente(Expediente $expediente): self
+    {
+        if (!$this->expedientes->contains($expediente)) {
+            $this->expedientes[] = $expediente;
+            $expediente->setEstante($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Expediente $expediente
+     * @return $this
+     */
+    public function removeExpediente(Expediente $expediente): self
+    {
+        if ($this->expedientes->removeElement($expediente)) {
+            // set the owning side to null (unless already changed)
+            if ($expediente->getEstante() === $this) {
+                $expediente->setEstante(null);
+            }
+        }
 
         return $this;
     }
