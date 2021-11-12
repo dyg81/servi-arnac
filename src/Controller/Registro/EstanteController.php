@@ -23,7 +23,7 @@ class EstanteController extends AbstractController
      * @param EstanteRepository $estanteRepository
      * @return Response
      */
-    public function listarEstantes(EstanteRepository $estanteRepository): Response
+    public function listar(EstanteRepository $estanteRepository): Response
     {
         return $this->render('registro/estantes/listar.html.twig', [
             'estantes' => $estanteRepository->findAllOrderByAsc(),
@@ -35,7 +35,7 @@ class EstanteController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function agregarEstante(Request $request): Response
+    public function agregar(Request $request): Response
     {
         $estante = new Estante();
         $form = $this->createForm(EstanteType::class, $estante);
@@ -49,7 +49,12 @@ class EstanteController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El estante '.$estante->getNumero().' ha sido creado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El estante '.$estante->getNumero().' no ha podido ser creado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El estante '.$estante->getNumero().' no se pudo agregar, ya existe en el sistema.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_estantes'));
@@ -67,7 +72,7 @@ class EstanteController extends AbstractController
      * @param Estante $estante
      * @return Response
      */
-    public function edit(Request $request, Estante $estante): Response
+    public function editar(Request $request, Estante $estante): Response
     {
         $form = $this->createForm(EstanteType::class, $estante);
         $form->handleRequest($request);
@@ -79,7 +84,12 @@ class EstanteController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El estante '.$estante->getNumero().' ha sido editado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El estante '.$estante->getNumero().' no ha podido ser editado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El estante no se pudo editar, ya existe uno con igual identificador.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_estantes'));
@@ -97,7 +107,7 @@ class EstanteController extends AbstractController
      * @param Estante $estante
      * @return Response
      */
-    public function eliminarDeposito(Request $request, Estante $estante): Response
+    public function eliminar(Request $request, Estante $estante): Response
     {
         $form = $this->createDeleteForm($estante);
 
@@ -112,7 +122,12 @@ class EstanteController extends AbstractController
                     $entityManager->flush();
                     $this->addFlash('success', 'El estante '.$estante->getNumero().' ha sido eliminado correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'El estante '.$estante->getNumero().' no ha podido ser eliminado.');
+                    if ($e->getErrorCode() == 1451)  {
+                        $this->addFlash('error', 'El estante no se pudo eliminar, conserva expedientes o libros asociados.');
+                    } else
+                    {
+                        $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    }
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('listar_estantes'));

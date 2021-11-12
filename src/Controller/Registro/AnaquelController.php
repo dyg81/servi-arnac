@@ -23,7 +23,7 @@ class AnaquelController extends AbstractController
      * @param AnaquelRepository $anaquelRepository
      * @return Response
      */
-    public function listarAnaqueles(AnaquelRepository $anaquelRepository): Response
+    public function listar(AnaquelRepository $anaquelRepository): Response
     {
         return $this->render('registro/anaqueles/listar.html.twig', [
             'anaqueles' => $anaquelRepository->findAllOrderByAsc(),
@@ -35,7 +35,7 @@ class AnaquelController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function agregarAnaquel(Request $request): Response
+    public function agregar(Request $request): Response
     {
         $anaquel = new Anaquel();
         $form = $this->createForm(AnaquelType::class, $anaquel);
@@ -49,7 +49,12 @@ class AnaquelController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El anaquel '.$anaquel->getNumero().' ha sido creado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El anaquel '.$anaquel->getNumero().' no ha podido ser creado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El anaquel '.$anaquel->getNumero().' no se pudo agregar, ya existe en el sistema.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_anaqueles'));
@@ -67,7 +72,7 @@ class AnaquelController extends AbstractController
      * @param Anaquel $anaquel
      * @return Response
      */
-    public function edit(Request $request, Anaquel $anaquel): Response
+    public function editar(Request $request, Anaquel $anaquel): Response
     {
         $form = $this->createForm(AnaquelType::class, $anaquel);
         $form->handleRequest($request);
@@ -79,7 +84,12 @@ class AnaquelController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El anaquel '.$anaquel->getNumero().' ha sido editado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El anaquel '.$anaquel->getNumero().' no ha podido ser editado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El anaquel no se pudo editar, ya existe uno con igual identificador.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_anaqueles'));
@@ -97,7 +107,7 @@ class AnaquelController extends AbstractController
      * @param Anaquel $anaquel
      * @return Response
      */
-    public function eliminarAnaquel(Request $request, Anaquel $anaquel): Response
+    public function eliminar(Request $request, Anaquel $anaquel): Response
     {
         $form = $this->createDeleteForm($anaquel);
 
@@ -112,7 +122,12 @@ class AnaquelController extends AbstractController
                     $entityManager->flush();
                     $this->addFlash('success', 'El anaquel '.$anaquel->getNumero().' ha sido eliminado correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'El anaquel '.$anaquel->getNumero().' no ha podido ser eliminado.');
+                    if ($e->getErrorCode() == 1451)  {
+                        $this->addFlash('error', 'El anaquel no se pudo eliminar, conserva expedientes o libros asociados.');
+                    } else
+                    {
+                        $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    }
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('listar_anaqueles'));
