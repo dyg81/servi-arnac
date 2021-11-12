@@ -1,0 +1,231 @@
+{% extends '@Dyg81Modal/baseModal.html.twig' %}
+
+{% block modalBackdrop %}
+    data-backdrop="static"
+{% endblock %}
+
+{% block modalSize %}
+{% endblock %}
+
+{% block modalContent %}
+    {{ form_start(form, {'action': path('editar_libro', {'id': libro.id})}) }}
+    <div class="modal-header">
+        <h5 class="modal-title text-muted pl-2"><span class="fa fa-check-circle pr-2"></span>
+            Libro</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body text-xs">
+        <div class="row">
+            <div class="form-group sac-form-group col-6">
+                <span class="far fa-file-alt form-control-feedback"></span>
+                {{ form_widget(form.tomo) }}
+            </div>
+            <div class="form-group sac-form-group col-6">
+                {{ form_widget(form.anno) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group sac-form-group col-12">
+                <span class="far fa-comment-alt-lines form-control-feedback"></span>
+                {{ form_widget(form.descripcion) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-12">
+                {{ form_widget(form.fondo) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-4">
+                {{ form_widget(form.deposito) }}
+            </div>
+            <div class="form-group col-4">
+                {{ form_widget(form.estante) }}
+            </div>
+            <div class="form-group col-4">
+                {{ form_widget(form.anaquel) }}
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-sm btn-primary btn-save mr-2">Guardar</button>
+        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>
+    </div>
+
+    <script>
+        $('#libro_fondo').change(function () {
+            let expedienteSelector = $(this);
+
+            $.ajax({
+                url: "{{ path('obtener_depositos') }}",
+                type: "GET",
+                dataType: "JSON",
+                data: {
+                    fondoid: expedienteSelector.val()
+                },
+
+                success: function (depositos) {
+                    let depositosSelect = $("#libro_deposito");
+
+                    depositosSelect.prop('disabled', false);
+
+                    depositosSelect.html('');
+                    depositosSelect.append('<option value="" selected="selected"></option>');
+
+                    $.each(depositos, function (key, deposito) {
+                        depositosSelect.append('<option value="' + deposito.id + '">' + deposito.numero + '</option>');
+                    });
+                },
+
+                error: function (err) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Ha ocurrido un error desconocido mientras se cargaban los datos.'
+                    })
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            autosize($('textarea'));
+
+            $.fn.modal.Constructor.prototype._enforceFocus = function () {};
+
+            const select_anno = $('#libro_anno').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-calendar-check\"></i>&nbsp;&nbsp;&nbsp; Años",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            const select_fondo = $('#libro_fondo').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-clipboard\"></i>&nbsp;&nbsp;&nbsp; Fondos",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            const select_deposito = $('#libro_deposito').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-building\"></i>&nbsp;&nbsp;&nbsp; Depositos",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            const select_estante = $('#libro_estante').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-line-columns\"></i>&nbsp;&nbsp;&nbsp; Estantes",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            const select_anaquel = $('#libro_anaquel').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-bars\"></i>&nbsp;&nbsp;&nbsp; Anaqueles",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            $(".btn-save").click(function (e) {
+                if (!$('#sac-form').valid()) {
+                    e.preventDefault()
+                }
+            });
+
+            select_anno.add(select_fondo).add(select_deposito).add(select_estante).add(select_anaquel).on("change", function () {
+                $(this).trigger('blur');
+            });
+
+            $("#sac-form").validate({
+                ignore: '.select2-input, .select2-focusser',
+                rules: {
+                    'libro[tomo]': {
+                        required: true,
+                        digits: true,
+                    },
+                    'libro[anno]': {
+                        required: true,
+                    },
+                    'libro[descripcion]': {
+                        required: true,
+                    },
+                    'libro[fondo]': {
+                        required: true,
+                    },
+                    'libro[deposito]': {
+                        required: true,
+                    },
+                    'libro[estante]': {
+                        required: true,
+                    },
+                    'libro[anaquel]': {
+                        required: true,
+                    },
+                },
+                messages: {
+                    'libro[tomo]': {
+                        required: "Esta campo es obligatorio",
+                        digits: "Solo se permiten números",
+                    },
+                    'libro[anno]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                    'libro[descripcion]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                    'libro[fondo]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                    'libro[deposito]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                    'libro[estante]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                    'libro[anaquel]': {
+                        required: "Esta campo es obligatorio",
+                    },
+                },
+                errorElement: "em",
+                errorPlacement: function (error, element) {
+                    error.addClass("invalid-feedback");
+
+                    if (element.hasClass("select2-hidden-accessible")) {
+                        error.insertAfter(element.next(".select2-container"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                success: function (label, element) {
+                    $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                },
+                highlight: function (element) {
+                    $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+                },
+                unhighlight: function (element) {
+                    $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                },
+            });
+        });
+    </script>
+    {{ form_end(form) }}
+{% endblock %}

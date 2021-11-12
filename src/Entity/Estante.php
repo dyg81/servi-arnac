@@ -36,11 +36,17 @@ class Estante
     private $expedientes;
 
     /**
+     * @ORM\OneToMany(targetEntity=Libro::class, mappedBy="estante")
+     */
+    private $libros;
+
+    /**
      * Init the array's collections for every new estante
      */
     public function __construct()
     {
         $this->expedientes = new ArrayCollection();
+        $this->libros = new ArrayCollection();
     }
 
     /**
@@ -129,6 +135,36 @@ class Estante
             // set the owning side to null (unless already changed)
             if ($expediente->getEstante() === $this) {
                 $expediente->setEstante(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Libro[]
+     */
+    public function getLibros(): Collection
+    {
+        return $this->libros;
+    }
+
+    public function addLibro(Libro $libro): self
+    {
+        if (!$this->libros->contains($libro)) {
+            $this->libros[] = $libro;
+            $libro->setEstante($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLibro(Libro $libro): self
+    {
+        if ($this->libros->removeElement($libro)) {
+            // set the owning side to null (unless already changed)
+            if ($libro->getEstante() === $this) {
+                $libro->setEstante(null);
             }
         }
 

@@ -41,12 +41,18 @@ class Deposito
     private $expedientes;
 
     /**
+     * @ORM\OneToMany(targetEntity=Libro::class, mappedBy="deposito")
+     */
+    private $libros;
+
+    /**
      * Init the array's collections for every new deposito
      */
     public function __construct()
     {
         $this->fondos = new ArrayCollection();
         $this->expedientes = new ArrayCollection();
+        $this->libros = new ArrayCollection();
     }
 
     /**
@@ -162,6 +168,36 @@ class Deposito
             // set the owning side to null (unless already changed)
             if ($expediente->getDeposito() === $this) {
                 $expediente->setDeposito(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Libro[]
+     */
+    public function getLibros(): Collection
+    {
+        return $this->libros;
+    }
+
+    public function addLibro(Libro $libro): self
+    {
+        if (!$this->libros->contains($libro)) {
+            $this->libros[] = $libro;
+            $libro->setDeposito($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLibro(Libro $libro): self
+    {
+        if ($this->libros->removeElement($libro)) {
+            // set the owning side to null (unless already changed)
+            if ($libro->getDeposito() === $this) {
+                $libro->setDeposito(null);
             }
         }
 
