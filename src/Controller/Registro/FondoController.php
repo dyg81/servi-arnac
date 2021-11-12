@@ -24,7 +24,7 @@ class FondoController extends AbstractController
      * @param FondoRepository $fondoRepository
      * @return Response
      */
-    public function index(FondoRepository $fondoRepository): Response
+    public function listar(FondoRepository $fondoRepository): Response
     {
         return $this->render('registro/fondos/listar.html.twig', [
             'fondos' => $fondoRepository->findAll(),
@@ -36,7 +36,7 @@ class FondoController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function agregarFondo(Request $request): Response
+    public function agregar(Request $request): Response
     {
         $fondo = new Fondo();
         $form = $this->createForm(FondoType::class, $fondo);
@@ -50,7 +50,12 @@ class FondoController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El fondo ' . $fondo->getNombre() . ' ha sido creado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El fondo ' . $fondo->getNombre() . ' no ha podido ser creado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El fondo '.$fondo->getNombre().' no se pudo agregar, ya existe en el sistema.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_fondos'));
@@ -68,7 +73,7 @@ class FondoController extends AbstractController
      * @param Fondo $fondo
      * @return Response
      */
-    public function edit(Request $request, Fondo $fondo): Response
+    public function editar(Request $request, Fondo $fondo): Response
     {
         $form = $this->createForm(FondoType::class, $fondo);
         $form->handleRequest($request);
@@ -80,7 +85,12 @@ class FondoController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El fondo ' . $fondo->getNombre() . ' ha sido editado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El fondo ' . $fondo->getNombre() . ' no ha podido ser editado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El fondo no se pudo editar, ya existe uno con igual identificador.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_fondos'));
@@ -98,7 +108,7 @@ class FondoController extends AbstractController
      * @param Fondo $fondo
      * @return Response
      */
-    public function eliminarFondo(Request $request, Fondo $fondo): Response
+    public function eliminar(Request $request, Fondo $fondo): Response
     {
         $form = $this->createDeleteForm($fondo);
 
@@ -113,7 +123,12 @@ class FondoController extends AbstractController
                     $entityManager->flush();
                     $this->addFlash('success', 'El fondo ' . $fondo->getNombre() . ' ha sido eliminado correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'El fondo ' . $fondo->getNombre() . ' no ha podido ser eliminado.');
+                    if ($e->getErrorCode() == 1451)  {
+                        $this->addFlash('error', 'El fondo no se pudo eliminar, conserva expedientes o libros asociados.');
+                    } else
+                    {
+                        $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    }
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('listar_fondos'));

@@ -50,7 +50,12 @@ class ExpedienteController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El expediente '.$expediente->getNumero().' ha sido creado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El expediente '.$expediente->getNumero().' no ha podido ser creado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El expediente '.$expediente->getNumero().' no se pudo agregar, ya existe en el sistema.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_expedientes'));
@@ -80,7 +85,12 @@ class ExpedienteController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El expediente '.$expediente->getNumero().' ha sido editado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El expediente '.$expediente->getNumero().' no ha podido ser editado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El expediente no se pudo editar, ya existe uno con igual identificador.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_expedientes'));
@@ -113,7 +123,7 @@ class ExpedienteController extends AbstractController
                     $entityManager->flush();
                     $this->addFlash('success', 'El expediente '.$expediente->getNumero().' ha sido eliminado correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'El expediente '.$expediente->getNumero().' no ha podido ser eliminado.');
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('listar_expedientes'));

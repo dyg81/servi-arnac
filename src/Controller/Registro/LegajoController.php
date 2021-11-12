@@ -23,7 +23,7 @@ class LegajoController extends AbstractController
      * @param LegajoRepository $legajoRepository
      * @return Response
      */
-    public function index(LegajoRepository $legajoRepository): Response
+    public function listar(LegajoRepository $legajoRepository): Response
     {
         return $this->render('registro/legajos/listar.html.twig', [
             'legajos' => $legajoRepository->findAllOrderByAsc(),
@@ -35,7 +35,7 @@ class LegajoController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function agregarLegajo(Request $request): Response
+    public function agregar(Request $request): Response
     {
         $legajo = new Legajo();
         $form = $this->createForm(LegajoType::class, $legajo);
@@ -49,7 +49,12 @@ class LegajoController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El legajo '.$legajo->getLegajo().' ha sido creado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El legajo '.$legajo->getLegajo().' no ha podido ser creado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El legajo '.$legajo->getLegajo().' no se pudo agregar, ya existe en el sistema.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_legajos'));
@@ -67,7 +72,7 @@ class LegajoController extends AbstractController
      * @param Legajo $legajo
      * @return Response
      */
-    public function editarLegajo(Request $request, Legajo $legajo): Response
+    public function editar(Request $request, Legajo $legajo): Response
     {
         $form = $this->createForm(LegajoType::class, $legajo);
         $form->handleRequest($request);
@@ -79,7 +84,12 @@ class LegajoController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El legajo '.$legajo->getLegajo().' ha sido editado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El legajo '.$legajo->getLegajo().' no ha podido ser editado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El legajo no se pudo editar, ya existe uno con igual identificador.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_legajos'));
@@ -97,7 +107,7 @@ class LegajoController extends AbstractController
      * @param Legajo $legajo
      * @return Response
      */
-    public function eliminarLegajo(Request $request, Legajo $legajo): Response
+    public function eliminar(Request $request, Legajo $legajo): Response
     {
         $form = $this->createDeleteForm($legajo);
 
@@ -112,7 +122,12 @@ class LegajoController extends AbstractController
                     $entityManager->flush();
                     $this->addFlash('success', 'El legajo '.$legajo->getLegajo().' ha sido eliminado correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'El legajo '.$legajo->getLegajo().' no ha podido ser eliminado.');
+                    if ($e->getErrorCode() == 1451)  {
+                        $this->addFlash('error', 'El legajo no se pudo eliminar, conserva expedientes o libros asociados.');
+                    } else
+                    {
+                        $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    }
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('listar_legajos'));

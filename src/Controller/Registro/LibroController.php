@@ -35,7 +35,7 @@ class LibroController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function new(Request $request): Response
+    public function agregar(Request $request): Response
     {
         $libro = new Libro();
         $form = $this->createForm(LibroType::class, $libro);
@@ -49,7 +49,12 @@ class LibroController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El libro '.$libro->getTomo().' ha sido creado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El libro '.$libro->getTomo().' no ha podido ser creado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El libro '.$libro->getTomo().' no se pudo agregar, ya existe en el sistema.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_libros'));
@@ -76,7 +81,12 @@ class LibroController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El libro '.$libro->getTomo().' ha sido editado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El libro '.$libro->getTomo().' no ha podido ser editado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El libro no se pudo editar, ya existe uno con igual identificador.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_libros'));
@@ -109,7 +119,7 @@ class LibroController extends AbstractController
                     $entityManager->flush();
                     $this->addFlash('success', 'El libro '.$libro->getTomo().' ha sido eliminado correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'El libro '.$libro->getTomo().' no ha podido ser eliminado.');
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('listar_libros'));

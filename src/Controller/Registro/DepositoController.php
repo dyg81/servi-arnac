@@ -24,7 +24,7 @@ class DepositoController extends AbstractController
      * @param DepositoRepository $depositoRepository
      * @return Response
      */
-    public function listarDepositos(DepositoRepository $depositoRepository): Response
+    public function listar(DepositoRepository $depositoRepository): Response
     {
         return $this->render('registro/depositos/listar.html.twig', [
             'depositos' => $depositoRepository->findAllOrderByAsc()
@@ -36,7 +36,7 @@ class DepositoController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function agregarDeposito(Request $request): Response
+    public function agregar(Request $request): Response
     {
         $deposito = new Deposito();
         $form = $this->createForm(DepositoType::class, $deposito);
@@ -50,12 +50,15 @@ class DepositoController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El depósito '.$deposito->getNumero().' ha sido creado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El depósito '.$deposito->getNumero().' no ha podido ser creado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El depósito '.$deposito->getNumero().' no se pudo agregar, ya existe en el sistema.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_depositos'));
-
-            //return $this->redirectToRoute('listar_depositos', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('registro/depositos/agregar.html.twig', [
@@ -70,7 +73,7 @@ class DepositoController extends AbstractController
      * @param Deposito $deposito
      * @return Response
      */
-    public function editarDeposito(Request $request, Deposito $deposito): Response
+    public function editar(Request $request, Deposito $deposito): Response
     {
         $form = $this->createForm(DepositoType::class, $deposito);
         $form->handleRequest($request);
@@ -82,7 +85,12 @@ class DepositoController extends AbstractController
                 $entityManager->flush();
                 $this->addFlash('success', 'El depósito '.$deposito->getNumero().' ha sido editado correctamente.');
             } catch (Exception $e) {
-                $this->addFlash('error', 'El depósito '.$deposito->getNumero().' no ha podido ser editado.');
+                if ($e->getErrorCode() == 1062)  {
+                    $this->addFlash('error', 'El depósito no se pudo editar, ya existe uno con igual identificador.');
+                } else
+                {
+                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                }
             }
 
             return new ModalRedirectResponse($this->generateUrl('listar_depositos'));
@@ -100,7 +108,7 @@ class DepositoController extends AbstractController
      * @param Deposito $deposito
      * @return Response
      */
-    public function eliminarDeposito(Request $request, Deposito $deposito): Response
+    public function eliminar(Request $request, Deposito $deposito): Response
     {
         $form = $this->createDeleteForm($deposito);
 
@@ -115,7 +123,12 @@ class DepositoController extends AbstractController
                     $entityManager->flush();
                     $this->addFlash('success', 'El depósito '.$deposito->getNumero().' ha sido eliminado correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'El depósito '.$deposito->getNumero().' no ha podido ser eliminado.');
+                    if ($e->getErrorCode() == 1451)  {
+                        $this->addFlash('error', 'El depósito no se pudo eliminar, conserva expedientes o libros asociados.');
+                    } else
+                    {
+                        $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    }
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('listar_depositos'));
