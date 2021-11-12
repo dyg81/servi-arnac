@@ -36,11 +36,17 @@ class Anaquel
     private $expedientes;
 
     /**
+     * @ORM\OneToMany(targetEntity=Libro::class, mappedBy="anaquel")
+     */
+    private $libros;
+
+    /**
      * Init the array's collections for every new anaquel
      */
     public function __construct()
     {
         $this->expedientes = new ArrayCollection();
+        $this->libros = new ArrayCollection();
     }
 
     /**
@@ -129,6 +135,36 @@ class Anaquel
             // set the owning side to null (unless already changed)
             if ($expediente->getAnaquel() === $this) {
                 $expediente->setAnaquel(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Libro[]
+     */
+    public function getLibros(): Collection
+    {
+        return $this->libros;
+    }
+
+    public function addLibro(Libro $libro): self
+    {
+        if (!$this->libros->contains($libro)) {
+            $this->libros[] = $libro;
+            $libro->setAnaquel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLibro(Libro $libro): self
+    {
+        if ($this->libros->removeElement($libro)) {
+            // set the owning side to null (unless already changed)
+            if ($libro->getAnaquel() === $this) {
+                $libro->setAnaquel(null);
             }
         }
 
