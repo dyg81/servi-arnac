@@ -56,6 +56,22 @@ const Toast = Swal.mixin({
 });
 
 /*
+* Inicialización de la librería DataTables
+*/
+$('#sac').DataTable({
+    "ordering": false,
+    "pageResize": true,
+    "scrollX": "100%",
+    "pagingType": "full_numbers",
+    "language": {
+        "url": "/assets/plugins/datatables/spanish.json"
+    },
+    dom: `<'row'<'col-sm-6 text-left'><'col-sm-6 text-right'f>>
+              <'row'<'col-sm-12'tr>>
+              <'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>`,
+});
+
+/*
 * Inicialización de los tooltips de BS4
 */
 $('[data-toggle="tooltip"]').tooltip(

@@ -2,8 +2,10 @@
 
 namespace App\Form;
 
+use App\Entity\Deposito;
 use App\Entity\Fondo;
 use AppBundle\Library\Urlizer\Urlizer;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -24,12 +26,18 @@ class FondoType extends AbstractType
                 //'required' => false,
             ])
             ->add('descripcion', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'rows' => '1', 'placeholder' => 'Descripción'],
+                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'rows' => '1', 'placeholder' => 'Contenido'],
                 //'required' => false,
             ])
             ->add('depositos', null, [
-                'attr'     => ['class' => 'form-control'],
-                //'required' => false,
+                'class'         => Deposito::class,
+                'choice_label'  => 'identificador',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('d')
+                        ->orderBy('d.numero', 'ASC');
+                },
+                'attr'          => ['class' => 'form-control'],
+                'required'      => false
             ])
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
                 /** @var $fondo */

@@ -14,12 +14,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/libros")
+ * @Route("/registro")
  */
 class LibroController extends AbstractController
 {
     /**
-     * @Route("/listar", name="listar_libros", methods={"GET"})
+     * @Route("/listar-libros", name="listar_libros", methods={"GET"})
      * @param LibroRepository $libroRepository
      * @return Response
      */
@@ -31,7 +31,7 @@ class LibroController extends AbstractController
     }
 
     /**
-     * @Route("/agregar", name="agregar_libro", methods={"GET","POST"})
+     * @Route("/agregar-libros", name="agregar_libro", methods={"GET","POST"})
      * @param Request $request
      * @return Response
      */
@@ -67,7 +67,7 @@ class LibroController extends AbstractController
     }
 
     /**
-     * @Route("/editar/{id}", name="editar_libro", methods={"GET","POST"})
+     * @Route("/editar-libros/{id}", name="editar_libro", methods={"GET","POST"})
      */
     public function editar(Request $request, Libro $libro): Response
     {
@@ -99,7 +99,7 @@ class LibroController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar/{id}", name="eliminar_libro", methods={"GET", "DELETE"})
+     * @Route("/eliminar-libros/{id}", name="eliminar_libro", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Libro $libro
      * @return Response
