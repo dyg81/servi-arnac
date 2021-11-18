@@ -10,7 +10,6 @@ use App\Entity\Fondo;
 use App\Entity\Legajo;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -44,9 +43,9 @@ class ExpedienteType extends AbstractType
                 'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificador']
             ])
             ->add('descripcion', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Descripción']
+                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Contenido']
             ])
-            ->add('estante', EntityType::class, [
+            ->add('estante', null, [
                 'class'         => Estante::class,
                 'choice_label'  => 'identificador',
                 'query_builder' => function (EntityRepository $er) {
@@ -56,7 +55,7 @@ class ExpedienteType extends AbstractType
                 'attr'          => ['class' => 'form-control'],
                 'required'      => false
             ])
-            ->add('anaquel', EntityType::class, [
+            ->add('anaquel', null, [
                 'class'         => Anaquel::class,
                 'choice_label'  => 'identificador',
                 'query_builder' => function (EntityRepository $er) {
@@ -66,7 +65,7 @@ class ExpedienteType extends AbstractType
                 'attr'          => ['class' => 'form-control'],
                 'required'      => false
             ])
-            ->add('legajo', EntityType::class, [
+            ->add('legajo', null, [
                 'class'         => Legajo::class,
                 'choice_label'  => 'identificador',
                 'query_builder' => function (EntityRepository $er) {
@@ -98,7 +97,7 @@ class ExpedienteType extends AbstractType
     {
         $form->add('fondo', null, [
             'attr'     => ['class' => 'form-control'],
-            'class'    => 'App\Entity\Fondo',
+            'class'    => Fondo::class,
             'required' => false,
             'data'     => $fondo,
         ]);
@@ -112,7 +111,7 @@ class ExpedienteType extends AbstractType
 
         $form->add('deposito', null, [
             'attr'     => ['class' => 'form-control'],
-            'class'    => 'App\Entity\Deposito',
+            'class'    => Deposito::class,
             'choices'  => $depositosAsociados,
         ]);
     }

@@ -14,12 +14,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/legajos")
+ * @Route("/registro")
  */
 class LegajoController extends AbstractController
 {
     /**
-     * @Route("/listar", name="listar_legajos", methods={"GET"})
+     * @Route("/listar-legajos", name="listar_legajos", methods={"GET"})
      * @param LegajoRepository $legajoRepository
      * @return Response
      */
@@ -31,7 +31,7 @@ class LegajoController extends AbstractController
     }
 
     /**
-     * @Route("/agregar", name="agregar_legajo", methods={"GET","POST"})
+     * @Route("/agregar-legajos", name="agregar_legajo", methods={"GET","POST"})
      * @param Request $request
      * @return Response
      */
@@ -67,7 +67,7 @@ class LegajoController extends AbstractController
     }
 
     /**
-     * @Route("/editar/{id}", name="editar_legajo", methods={"GET","POST"})
+     * @Route("/editar-legajos/{id}", name="editar_legajo", methods={"GET","POST"})
      * @param Request $request
      * @param Legajo $legajo
      * @return Response
@@ -102,7 +102,7 @@ class LegajoController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar/{id}", name="eliminar_legajo", methods={"GET", "DELETE"})
+     * @Route("/eliminar-legajos/{id}", name="eliminar_legajo", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Legajo $legajo
      * @return Response

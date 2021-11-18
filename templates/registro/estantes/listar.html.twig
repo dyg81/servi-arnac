@@ -75,7 +75,14 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card card-primary card-outline mt-2">
+                    <div class="card card-primary card-outline card-tabs mt-2">
+                        <div class="card-header p-0 pt-1 border-bottom-0">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active font-italic font-weight-bolder">Gestión de estantes</a>
+                                </li>
+                            </ul>
+                        </div>
                         <div id="table_wrapper" class="card-body">
                             <div class="float-right pr-2">
                                 <a href="{{ path('agregar_estante') }}" class="btn btn-primary btn-sm btn-icon-split modal-open"
@@ -125,19 +132,6 @@
     {{ parent() }}
 
     <script>
-        $('#sac').DataTable({
-            "ordering": false,
-            "pageResize": true,
-            "scrollX": "100%",
-            "pagingType": "full_numbers",
-            "language": {
-                "url": "{{ asset('assets/plugins/datatables/spanish.json') }}"
-            },
-            dom: `<'row'<'col-sm-6 text-left'><'col-sm-6 text-right'f>>
-              <'row'<'col-sm-12'tr>>
-              <'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>`,
-        });
-
         {% for type, msgs in app.session.flashBag.all() %}
         {% for msg in msgs %}
         Toast.fire({

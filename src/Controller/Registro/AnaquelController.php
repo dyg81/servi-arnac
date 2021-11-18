@@ -14,12 +14,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/anaqueles")
+ * @Route("/registro")
  */
 class AnaquelController extends AbstractController
 {
     /**
-     * @Route("/listar", name="listar_anaqueles", methods={"GET"})
+     * @Route("/listar-anaqueles", name="listar_anaqueles", methods={"GET"})
      * @param AnaquelRepository $anaquelRepository
      * @return Response
      */
@@ -31,7 +31,7 @@ class AnaquelController extends AbstractController
     }
 
     /**
-     * @Route("/agregar", name="agregar_anaquel", methods={"GET","POST"})
+     * @Route("/agregar-anaqueles", name="agregar_anaquel", methods={"GET","POST"})
      * @param Request $request
      * @return Response
      */
@@ -67,7 +67,7 @@ class AnaquelController extends AbstractController
     }
 
     /**
-     * @Route("/editar/{id}", name="editar_anaquel", methods={"GET","POST"})
+     * @Route("/editar-anaqueles/{id}", name="editar_anaquel", methods={"GET","POST"})
      * @param Request $request
      * @param Anaquel $anaquel
      * @return Response
@@ -102,7 +102,7 @@ class AnaquelController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar/{id}", name="eliminar_anaquel", methods={"GET", "DELETE"})
+     * @Route("/eliminar-anaqueles/{id}", name="eliminar_anaquel", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Anaquel $anaquel
      * @return Response

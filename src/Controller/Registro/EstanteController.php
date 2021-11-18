@@ -14,12 +14,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/estantes")
+ * @Route("/registro")
  */
 class EstanteController extends AbstractController
 {
     /**
-     * @Route("/listar", name="listar_estantes", methods={"GET"})
+     * @Route("/listar-estantes", name="listar_estantes", methods={"GET"})
      * @param EstanteRepository $estanteRepository
      * @return Response
      */
@@ -31,7 +31,7 @@ class EstanteController extends AbstractController
     }
 
     /**
-     * @Route("/agregar", name="agregar_estante", methods={"GET","POST"})
+     * @Route("/agregar-estantes", name="agregar_estante", methods={"GET","POST"})
      * @param Request $request
      * @return Response
      */
@@ -67,7 +67,7 @@ class EstanteController extends AbstractController
     }
 
     /**
-     * @Route("/editar/{id}", name="editar_estante", methods={"GET","POST"})
+     * @Route("/editar-estantes/{id}", name="editar_estante", methods={"GET","POST"})
      * @param Request $request
      * @param Estante $estante
      * @return Response
@@ -102,7 +102,7 @@ class EstanteController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar/{id}", name="eliminar_estante", methods={"GET", "DELETE"})
+     * @Route("/eliminar-estantes/{id}", name="eliminar_estante", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Estante $estante
      * @return Response

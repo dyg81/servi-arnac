@@ -15,12 +15,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/fondos")
+ * @Route("/registro")
  */
 class FondoController extends AbstractController
 {
     /**
-     * @Route("/listar", name="listar_fondos", methods={"GET"})
+     * @Route("/listar-fondos", name="listar_fondos", methods={"GET"})
      * @param FondoRepository $fondoRepository
      * @return Response
      */
@@ -32,7 +32,7 @@ class FondoController extends AbstractController
     }
 
     /**
-     * @Route("/agregar", name="agregar_fondo", methods={"GET","POST"})
+     * @Route("/agregar-fondos", name="agregar_fondo", methods={"GET","POST"})
      * @param Request $request
      * @return Response
      */
@@ -68,7 +68,7 @@ class FondoController extends AbstractController
     }
 
     /**
-     * @Route("/editar/{id}", name="editar_fondo", methods={"GET","POST"})
+     * @Route("/editar-fondos/{id}", name="editar_fondo", methods={"GET","POST"})
      * @param Request $request
      * @param Fondo $fondo
      * @return Response
@@ -103,7 +103,7 @@ class FondoController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar/{id}", name="eliminar_fondo", methods={"GET", "DELETE"})
+     * @Route("/eliminar-fondos/{id}", name="eliminar_fondo", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Fondo $fondo
      * @return Response

@@ -14,12 +14,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/expedientes")
+ * @Route("/registro")
  */
 class ExpedienteController extends AbstractController
 {
     /**
-     * @Route("/listar", name="listar_expedientes", methods={"GET"})
+     * @Route("/listar-expedientes", name="listar_expedientes", methods={"GET"})
      * @param ExpedienteRepository $expedienteRepository
      * @return Response
      */
@@ -31,7 +31,7 @@ class ExpedienteController extends AbstractController
     }
 
     /**
-     * @Route("/agregar", name="agregar_expediente", methods={"GET","POST"})
+     * @Route("/agregar-expedientes", name="agregar_expediente", methods={"GET","POST"})
      * @param Request $request
      * @return Response
      */
@@ -68,7 +68,7 @@ class ExpedienteController extends AbstractController
     }
 
     /**
-     * @Route("/editar/{id}", name="editar_expediente", methods={"GET","POST"})
+     * @Route("/editar-expedientes/{id}", name="editar_expediente", methods={"GET","POST"})
      * @param Request $request
      * @param Expediente $expediente
      * @return Response
@@ -103,7 +103,7 @@ class ExpedienteController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar/{id}", name="eliminar_expediente", methods={"GET", "DELETE"})
+     * @Route("/eliminar-expedientes/{id}", name="eliminar_expediente", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Expediente $expediente
      * @return Response

@@ -15,12 +15,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/depositos")
+ * @Route("/registro")
  */
 class DepositoController extends AbstractController
 {
     /**
-     * @Route("/listar", name="listar_depositos", methods={"GET"})
+     * @Route("/listar-depositos", name="listar_depositos", methods={"GET"})
      * @param DepositoRepository $depositoRepository
      * @return Response
      */
@@ -32,7 +32,7 @@ class DepositoController extends AbstractController
     }
 
     /**
-     * @Route("/agregar", name="agregar_deposito", methods={"GET","POST"})
+     * @Route("/agregar-depositos", name="agregar_deposito", methods={"GET","POST"})
      * @param Request $request
      * @return Response
      */
@@ -68,7 +68,7 @@ class DepositoController extends AbstractController
     }
 
     /**
-     * @Route("/editar/{id}", name="editar_deposito", methods={"GET","POST"})
+     * @Route("/editar-depositos/{id}", name="editar_deposito", methods={"GET","POST"})
      * @param Request $request
      * @param Deposito $deposito
      * @return Response
@@ -103,7 +103,7 @@ class DepositoController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar/{id}", name="eliminar_deposito", methods={"GET", "DELETE"})
+     * @Route("/eliminar-depositos/{id}", name="eliminar_deposito", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Deposito $deposito
      * @return Response
