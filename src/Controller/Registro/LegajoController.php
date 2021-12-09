@@ -6,6 +6,7 @@ use App\Entity\Legajo;
 use App\Form\LegajoType;
 use App\Repository\LegajoRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -33,27 +34,27 @@ class LegajoController extends AbstractController
     /**
      * @Route("/agregar-legajos", name="agregar_legajo", methods={"GET","POST"})
      * @param Request $request
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function agregar(Request $request): Response
+    public function agregar(Request $request, EntityManagerInterface $entityManager): Response
     {
         $legajo = new Legajo();
         $form = $this->createForm(LegajoType::class, $legajo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($legajo);
 
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El legajo '.$legajo->getLegajo().' ha sido creado correctamente.');
+                $this->addFlash('success', 'El legajo se ha agregado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El legajo '.$legajo->getLegajo().' no se pudo agregar, ya existe en el sistema.');
+                    $this->addFlash('error', 'Legajo no agregado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -70,25 +71,24 @@ class LegajoController extends AbstractController
      * @Route("/editar-legajos/{id}", name="editar_legajo", methods={"GET","POST"})
      * @param Request $request
      * @param Legajo $legajo
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function editar(Request $request, Legajo $legajo): Response
+    public function editar(Request $request, Legajo $legajo, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(LegajoType::class, $legajo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El legajo '.$legajo->getLegajo().' ha sido editado correctamente.');
+                $this->addFlash('success', 'El legajo se ha sido editado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El legajo no se pudo editar, ya existe uno con igual identificador.');
+                    $this->addFlash('error', 'Legajo no editado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -105,9 +105,10 @@ class LegajoController extends AbstractController
      * @Route("/eliminar-legajos/{id}", name="eliminar_legajo", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Legajo $legajo
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function eliminar(Request $request, Legajo $legajo): Response
+    public function eliminar(Request $request, Legajo $legajo, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createDeleteForm($legajo);
 
@@ -115,18 +116,17 @@ class LegajoController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->remove($legajo);
 
                 try {
                     $entityManager->flush();
-                    $this->addFlash('success', 'El legajo '.$legajo->getLegajo().' ha sido eliminado correctamente.');
+                    $this->addFlash('success', 'El legajo se ha eliminado correctamente.');
                 } catch (Exception $e) {
                     if ($e->getErrorCode() == 1451)  {
-                        $this->addFlash('error', 'El legajo no se pudo eliminar, conserva expedientes o libros asociados.');
+                        $this->addFlash('error', 'Legajo no eliminado, conserva expedientes y/o libros asociados.');
                     } else
                     {
-                        $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                     }
                 }
 
@@ -144,7 +144,7 @@ class LegajoController extends AbstractController
      * @param Legajo $legajo
      * @return FormInterface
      */
-    private function createDeleteForm(Legajo $legajo)
+    private function createDeleteForm(Legajo $legajo): FormInterface
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('eliminar_legajo', array('id' => $legajo->getId())))

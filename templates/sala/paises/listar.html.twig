@@ -1,0 +1,162 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    SAC | Paises
+{% endblock %}
+
+{% block menu %}
+    <div class="sidebar text-sm">
+        <nav class="mt-4">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
+                <li class="nav-item has-treeview menu-open">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon far fa-cog"></i>
+                        <p>
+                            Gestión
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link active">
+                                <i class="far fa-flag nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Paises</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('listar_categorias') }}" class="nav-link">
+                                <i class="far fa-bookmark nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Categorias</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('listar_clientes') }}" class="nav-link">
+                                <i class="far fa-user-friends nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Clientes</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon far fa-sitemap"></i>
+                        <p>
+                            Servicios
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link">
+                                <i class="far fa-search nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Investigación</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link">
+                                <i class="far fa-signature nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Transcripción</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link">
+                                <i class="far fa-scanner-image nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Reprografía</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link">
+                                <i class="far fa-file-invoice nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Certificación</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-primary card-outline card-tabs mt-2">
+                        <div class="card-header p-0 pt-1 border-bottom-0">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active font-italic font-weight-bolder">Gestión de paises</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="table_wrapper" class="card-body">
+                            <div class="float-right pr-2">
+                                <a href="{{ path('agregar_pais') }}" class="btn btn-primary btn-sm btn-icon-split modal-open"
+                                   data-toggle="modal" data-target="#modal-example">
+                                    <span class="icon text-white-50"><i class="fas fa-share-square"></i></span>
+                                    <span class="text"> Agregar</span>
+                                </a>
+                            </div>
+                            <table id="sac" class="table table-hover display nowrap" style="width: 100%;">
+                                <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th style="width: 10px"></th>
+                                    <th style="width: 10px"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for pais in paises %}
+                                    <tr>
+                                        <td>{{ pais.nombre }}</td>
+                                        <td>
+                                            <a href="{{ path('editar_pais', { 'id': pais.id }) }}" class="text-muted modal-open">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('eliminar_pais', { 'id': pais.id }) }}" class="text-muted mr-2 modal-open">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        {% for type, msgs in app.session.flashBag.all() %}
+        {% for msg in msgs %}
+
+        inputText = '{{ msg }}';
+        font = "0.875rem Nimrod MT";
+
+        canvas = document.createElement("canvas");
+        context = canvas.getContext("2d");
+        context.font = font;
+        width = context.measureText(inputText).width;
+        formattedWidth = Math.ceil(width) + 100;
+
+        Toast.fire({
+            icon: '{{ type }}',
+            title: '{{ msg }}',
+            width: formattedWidth,
+        });
+
+        {% endfor %}
+        {% endfor %}
+    </script>
+{% endblock %}

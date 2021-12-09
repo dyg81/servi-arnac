@@ -152,6 +152,10 @@ class Deposito
         return $this->expedientes;
     }
 
+    /**
+     * @param Expediente $expediente
+     * @return $this
+     */
     public function addExpediente(Expediente $expediente): self
     {
         if (!$this->expedientes->contains($expediente)) {
@@ -162,6 +166,10 @@ class Deposito
         return $this;
     }
 
+    /**
+     * @param Expediente $expediente
+     * @return $this
+     */
     public function removeExpediente(Expediente $expediente): self
     {
         if ($this->expedientes->removeElement($expediente)) {
@@ -182,6 +190,10 @@ class Deposito
         return $this->libros;
     }
 
+    /**
+     * @param Libro $libro
+     * @return $this
+     */
     public function addLibro(Libro $libro): self
     {
         if (!$this->libros->contains($libro)) {
@@ -192,6 +204,10 @@ class Deposito
         return $this;
     }
 
+    /**
+     * @param Libro $libro
+     * @return $this
+     */
     public function removeLibro(Libro $libro): self
     {
         if ($this->libros->removeElement($libro)) {

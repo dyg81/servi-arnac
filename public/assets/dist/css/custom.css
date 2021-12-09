@@ -201,3 +201,22 @@ select option:checked
     background-color: #634c3c !important;
     color: #fff;
 }
+
+/*
+    Customización de la libreria SweetAlert2
+*/
+.swal2-container {
+    padding: 0.4em;
+}
+
+.swal2-toast {
+    max-width: inherit;
+}
+
+body.swal2-toast-shown .swal2-container {
+    width: unset;
+}
+
+.swal2-popup.swal2-toast .swal2-title {
+    margin: 9px 5px auto;
+}

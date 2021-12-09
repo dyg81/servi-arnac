@@ -6,6 +6,7 @@ use App\Entity\Anaquel;
 use App\Form\AnaquelType;
 use App\Repository\AnaquelRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -33,27 +34,27 @@ class AnaquelController extends AbstractController
     /**
      * @Route("/agregar-anaqueles", name="agregar_anaquel", methods={"GET","POST"})
      * @param Request $request
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function agregar(Request $request): Response
+    public function agregar(Request $request, EntityManagerInterface $entityManager): Response
     {
         $anaquel = new Anaquel();
         $form = $this->createForm(AnaquelType::class, $anaquel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($anaquel);
 
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El anaquel '.$anaquel->getNumero().' ha sido creado correctamente.');
+                $this->addFlash('success', 'El anaquel se ha agregado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El anaquel '.$anaquel->getNumero().' no se pudo agregar, ya existe en el sistema.');
+                    $this->addFlash('error', 'Anaquel no agregado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -70,25 +71,24 @@ class AnaquelController extends AbstractController
      * @Route("/editar-anaqueles/{id}", name="editar_anaquel", methods={"GET","POST"})
      * @param Request $request
      * @param Anaquel $anaquel
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function editar(Request $request, Anaquel $anaquel): Response
+    public function editar(Request $request, Anaquel $anaquel, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(AnaquelType::class, $anaquel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El anaquel '.$anaquel->getNumero().' ha sido editado correctamente.');
+                $this->addFlash('success', 'El anaquel se ha sido editado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El anaquel no se pudo editar, ya existe uno con igual identificador.');
+                    $this->addFlash('error', 'Anaquel no editado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -105,9 +105,10 @@ class AnaquelController extends AbstractController
      * @Route("/eliminar-anaqueles/{id}", name="eliminar_anaquel", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Anaquel $anaquel
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function eliminar(Request $request, Anaquel $anaquel): Response
+    public function eliminar(Request $request, Anaquel $anaquel, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createDeleteForm($anaquel);
 
@@ -115,18 +116,17 @@ class AnaquelController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->remove($anaquel);
 
                 try {
                     $entityManager->flush();
-                    $this->addFlash('success', 'El anaquel '.$anaquel->getNumero().' ha sido eliminado correctamente.');
+                    $this->addFlash('success', 'El anaquel se ha eliminado correctamente.');
                 } catch (Exception $e) {
                     if ($e->getErrorCode() == 1451)  {
-                        $this->addFlash('error', 'El anaquel no se pudo eliminar, conserva expedientes o libros asociados.');
+                        $this->addFlash('error', 'Anaquel no eliminado, conserva expedientes y/o libros asociados.');
                     } else
                     {
-                        $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                     }
                 }
 
@@ -144,7 +144,7 @@ class AnaquelController extends AbstractController
      * @param Anaquel $anaquel
      * @return FormInterface
      */
-    private function createDeleteForm(Anaquel $anaquel)
+    private function createDeleteForm(Anaquel $anaquel): FormInterface
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('eliminar_anaquel', array('id' => $anaquel->getId())))

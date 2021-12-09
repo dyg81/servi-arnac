@@ -134,10 +134,22 @@
     <script>
         {% for type, msgs in app.session.flashBag.all() %}
         {% for msg in msgs %}
+
+        inputText = '{{ msg }}';
+        font = "0.875rem Nimrod MT";
+
+        canvas = document.createElement("canvas");
+        context = canvas.getContext("2d");
+        context.font = font;
+        width = context.measureText(inputText).width;
+        formattedWidth = Math.ceil(width) + 100;
+
         Toast.fire({
             icon: '{{ type }}',
-            title: '{{ msg }}'
+            title: '{{ msg }}',
+            width: formattedWidth,
         });
+
         {% endfor %}
         {% endfor %}
     </script>

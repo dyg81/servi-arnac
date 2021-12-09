@@ -149,6 +149,10 @@ class Anaquel
         return $this->libros;
     }
 
+    /**
+     * @param Libro $libro
+     * @return $this
+     */
     public function addLibro(Libro $libro): self
     {
         if (!$this->libros->contains($libro)) {
@@ -159,6 +163,10 @@ class Anaquel
         return $this;
     }
 
+    /**
+     * @param Libro $libro
+     * @return $this
+     */
     public function removeLibro(Libro $libro): self
     {
         if ($this->libros->removeElement($libro)) {

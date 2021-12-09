@@ -6,6 +6,7 @@ use App\Entity\Estante;
 use App\Form\EstanteType;
 use App\Repository\EstanteRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -33,27 +34,27 @@ class EstanteController extends AbstractController
     /**
      * @Route("/agregar-estantes", name="agregar_estante", methods={"GET","POST"})
      * @param Request $request
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function agregar(Request $request): Response
+    public function agregar(Request $request, EntityManagerInterface $entityManager): Response
     {
         $estante = new Estante();
         $form = $this->createForm(EstanteType::class, $estante);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($estante);
 
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El estante '.$estante->getNumero().' ha sido creado correctamente.');
+                $this->addFlash('success', 'El estante se ha agregado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El estante '.$estante->getNumero().' no se pudo agregar, ya existe en el sistema.');
+                    $this->addFlash('error', 'Estante no agregado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -70,25 +71,24 @@ class EstanteController extends AbstractController
      * @Route("/editar-estantes/{id}", name="editar_estante", methods={"GET","POST"})
      * @param Request $request
      * @param Estante $estante
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function editar(Request $request, Estante $estante): Response
+    public function editar(Request $request, Estante $estante, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(EstanteType::class, $estante);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El estante '.$estante->getNumero().' ha sido editado correctamente.');
+                $this->addFlash('success', 'El estante se ha sido editado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El estante no se pudo editar, ya existe uno con igual identificador.');
+                    $this->addFlash('error', 'Estante no editado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -105,9 +105,10 @@ class EstanteController extends AbstractController
      * @Route("/eliminar-estantes/{id}", name="eliminar_estante", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Estante $estante
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function eliminar(Request $request, Estante $estante): Response
+    public function eliminar(Request $request, Estante $estante, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createDeleteForm($estante);
 
@@ -115,18 +116,17 @@ class EstanteController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->remove($estante);
 
                 try {
                     $entityManager->flush();
-                    $this->addFlash('success', 'El estante '.$estante->getNumero().' ha sido eliminado correctamente.');
+                    $this->addFlash('success', 'El estante se ha eliminado correctamente.');
                 } catch (Exception $e) {
                     if ($e->getErrorCode() == 1451)  {
-                        $this->addFlash('error', 'El estante no se pudo eliminar, conserva expedientes o libros asociados.');
+                        $this->addFlash('error', 'Estante no eliminado, conserva expedientes y/o libros asociados.');
                     } else
                     {
-                        $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                     }
                 }
 
@@ -144,7 +144,7 @@ class EstanteController extends AbstractController
      * @param Estante $estante
      * @return FormInterface
      */
-    private function createDeleteForm(Estante $estante)
+    private function createDeleteForm(Estante $estante): FormInterface
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('eliminar_estante', array('id' => $estante->getId())))

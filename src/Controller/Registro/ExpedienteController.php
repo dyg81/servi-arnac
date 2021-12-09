@@ -6,6 +6,7 @@ use App\Entity\Expediente;
 use App\Form\ExpedienteType;
 use App\Repository\ExpedienteRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -33,28 +34,27 @@ class ExpedienteController extends AbstractController
     /**
      * @Route("/agregar-expedientes", name="agregar_expediente", methods={"GET","POST"})
      * @param Request $request
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function agregar(Request $request): Response
+    public function agregar(Request $request, EntityManagerInterface $entityManager): Response
     {
         $expediente = new Expediente();
         $form = $this->createForm(ExpedienteType::class, $expediente);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($expediente);
 
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El expediente '.$expediente->getNumero().' ha sido creado correctamente.');
+                $this->addFlash('success', 'El expediente se ha agregado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El expediente '.$expediente->getNumero().' no se pudo agregar, ya existe en el sistema.');
+                    $this->addFlash('error', 'Expediente no agregado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -71,25 +71,24 @@ class ExpedienteController extends AbstractController
      * @Route("/editar-expedientes/{id}", name="editar_expediente", methods={"GET","POST"})
      * @param Request $request
      * @param Expediente $expediente
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function editar(Request $request, Expediente $expediente): Response
+    public function editar(Request $request, Expediente $expediente, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ExpedienteType::class, $expediente);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El expediente '.$expediente->getNumero().' ha sido editado correctamente.');
+                $this->addFlash('success', 'El expediente se ha sido editado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El expediente no se pudo editar, ya existe uno con igual identificador.');
+                    $this->addFlash('error', 'Expediente no editado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -106,9 +105,10 @@ class ExpedienteController extends AbstractController
      * @Route("/eliminar-expedientes/{id}", name="eliminar_expediente", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Expediente $expediente
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function eliminar(Request $request, Expediente $expediente): Response
+    public function eliminar(Request $request, Expediente $expediente, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createDeleteForm($expediente);
 
@@ -116,14 +116,13 @@ class ExpedienteController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->remove($expediente);
 
                 try {
                     $entityManager->flush();
-                    $this->addFlash('success', 'El expediente '.$expediente->getNumero().' ha sido eliminado correctamente.');
+                    $this->addFlash('success', 'El expediente se ha eliminado correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('listar_expedientes'));
@@ -140,7 +139,7 @@ class ExpedienteController extends AbstractController
      * @param Expediente $expediente
      * @return FormInterface
      */
-    private function createDeleteForm(Expediente $expediente)
+    private function createDeleteForm(Expediente $expediente): FormInterface
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('eliminar_expediente', array('id' => $expediente->getId())))
