@@ -1,0 +1,114 @@
+{% extends '@Dyg81Modal/baseModal.html.twig' %}
+
+{% block modalBackdrop %}
+    data-backdrop="static"
+{% endblock %}
+
+{% block modalSize %}
+{% endblock %}
+
+{% block modalContent %}
+    {{ form_start(form, {'action': path('editar_categoria', {'id': categoria.id})}) }}
+    <div class="modal-header">
+        <h5 class="modal-title text-muted pl-2"><span class="fa fa-check-circle pr-2"></span>
+            Categoría</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body text-xs">
+        <div class="row">
+            <div class="form-group sac-form-group col-12">
+                <span class="far fa-bookmark form-control-feedback"></span>
+                {{ form_widget(form.nombre) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group sac-form-group col-4">
+                <span class="far fa-signature form-control-feedback"></span>
+                {{ form_widget(form.investigacion_precio) }}
+            </div>
+            <div class="form-group sac-form-group col-4">
+                <span class="far fa-scanner-image form-control-feedback"></span>
+                {{ form_widget(form.reprografia_precio) }}
+            </div>
+            <div class="form-group sac-form-group col-4">
+                <span class="far fa-file-invoice form-control-feedback"></span>
+                {{ form_widget(form.certificacion_precio) }}
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-sm btn-primary btn-save mr-2">Guardar</button>
+        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $(".btn-save").click(function (e) {
+                if (!$('#sac-form').valid()) {
+                    e.preventDefault()
+                }
+            });
+
+            $.validator.addMethod("currency", function (value, element) {
+                return this.optional(element) || /(\d{1,3}(\,\d{3})*|(\d+))(\.\d{2})?$/.test(value);
+            }, "Cantidad inválida.");
+
+            $("#sac-form").validate({
+                ignore: '.select2-input, .select2-focusser',
+                rules: {
+                    'categoria[nombre]': {
+                        required: true,
+                    },
+                    'categoria[investigacion_precio]': {
+                        required: true,
+                        currency: true
+                    },
+                    'categoria[reprografia_precio]': {
+                        required: true,
+                        currency: true
+                    },
+                    'categoria[certificacion_precio]': {
+                        required: true,
+                        currency: true
+                    },
+                },
+                messages: {
+                    'categoria[nombre]': {
+                        required: "Este campo es obligatorio.",
+                    },
+                    'categoria[investigacion_precio]': {
+                        required: "Este campo es obligatorio.",
+                    },
+                    'categoria[reprografia_precio]': {
+                        required: "Este campo es obligatorio.",
+                    },
+                    'categoria[certificacion_precio]': {
+                        required: "Este campo es obligatorio.",
+                    },
+                },
+                errorElement: "em",
+                errorPlacement: function (error, element) {
+                    error.addClass("invalid-feedback");
+
+                    if (element.hasClass("select2-hidden-accessible")) {
+                        error.insertAfter(element.next(".select2-container"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                success: function (label, element) {
+                    $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                },
+                highlight: function (element) {
+                    $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+                },
+                unhighlight: function (element) {
+                    $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                },
+            });
+        });
+    </script>
+    {{ form_end(form) }}
+{% endblock %}

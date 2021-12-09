@@ -6,6 +6,7 @@ use App\Entity\Fondo;
 use App\Form\FondoType;
 use App\Repository\FondoRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -34,27 +35,27 @@ class FondoController extends AbstractController
     /**
      * @Route("/agregar-fondos", name="agregar_fondo", methods={"GET","POST"})
      * @param Request $request
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function agregar(Request $request): Response
+    public function agregar(Request $request, EntityManagerInterface $entityManager): Response
     {
         $fondo = new Fondo();
         $form = $this->createForm(FondoType::class, $fondo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($fondo);
 
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El fondo ' . $fondo->getNombre() . ' ha sido creado correctamente.');
+                $this->addFlash('success', 'El fondo se ha agregado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El fondo '.$fondo->getNombre().' no se pudo agregar, ya existe en el sistema.');
+                    $this->addFlash('error', 'Fondo no agregado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -71,25 +72,24 @@ class FondoController extends AbstractController
      * @Route("/editar-fondos/{id}", name="editar_fondo", methods={"GET","POST"})
      * @param Request $request
      * @param Fondo $fondo
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function editar(Request $request, Fondo $fondo): Response
+    public function editar(Request $request, Fondo $fondo, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(FondoType::class, $fondo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El fondo ' . $fondo->getNombre() . ' ha sido editado correctamente.');
+                $this->addFlash('success', 'El fondo se ha sido editado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El fondo no se pudo editar, ya existe uno con igual identificador.');
+                    $this->addFlash('error', 'Fondo no editado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -106,9 +106,10 @@ class FondoController extends AbstractController
      * @Route("/eliminar-fondos/{id}", name="eliminar_fondo", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Fondo $fondo
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function eliminar(Request $request, Fondo $fondo): Response
+    public function eliminar(Request $request, Fondo $fondo, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createDeleteForm($fondo);
 
@@ -116,18 +117,17 @@ class FondoController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->remove($fondo);
 
                 try {
                     $entityManager->flush();
-                    $this->addFlash('success', 'El fondo ' . $fondo->getNombre() . ' ha sido eliminado correctamente.');
+                    $this->addFlash('success', 'El fondo se ha eliminado correctamente.');
                 } catch (Exception $e) {
                     if ($e->getErrorCode() == 1451)  {
-                        $this->addFlash('error', 'El fondo no se pudo eliminar, conserva expedientes o libros asociados.');
+                        $this->addFlash('error', 'Fondo no eliminado, conserva expedientes y/o libros asociados.');
                     } else
                     {
-                        $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                     }
                 }
 
@@ -145,7 +145,7 @@ class FondoController extends AbstractController
      * @param Fondo $fondo
      * @return FormInterface
      */
-    private function createDeleteForm(Fondo $fondo)
+    private function createDeleteForm(Fondo $fondo): FormInterface
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('eliminar_fondo', array('id' => $fondo->getId())))

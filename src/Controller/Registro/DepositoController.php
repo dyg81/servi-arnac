@@ -6,6 +6,7 @@ use App\Entity\Deposito;
 use App\Form\DepositoType;
 use App\Repository\DepositoRepository;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -34,27 +35,27 @@ class DepositoController extends AbstractController
     /**
      * @Route("/agregar-depositos", name="agregar_deposito", methods={"GET","POST"})
      * @param Request $request
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function agregar(Request $request): Response
+    public function agregar(Request $request, EntityManagerInterface $entityManager): Response
     {
         $deposito = new Deposito();
         $form = $this->createForm(DepositoType::class, $deposito);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($deposito);
 
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El depósito '.$deposito->getNumero().' ha sido creado correctamente.');
+                $this->addFlash('success', 'El depósito se ha agregado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El depósito '.$deposito->getNumero().' no se pudo agregar, ya existe en el sistema.');
+                    $this->addFlash('error', 'Depósito no agregado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -71,25 +72,24 @@ class DepositoController extends AbstractController
      * @Route("/editar-depositos/{id}", name="editar_deposito", methods={"GET","POST"})
      * @param Request $request
      * @param Deposito $deposito
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function editar(Request $request, Deposito $deposito): Response
+    public function editar(Request $request, Deposito $deposito, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(DepositoType::class, $deposito);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El depósito '.$deposito->getNumero().' ha sido editado correctamente.');
+                $this->addFlash('success', 'El depósito se ha sido editado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'El depósito no se pudo editar, ya existe uno con igual identificador.');
+                    $this->addFlash('error', 'Depósito no editado, ya existe en el sistema.');
                 } else
                 {
-                    $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
@@ -106,9 +106,10 @@ class DepositoController extends AbstractController
      * @Route("/eliminar-depositos/{id}", name="eliminar_deposito", methods={"GET", "DELETE"})
      * @param Request $request
      * @param Deposito $deposito
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function eliminar(Request $request, Deposito $deposito): Response
+    public function eliminar(Request $request, Deposito $deposito, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createDeleteForm($deposito);
 
@@ -116,18 +117,17 @@ class DepositoController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->remove($deposito);
 
                 try {
                     $entityManager->flush();
-                    $this->addFlash('success', 'El depósito '.$deposito->getNumero().' ha sido eliminado correctamente.');
+                    $this->addFlash('success', 'El depósito se ha eliminado correctamente.');
                 } catch (Exception $e) {
                     if ($e->getErrorCode() == 1451)  {
-                        $this->addFlash('error', 'El depósito no se pudo eliminar, conserva expedientes o libros asociados.');
+                        $this->addFlash('error', 'Depósito no eliminado, conserva expedientes y/o libros asociados.');
                     } else
                     {
-                        $this->addFlash('error', 'Error desconocido: '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                     }
                 }
 
@@ -145,7 +145,7 @@ class DepositoController extends AbstractController
      * @param Deposito $deposito
      * @return FormInterface
      */
-    private function createDeleteForm(Deposito $deposito)
+    private function createDeleteForm(Deposito $deposito): FormInterface
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('eliminar_deposito', array('id' => $deposito->getId())))
@@ -160,7 +160,7 @@ class DepositoController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function obtenerDepositos(DepositoRepository $depositoRepository, Request $request)
+    public function obtenerDepositos(DepositoRepository $depositoRepository, Request $request): JsonResponse
     {
         $depositosArray = array();
         $depositosAsociados = $depositoRepository->findAllByFondo($request->query->get('fondoid'));

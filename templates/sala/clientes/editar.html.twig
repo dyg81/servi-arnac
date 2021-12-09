@@ -1,0 +1,181 @@
+{% extends '@Dyg81Modal/baseModal.html.twig' %}
+
+{% block modalBackdrop %}
+    data-backdrop="static"
+{% endblock %}
+
+{% block modalSize %}
+{% endblock %}
+
+{% block modalContent %}
+    {{ form_start(form, {'action': path('editar_cliente', {'id': cliente.id})}) }}
+    <div class="modal-header">
+        <h5 class="modal-title text-muted pl-2"><span class="fa fa-check-circle pr-2"></span>
+            Cliente</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body text-xs">
+        <div class="row">
+            <div class="form-group sac-form-group col-12">
+                <span class="far fa-user form-control-feedback"></span>
+                {{ form_widget(form.nombre) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group sac-form-group col-6">
+                <span class="far fa-passport form-control-feedback"></span>
+                {{ form_widget(form.identificacion) }}
+            </div>
+            <div class="form-group sac-form-group col-6">
+                <span class="far fa-phone form-control-feedback"></span>
+                {{ form_widget(form.telefono) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group sac-form-group col-12">
+                <span class="far fa-address-card form-control-feedback"></span>
+                {{ form_widget(form.direccion) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group sac-form-group col-12">
+                <span class="far fa-link form-control-feedback"></span>
+                {{ form_widget(form.ocupacion) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group sac-form-group col-12">
+                <span class="far fa-mail-bulk form-control-feedback"></span>
+                {{ form_widget(form.correo) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-12">
+                {{ form_widget(form.pais) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-12">
+                {{ form_widget(form.categoria) }}
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-sm btn-primary btn-save mr-2">Guardar</button>
+        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $.fn.modal.Constructor.prototype._enforceFocus = function () {};
+
+            const select_pais = $('#cliente_pais').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-flag\"></i>&nbsp;&nbsp;&nbsp; País",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            const select_categoria = $('#cliente_categoria').select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: "<i class=\"far fa-bookmark\"></i>&nbsp;&nbsp;&nbsp; Categoría",
+                allowClear: Boolean($(this).data('allow-clear')),
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            $(".btn-save").click(function (e) {
+                if (!$('#sac-form').valid()) {
+                    e.preventDefault()
+                }
+            });
+
+            select_pais.add(select_categoria).on("change", function () {
+                $(this).trigger('blur');
+            });
+
+            $("#sac-form").validate({
+                ignore: '.select2-input, .select2-focusser',
+                rules: {
+                    'cliente[nombre]': {
+                        required: true,
+                    },
+                    'cliente[identificacion]': {
+                        required: true,
+                    },
+                    'cliente[telefono]': {
+                        required: true,
+                    },
+                    'cliente[direccion]': {
+                        required: true,
+                    },
+                    'cliente[ocupacion]': {
+                        required: true,
+                    },
+                    'cliente[correo]': {
+                        required: true,
+                    },
+                    'cliente[pais]': {
+                        required: true,
+                    },
+                    'cliente[categoria]': {
+                        required: true,
+                    },
+                },
+                messages: {
+                    'cliente[nombre]': {
+                        required: 'Esta campo es obligatorio.',
+                    },
+                    'cliente[identificacion]': {
+                        required: 'Esta campo es obligatorio.',
+                    },
+                    'cliente[telefono]': {
+                        required: 'Esta campo es obligatorio.',
+                    },
+                    'cliente[direccion]': {
+                        required: 'Esta campo es obligatorio.',
+                    },
+                    'cliente[ocupacion]': {
+                        required: 'Esta campo es obligatorio.',
+                    },
+                    'cliente[correo]': {
+                        required: 'Esta campo es obligatorio.',
+                    },
+                    'cliente[pais]': {
+                        required: 'Esta campo es obligatorio.',
+                    },
+                    'cliente[categoria]': {
+                        required: 'Esta campo es obligatorio.',
+                    },
+                },
+                errorElement: "em",
+                errorPlacement: function (error, element) {
+                    error.addClass("invalid-feedback");
+
+                    if (element.hasClass("select2-hidden-accessible")) {
+                        error.insertAfter(element.next(".select2-container"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                success: function (label, element) {
+                    $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                },
+                highlight: function (element) {
+                    $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+                },
+                unhighlight: function (element) {
+                    $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                },
+            });
+        });
+    </script>
+    {{ form_end(form) }}
+{% endblock %}

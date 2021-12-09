@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controller\Registro;
+namespace App\Controller\Sala;
 
-use App\Entity\Legajo;
-use App\Form\LegajoType;
-use App\Repository\LegajoRepository;
+use App\Entity\Cliente;
+use App\Form\ClienteType;
+use App\Repository\ClienteRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
@@ -15,139 +15,139 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/registro")
+ * @Route("/sala")
  */
-class LegajoController extends AbstractController
+class ClienteController extends AbstractController
 {
     /**
-     * @Route("/listar-legajos", name="listar_legajos", methods={"GET"})
-     * @param LegajoRepository $legajoRepository
+     * @Route("/listar-clientes", name="listar_clientes", methods={"GET"})
+     * @param ClienteRepository $clienteRepository
      * @return Response
      */
-    public function listar(LegajoRepository $legajoRepository): Response
+    public function listar(ClienteRepository $clienteRepository): Response
     {
-        return $this->render('registro/legajos/listar.html.twig', [
-            'legajos' => $legajoRepository->findAllOrderByAsc(),
+        return $this->render('sala/clientes/listar.html.twig', [
+            'clientes' => $clienteRepository->findAll(),
         ]);
     }
 
     /**
-     * @Route("/agregar-legajos", name="agregar_legajo", methods={"GET","POST"})
+     * @Route("/agregar-clientes", name="agregar_cliente", methods={"GET", "POST"})
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     public function agregar(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $legajo = new Legajo();
-        $form = $this->createForm(LegajoType::class, $legajo);
+        $cliente = new Cliente();
+        $form = $this->createForm(ClienteType::class, $cliente);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($legajo);
+            $entityManager->persist($cliente);
 
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El legajo se ha agregado correctamente.');
+                $this->addFlash('success', 'El cliente se ha agregado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Legajo no agregado, ya existe en el sistema.');
+                    $this->addFlash('error', 'Cliente no agregado, ya existe en el sistema.');
                 } else
                 {
                     $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
-            return new ModalRedirectResponse($this->generateUrl('listar_legajos'));
+            return new ModalRedirectResponse($this->generateUrl('listar_clientes'));
         }
 
-        return $this->render('registro/legajos/agregar.html.twig', [
-            'legajos' => $legajo,
+        return $this->render('sala/clientes/agregar.html.twig', [
+            'cliente' => $cliente,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/editar-legajos/{id}", name="editar_legajo", methods={"GET","POST"})
+     * @Route("/editar-cliente/{id}", name="editar_cliente", methods={"GET", "POST"})
      * @param Request $request
-     * @param Legajo $legajo
+     * @param Cliente $cliente
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function editar(Request $request, Legajo $legajo, EntityManagerInterface $entityManager): Response
+    public function editar(Request $request, Cliente $cliente, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(LegajoType::class, $legajo);
+        $form = $this->createForm(ClienteType::class, $cliente);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El legajo se ha sido editado correctamente.');
+                $this->addFlash('success', 'El cliente se ha sido editado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Legajo no editado, ya existe en el sistema.');
+                    $this->addFlash('error', 'Cliente no editado, ya existe en el sistema.');
                 } else
                 {
                     $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
-            return new ModalRedirectResponse($this->generateUrl('listar_legajos'));
+            return new ModalRedirectResponse($this->generateUrl('listar_clientes'));
         }
 
-        return $this->render('registro/legajos/editar.html.twig', [
-            'legajo' => $legajo,
+        return $this->render('sala/clientes/editar.html.twig', [
+            'cliente' => $cliente,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/eliminar-legajos/{id}", name="eliminar_legajo", methods={"GET", "DELETE"})
+     * @Route("/eliminar-clientes/{id}", name="eliminar_cliente", methods={"GET", "DELETE"})
      * @param Request $request
-     * @param Legajo $legajo
+     * @param Cliente $cliente
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function eliminar(Request $request, Legajo $legajo, EntityManagerInterface $entityManager): Response
+    public function eliminar(Request $request, Cliente $cliente, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createDeleteForm($legajo);
+        $form = $this->createDeleteForm($cliente);
 
         if ($request->getMethod() == "DELETE") {
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager->remove($legajo);
+                $entityManager->remove($cliente);
 
                 try {
                     $entityManager->flush();
-                    $this->addFlash('success', 'El legajo se ha eliminado correctamente.');
+                    $this->addFlash('success', 'El cliente se ha eliminado correctamente.');
                 } catch (Exception $e) {
                     if ($e->getErrorCode() == 1451)  {
-                        $this->addFlash('error', 'Legajo no eliminado, conserva expedientes y/o libros asociados.');
+                        $this->addFlash('error', 'Cliente no eliminado, conserva facturas asociadas.');
                     } else
                     {
                         $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                     }
                 }
 
-                return new ModalRedirectResponse($this->generateUrl('listar_legajos'));
+                return new ModalRedirectResponse($this->generateUrl('listar_clientes'));
             }
         }
 
-        return $this->render('registro/legajos/eliminar.html.twig', array(
-            'legajo' => $legajo,
+        return $this->render('sala/clientes/eliminar.html.twig', array(
+            'cliente' => $cliente,
             'form' => $form->createView()
         ));
     }
 
     /**
-     * @param Legajo $legajo
+     * @param Cliente $cliente
      * @return FormInterface
      */
-    private function createDeleteForm(Legajo $legajo): FormInterface
+    private function createDeleteForm(Cliente $cliente): FormInterface
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('eliminar_legajo', array('id' => $legajo->getId())))
+            ->setAction($this->generateUrl('eliminar_cliente', array('id' => $cliente->getId())))
             ->setMethod('DELETE')
             ->getForm()
             ;

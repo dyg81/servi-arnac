@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controller\Registro;
+namespace App\Controller\Sala;
 
-use App\Entity\Legajo;
-use App\Form\LegajoType;
-use App\Repository\LegajoRepository;
+use App\Entity\Pais;
+use App\Form\PaisType;
+use App\Repository\PaisRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
@@ -15,139 +15,139 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/registro")
+ * @Route("/sala")
  */
-class LegajoController extends AbstractController
+class PaisController extends AbstractController
 {
     /**
-     * @Route("/listar-legajos", name="listar_legajos", methods={"GET"})
-     * @param LegajoRepository $legajoRepository
+     * @Route("/listar-paises", name="listar_paises", methods={"GET"})
+     * @param PaisRepository $paisRepository
      * @return Response
      */
-    public function listar(LegajoRepository $legajoRepository): Response
+    public function listar(PaisRepository $paisRepository): Response
     {
-        return $this->render('registro/legajos/listar.html.twig', [
-            'legajos' => $legajoRepository->findAllOrderByAsc(),
+        return $this->render('sala/paises/listar.html.twig', [
+            'paises' => $paisRepository->findAllOrderByAsc(),
         ]);
     }
 
     /**
-     * @Route("/agregar-legajos", name="agregar_legajo", methods={"GET","POST"})
+     * @Route("/agregar-paises", name="agregar_pais", methods={"GET","POST"})
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
     public function agregar(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $legajo = new Legajo();
-        $form = $this->createForm(LegajoType::class, $legajo);
+        $pais = new Pais();
+        $form = $this->createForm(PaisType::class, $pais);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($legajo);
+            $entityManager->persist($pais);
 
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El legajo se ha agregado correctamente.');
+                $this->addFlash('success', 'El país se ha agregado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Legajo no agregado, ya existe en el sistema.');
+                    $this->addFlash('error', 'País no agregado, ya existe en el sistema.');
                 } else
                 {
                     $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
-            return new ModalRedirectResponse($this->generateUrl('listar_legajos'));
+            return new ModalRedirectResponse($this->generateUrl('listar_paises'));
         }
 
-        return $this->render('registro/legajos/agregar.html.twig', [
-            'legajos' => $legajo,
+        return $this->render('sala/paises/agregar.html.twig', [
+            'pais' => $pais,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/editar-legajos/{id}", name="editar_legajo", methods={"GET","POST"})
+     * @Route("/editar-paises/{id}", name="editar_pais", methods={"GET","POST"})
      * @param Request $request
-     * @param Legajo $legajo
+     * @param Pais $pais
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function editar(Request $request, Legajo $legajo, EntityManagerInterface $entityManager): Response
+    public function editar(Request $request, Pais $pais, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(LegajoType::class, $legajo);
+        $form = $this->createForm(PaisType::class, $pais);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $entityManager->flush();
-                $this->addFlash('success', 'El legajo se ha sido editado correctamente.');
+                $this->addFlash('success', 'El país se ha sido editado correctamente.');
             } catch (Exception $e) {
                 if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Legajo no editado, ya existe en el sistema.');
+                    $this->addFlash('error', 'País no editado, ya existe en el sistema.');
                 } else
                 {
                     $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                 }
             }
 
-            return new ModalRedirectResponse($this->generateUrl('listar_legajos'));
+            return new ModalRedirectResponse($this->generateUrl('listar_paises'));
         }
 
-        return $this->render('registro/legajos/editar.html.twig', [
-            'legajo' => $legajo,
+        return $this->render('sala/paises/editar.html.twig', [
+            'pais' => $pais,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/eliminar-legajos/{id}", name="eliminar_legajo", methods={"GET", "DELETE"})
+     * @Route("/eliminar-paises/{id}", name="eliminar_pais", methods={"GET", "DELETE"})
      * @param Request $request
-     * @param Legajo $legajo
+     * @param Pais $pais
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function eliminar(Request $request, Legajo $legajo, EntityManagerInterface $entityManager): Response
+    public function eliminar(Request $request, Pais $pais, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createDeleteForm($legajo);
+        $form = $this->createDeleteForm($pais);
 
         if ($request->getMethod() == "DELETE") {
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager->remove($legajo);
+                $entityManager->remove($pais);
 
                 try {
                     $entityManager->flush();
-                    $this->addFlash('success', 'El legajo se ha eliminado correctamente.');
+                    $this->addFlash('success', 'El país se ha eliminado correctamente.');
                 } catch (Exception $e) {
                     if ($e->getErrorCode() == 1451)  {
-                        $this->addFlash('error', 'Legajo no eliminado, conserva expedientes y/o libros asociados.');
+                        $this->addFlash('error', 'País no eliminado, conserva clientes asociados.');
                     } else
                     {
                         $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
                     }
                 }
 
-                return new ModalRedirectResponse($this->generateUrl('listar_legajos'));
+                return new ModalRedirectResponse($this->generateUrl('listar_paises'));
             }
         }
 
-        return $this->render('registro/legajos/eliminar.html.twig', array(
-            'legajo' => $legajo,
+        return $this->render('sala/paises/eliminar.html.twig', array(
+            'pais' => $pais,
             'form' => $form->createView()
         ));
     }
 
     /**
-     * @param Legajo $legajo
+     * @param Pais $pais
      * @return FormInterface
      */
-    private function createDeleteForm(Legajo $legajo): FormInterface
+    private function createDeleteForm(Pais $pais): FormInterface
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('eliminar_legajo', array('id' => $legajo->getId())))
+            ->setAction($this->generateUrl('eliminar_pais', array('id' => $pais->getId())))
             ->setMethod('DELETE')
             ->getForm()
             ;
