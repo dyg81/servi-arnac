@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-12-2021 a las 23:25:28
+-- Tiempo de generación: 19-12-2021 a las 15:53:31
 -- Versión del servidor: 10.4.17-MariaDB
 -- Versión de PHP: 7.2.34
 
@@ -60,7 +60,9 @@ INSERT INTO `doctrine_migration_versions` (`version`, `executed_at`, `execution_
 ('DoctrineMigrations\\Version20211206172035', '2021-12-06 18:20:43', 32),
 ('DoctrineMigrations\\Version20211206173652', '2021-12-06 18:36:58', 156),
 ('DoctrineMigrations\\Version20211206215908', '2021-12-06 22:59:13', 31),
-('DoctrineMigrations\\Version20211206225914', '2021-12-06 23:59:17', 33);
+('DoctrineMigrations\\Version20211206225914', '2021-12-06 23:59:17', 33),
+('DoctrineMigrations\\Version20211213211416', '2021-12-13 22:14:25', 120),
+('DoctrineMigrations\\Version20211219143618', '2021-12-19 15:36:28', 330);
 
 -- --------------------------------------------------------
 
@@ -72,6 +74,19 @@ CREATE TABLE `fondo_deposito` (
   `fondo_id` int(11) NOT NULL,
   `deposito_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `fondo_deposito`
+--
+
+INSERT INTO `fondo_deposito` (`fondo_id`, `deposito_id`) VALUES
+(14, 3),
+(14, 9),
+(15, 9),
+(16, 26),
+(17, 11),
+(18, 20),
+(18, 21);
 
 -- --------------------------------------------------------
 
@@ -152,7 +167,8 @@ INSERT INTO `sac_cliente` (`id`, `pais_id`, `categoria_id`, `nombre`, `identific
 (1, 1, 19, 'Donald Yañez González', '81060710587', 'Luyano, La Habana', '54336775', 'd@g.com', 'Electromedico'),
 (2, 1, 22, 'Yadelys Díaz Hernández', '88021112345', 'En algun lugar del campo, x supuesto q lajas!!!', '58522021', 'y@h.com', 'Fiscalizadora'),
 (4, 2, 20, 'John Smith', 'P58214863', '1020 Leisure Avenue, Tampa FL', '8132551344', 'js@yahoo.com', 'Investigador'),
-(5, 10, 19, 'Yadiel Tito Torres', 'ESP5856314', 'Madrid', '2254563978', 'tt@hotmail.com', 'Turista');
+(5, 10, 19, 'Yadiel Tito Torres', 'ESP5856314', 'Madrid', '2254563978', 'tt@hotmail.com', 'Turista'),
+(6, 8, 21, 'Pepe Portilla', '8888888888', 'A la sasa', '55555555', 's@g.com', 'Sasa');
 
 -- --------------------------------------------------------
 
@@ -255,8 +271,21 @@ CREATE TABLE `sac_expediente` (
   `numero` varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL,
   `identificador` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deposito_id` int(11) NOT NULL
+  `deposito_id` int(11) NOT NULL,
+  `estado` smallint(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `sac_expediente`
+--
+
+INSERT INTO `sac_expediente` (`id`, `fondo_id`, `legajo_id`, `estante_id`, `anaquel_id`, `numero`, `identificador`, `descripcion`, `deposito_id`, `estado`) VALUES
+(7, 14, 21, 13, 1, '25', '25-audiencia-de-santiago-de-cuba-colonia', 'Cras venenatis orci hendrerit tortor congue dignissim, sodales dapibus enim ornare pharetra accumsan mauris, potenti dui curabitur sed risus.', 9, 0),
+(8, 14, 24, 6, 3, '396', '396-audiencia-de-santiago-de-cuba-colonia', 'mmm', 9, 0),
+(9, 17, 21, 13, 1, '2', '2-secretaria-de-hacienda', 'mmm', 11, 0),
+(10, 18, 19, 1, 8, '68', '68-sociedad-colombista-panamericana', 'nnn', 20, 0),
+(11, 17, 23, 9, 12, '790', '790-secretaria-de-hacienda', 'asdfsadf', 11, 0),
+(12, 14, 21, 13, 1, '679', '679-audiencia-de-santiago-de-cuba-colonia', 'asdf', 9, 0);
 
 -- --------------------------------------------------------
 
@@ -271,6 +300,17 @@ CREATE TABLE `sac_fondo` (
   `identificador` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `sac_fondo`
+--
+
+INSERT INTO `sac_fondo` (`id`, `nombre`, `descripcion`, `identificador`) VALUES
+(14, 'Audiencia de Santiago de Cuba (Colonia)', 'Auctor ullamcorper suscipit vitae penatibus varius velit massa, fames aliquam pellentesque posuere nam id mus tempor, lobortis praesent mauris eleifend scelerisque nisl. Interdum at cum vel ultrices molestie eleifend hac scelerisque viverra suscipit accumsan fringilla per facilisis, in cursus faucibus ut vitae sapien justo netus est ultricies ad natoque.', 'audiencia-de-santiago-de-cuba-colonia'),
+(15, 'Inventario de Hacienda', 'Lorem ipsum dolor sit amet consectetur adipiscing elit ridiculus, aliquam tristique cum euismod netus nam aptent pharetra, curabitur neque felis arcu blandit eros sapien.', 'inventario-de-hacienda'),
+(16, 'Audiencia de La Habana', 'Sociis natoque class vivamus mus sodales potenti habitant risus sollicitudin nostra, purus tempus volutpat dis dictum mollis magnis cursus ut egestas, nisi porttitor consequat enim justo elementum tincidunt eros laoreet. Cubilia sociis mollis euismod placerat duis diam, vivamus vehicula nisl vel lectus, molestie nostra per nec erat. Egestas sagittis enim libero tempor pretium nostra fames commodo non, a nisi class sed erat tellus mi velit cursus, neque convallis sapien conubia aptent rhoncus semper curae. Vivamus malesuada hendrerit feugiat risus tempus interdum phasellus molestie pellentesque, dui viverra aenean curabitur gravida rhoncus massa taciti.', 'audiencia-de-la-habana'),
+(17, 'Secretaria de Hacienda', 'Quisque mi conubia gravida congue vivamus hendrerit libero, nibh volutpat blandit vehicula sociosqu nascetur curabitur, vestibulum sagittis dignissim ridiculus tortor himenaeos.', 'secretaria-de-hacienda'),
+(18, 'Sociedad Colombista Panamericana', 'Tincidunt id fames convallis suspendisse morbi magna sem phasellus, quam fringilla ridiculus condimentum praesent mollis.', 'sociedad-colombista-panamericana');
+
 -- --------------------------------------------------------
 
 --
@@ -282,6 +322,19 @@ CREATE TABLE `sac_legajo` (
   `legajo` varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL,
   `identificador` varchar(7) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `sac_legajo`
+--
+
+INSERT INTO `sac_legajo` (`id`, `legajo`, `identificador`) VALUES
+(18, '144', 'LEG_144'),
+(19, 'AZ', 'LEG_AZ'),
+(20, '25W', 'LEG_25W'),
+(21, '001', 'LEG_001'),
+(22, '6', 'LEG_6'),
+(23, 'P0', 'LEG_P0'),
+(24, 'AA', 'LEG_AA');
 
 -- --------------------------------------------------------
 
@@ -298,8 +351,16 @@ CREATE TABLE `sac_libro` (
   `tomo` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL,
   `anno` varchar(4) COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `identificador` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `identificador` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `estado` smallint(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `sac_libro`
+--
+
+INSERT INTO `sac_libro` (`id`, `deposito_id`, `fondo_id`, `estante_id`, `anaquel_id`, `tomo`, `anno`, `descripcion`, `identificador`, `estado`) VALUES
+(8, 26, 16, 12, 8, '55', '1962', 'sdf', '55-1962-audiencia-de-la-habana', 0);
 
 -- --------------------------------------------------------
 
@@ -445,7 +506,7 @@ ALTER TABLE `sac_categoria`
 -- AUTO_INCREMENT de la tabla `sac_cliente`
 --
 ALTER TABLE `sac_cliente`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `sac_deposito`
@@ -463,25 +524,25 @@ ALTER TABLE `sac_estante`
 -- AUTO_INCREMENT de la tabla `sac_expediente`
 --
 ALTER TABLE `sac_expediente`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `sac_fondo`
 --
 ALTER TABLE `sac_fondo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `sac_legajo`
 --
 ALTER TABLE `sac_legajo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `sac_libro`
 --
 ALTER TABLE `sac_libro`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `sac_pais`

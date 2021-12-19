@@ -105,7 +105,7 @@
                                 {% for fondo in fondos %}
                                     <tr>
                                         <td>{{ fondo.nombre }}</td>
-                                        <td>{{ fondo.descripcion }}</td>
+                                        <td>{{ fondo.descripcion|length > 50 ? fondo.descripcion|slice(0, 50) ~ '...' : fondo.descripcion}}</td>
                                         <td>
                                             {% for deposito in fondo.depositos %}
                                                 {% if loop.last %}
