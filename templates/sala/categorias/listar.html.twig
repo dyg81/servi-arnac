@@ -103,8 +103,8 @@
                                 <thead>
                                 <tr>
                                     <th>Identificador</th>
-                                    <th>Investigación</th>
-                                    <th>Reprografía</th>
+                                    <th>Transcripción</th>
+                                    <th>Reprografías</th>
                                     <th>Certificación</th>
                                     <th style="width: 10px"></th>
                                     <th style="width: 10px"></th>
@@ -114,8 +114,8 @@
                                 {% for categoria in categorias %}
                                     <tr>
                                         <td>{{ categoria.nombre }}</td>
-                                        <td>$ {{ categoria.investigacionPrecio | number_format(2) }} CUP</td>
-                                        <td>$ {{ categoria.reprografiaPrecio | number_format(2) }} CUP</td>
+                                        <td>$ {{ categoria.transcripcionPrecio | number_format(2) }} CUP</td>
+                                        <td>$ {{ categoria.reprografiaNormalPrecio | number_format(2) }} CUP || $ {{ categoria.reprografiaGrandePrecio | number_format(2) }} CUP</td>
                                         <td>$ {{ categoria.certificacionPrecio | number_format(2) }} CUP</td>
                                         <td>
                                             <a href="{{ path('editar_categoria', { 'id': categoria.id }) }}" class="text-muted modal-open">

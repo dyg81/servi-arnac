@@ -51,6 +51,11 @@ class Fondo
     private $libros;
 
     /**
+     * @ORM\ManyToMany(targetEntity=Carta::class, mappedBy="fondos")
+     */
+    private $cartas;
+
+    /**
      * Init the array's collections for every new fondo
      */
     public function __construct()
@@ -58,6 +63,7 @@ class Fondo
         $this->depositos = new ArrayCollection();
         $this->expedientes = new ArrayCollection();
         $this->libros = new ArrayCollection();
+        $this->cartas = new ArrayCollection();
     }
 
     /**
@@ -236,6 +242,33 @@ class Fondo
             if ($libro->getFondo() === $this) {
                 $libro->setFondo(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Carta[]
+     */
+    public function getCartas(): Collection
+    {
+        return $this->cartas;
+    }
+
+    public function addCarta(Carta $carta): self
+    {
+        if (!$this->cartas->contains($carta)) {
+            $this->cartas[] = $carta;
+            $carta->addFondo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarta(Carta $carta): self
+    {
+        if ($this->cartas->removeElement($carta)) {
+            $carta->removeFondo($this);
         }
 
         return $this;

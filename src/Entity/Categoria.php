@@ -33,12 +33,17 @@ class Categoria
     /**
      * @ORM\Column(type="float")
      */
-    private $investigacion_precio;
+    private $transcripcion_precio;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $reprografia_precio;
+    private $reprografia_normal_precio;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $reprografia_grande_precio;
 
     /**
      * @ORM\Column(type="float")
@@ -115,18 +120,18 @@ class Categoria
     /**
      * @return float|null
      */
-    public function getInvestigacionPrecio(): ?float
+    public function getTranscripcionPrecio(): ?float
     {
-        return $this->investigacion_precio;
+        return $this->transcripcion_precio;
     }
 
     /**
-     * @param float $investigacion_precio
+     * @param float $transcripcion_precio
      * @return $this
      */
-    public function setInvestigacionPrecio(float $investigacion_precio): self
+    public function setTranscripcionPrecio(float $transcripcion_precio): self
     {
-        $this->investigacion_precio = $investigacion_precio;
+        $this->transcripcion_precio = $transcripcion_precio;
 
         return $this;
     }
@@ -134,18 +139,37 @@ class Categoria
     /**
      * @return float|null
      */
-    public function getReprografiaPrecio(): ?float
+    public function getReprografiaNormalPrecio(): ?float
     {
-        return $this->reprografia_precio;
+        return $this->reprografia_normal_precio;
     }
 
     /**
-     * @param float $reprografia_precio
+     * @param float $reprografia_normal_precio
      * @return $this
      */
-    public function setReprografiaPrecio(float $reprografia_precio): self
+    public function setReprografiaNormalPrecio(float $reprografia_normal_precio): self
     {
-        $this->reprografia_precio = $reprografia_precio;
+        $this->reprografia_normal_precio = $reprografia_normal_precio;
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getReprografiaGrandePrecio(): ?float
+    {
+        return $this->reprografia_grande_precio;
+    }
+
+    /**
+     * @param float $reprografia_grande_precio
+     * @return $this
+     */
+    public function setReprografiaGrandePrecio(float $reprografia_grande_precio): self
+    {
+        $this->reprografia_grande_precio = $reprografia_grande_precio;
 
         return $this;
     }
