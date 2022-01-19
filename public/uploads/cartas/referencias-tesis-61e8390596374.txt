@@ -1,0 +1,42 @@
+REFERENCIAS GENERALES:
+----------------------
+symfony.com
+w3schools.com
+stackoverflow.com
+dev.to
+select2.org
+https://www.doctrine-project.org/
+
+
+Crear un switch para modo oscuro/claro:
+https://dev.to/ananyaneogi/create-a-dark-light-mode-switch-with-css-variables-34l8
+
+Añadir icono en el placeholder de la libreria Select2:
+https://stackoverflow.com/questions/17896075/how-to-add-html-placeholder-to-select2
+https://stackoverflow.com/a/38314293
+
+Añadir icono en el validador de la libreria Select2:
+https://stackoverflow.com/questions/54510043/bootstrap-and-select2-form-validation
+https://stackoverflow.com/a/59832354
+
+Corregir el foco del campo de busqueda del Select2 en un formulario embebido dentro de un modal:
+https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal
+https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/19574076#19574076
+
+Libreria Textarea Autosize:
+http://jacklmoore.com/autosize
+
+Libreria Dual Listbox:
+https://www.virtuosoft.eu/code/bootstrap-duallistbox/
+
+Cambiar colores de la libreria Dual Listbox:
+https://stackoverflow.com/questions/32921840/change-background-color-of-clicked-option-in-duallistbox
+
+Agregar una clase via JS:
+https://www.w3schools.com/howto/howto_js_add_class.asp
+
+Remover una clase via JS:
+https://www.w3schools.com/howto/howto_js_remove_class.asp
+
+Consultas DQL en relaciones ManyToMany:
+https://stackoverflow.com/questions/10038581/query-builder-join-on-manytomany-relationship

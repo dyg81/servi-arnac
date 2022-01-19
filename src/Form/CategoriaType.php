@@ -20,16 +20,20 @@ class CategoriaType extends AbstractType
                 'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Nombre'],
                 //'required' => false,
             ])
-            ->add('investigacion_precio', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Inv. Precio'],
+            ->add('transcripcion_precio', null, [
+                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Transcripción'],
                 //'required' => false,
             ])
-            ->add('reprografia_precio', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Rep. Precio'],
+            ->add('reprografia_normal_precio', null, [
+                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Rep. tamaño normal'],
+                //'required' => false,
+            ])
+            ->add('reprografia_grande_precio', null, [
+                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Rep. gran formato'],
                 //'required' => false,
             ])
             ->add('certificacion_precio', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Cert. Precio'],
+                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Certificación'],
                 //'required' => false,
             ])
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ClienteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -59,6 +61,24 @@ class Cliente
      * @ORM\Column(type="string", length=255)
      */
     private $ocupacion;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Carta::class, mappedBy="cliente")
+     */
+    private $cartas;
+
+    public function __construct()
+    {
+        $this->cartas = new ArrayCollection();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function __toString()
+    {
+        return $this->getNombre();
+    }
 
     /**
      * @return int|null
@@ -216,6 +236,36 @@ class Cliente
     public function setOcupacion(string $ocupacion): self
     {
         $this->ocupacion = $ocupacion;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Carta[]
+     */
+    public function getCartas(): Collection
+    {
+        return $this->cartas;
+    }
+
+    public function addCarta(Carta $carta): self
+    {
+        if (!$this->cartas->contains($carta)) {
+            $this->cartas[] = $carta;
+            $carta->setCiente($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarta(Carta $carta): self
+    {
+        if ($this->cartas->removeElement($carta)) {
+            // set the owning side to null (unless already changed)
+            if ($carta->getCiente() === $this) {
+                $carta->setCiente(null);
+            }
+        }
 
         return $this;
     }

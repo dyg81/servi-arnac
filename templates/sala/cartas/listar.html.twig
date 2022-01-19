@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 
 {% block title %}
-    SAC | Categorías
+    SAC | Cartas
 {% endblock %}
 
 {% block menu %}
@@ -25,15 +25,21 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="javascript:void(0)" class="nav-link active">
+                            <a href="{{ path('listar_categorias') }}" class="nav-link">
                                 <i class="far fa-bookmark nav-icon" style="font-size: 0.875em"></i>
-                                <p style="font-size: 0.875em">Categorías</p>
+                                <p style="font-size: 0.875em">Categorias</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ path('listar_clientes') }}" class="nav-link">
                                 <i class="far fa-user-friends nav-icon" style="font-size: 0.875em"></i>
                                 <p style="font-size: 0.875em">Clientes</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link active">
+                                <i class="far fa-file-chart-line nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Cartas</p>
                             </a>
                         </li>
                     </ul>
@@ -87,13 +93,13 @@
                         <div class="card-header p-0 pt-1 border-bottom-0">
                             <ul class="nav nav-tabs">
                                 <li class="nav-item">
-                                    <a class="nav-link active font-italic font-weight-bolder">Gestión de categorías</a>
+                                    <a class="nav-link active font-italic font-weight-bolder">Gestión de Autorizos</a>
                                 </li>
                             </ul>
                         </div>
                         <div id="table_wrapper" class="card-body">
                             <div class="float-right pr-2">
-                                <a href="{{ path('agregar_categoria') }}" class="btn btn-primary btn-sm btn-icon-split modal-open"
+                                <a href="{{ path('agregar_carta') }}" class="btn btn-primary btn-sm btn-icon-split modal-open"
                                    data-toggle="modal" data-target="#modal-example">
                                     <span class="icon text-white-50"><i class="fas fa-share-square"></i></span>
                                     <span class="text"> Agregar</span>
@@ -102,32 +108,45 @@
                             <table id="sac" class="table table-hover display nowrap" style="width: 100%;">
                                 <thead>
                                 <tr>
-                                    <th>Identificador</th>
-                                    <th>Transcripción</th>
-                                    <th>Reprografías</th>
-                                    <th>Certificación</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha de Solcitiud</th>
+                                    <th>Estado</th>
                                     <th style="width: 10px"></th>
                                     <th style="width: 10px"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for categoria in categorias %}
+                                {% for carta in cartas %}
                                     <tr>
-                                        <td>{{ categoria.nombre }}</td>
-                                        <td>$ {{ categoria.transcripcionPrecio | number_format(2) }} CUP</td>
-                                        <td>$ {{ categoria.reprografiaNormalPrecio | number_format(2) }} CUP || $ {{ categoria.reprografiaGrandePrecio | number_format(2) }} CUP</td>
-                                        <td>$ {{ categoria.certificacionPrecio | number_format(2) }} CUP</td>
-                                        <td>
-                                            <a href="{{ path('editar_categoria', { 'id': categoria.id }) }}" class="text-muted modal-open">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-
-                                        </td>
-                                        <td>
-                                            <a href="{{ path('eliminar_categoria', { 'id': categoria.id }) }}" class="text-muted mr-2 modal-open">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </td>
+                                        <td>{{ carta.cliente }}</td>
+                                        <td>{{ carta.fechaSolicitud | date("d / m / Y") }}</td>
+                                        {% if carta.estado == 0 %}
+                                            <td>
+                                                <span class="far fa-minus pl-3 text-md"></span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ path('editar_carta', { 'id': carta.id }) }}" class="text-muted modal-open">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="{{ path('eliminar_carta', { 'id': carta.id }) }}" class="text-muted mr-2 modal-open">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        {% elseif carta.estado == 1 %}
+                                            <td>
+                                                <span class="far fa-check pl-3 text-md text-success"></span>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        {% elseif carta.estado == 2 %}
+                                            <td>
+                                                <span class="far fa-times pl-3 text-md text-danger"></span>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        {% endif %}
                                     </tr>
                                 {% endfor %}
                                 </tbody>

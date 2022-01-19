@@ -23,18 +23,34 @@
                 {{ form_widget(form.nombre) }}
             </div>
         </div>
-        <div class="row">
-            <div class="form-group sac-form-group col-4">
-                <span class="far fa-signature form-control-feedback"></span>
-                {{ form_widget(form.investigacion_precio) }}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <em class="text-muted text-md"><span class="fa fa-exclamation-circle pr-1"></span>
+                        Precio de los servicios</em>
+                </div>
             </div>
-            <div class="form-group sac-form-group col-4">
-                <span class="far fa-scanner-image form-control-feedback"></span>
-                {{ form_widget(form.reprografia_precio) }}
-            </div>
-            <div class="form-group sac-form-group col-4">
-                <span class="far fa-file-invoice form-control-feedback"></span>
-                {{ form_widget(form.certificacion_precio) }}
+            <div class="card-body">
+                <div class="row">
+                    <div class="form-group sac-form-group col-6">
+                        <span class="far fa-signature form-control-feedback"></span>
+                        {{ form_widget(form.transcripcion_precio) }}
+                    </div>
+                    <div class="form-group sac-form-group col-6">
+                        <span class="far fa-file-invoice form-control-feedback"></span>
+                        {{ form_widget(form.certificacion_precio) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group sac-form-group col-6">
+                        <span class="far fa-scanner-image form-control-feedback"></span>
+                        {{ form_widget(form.reprografia_normal_precio) }}
+                    </div>
+                    <div class="form-group sac-form-group col-6">
+                        <span class="far fa-scanner-image form-control-feedback"></span>
+                        {{ form_widget(form.reprografia_grande_precio) }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -61,11 +77,15 @@
                     'categoria[nombre]': {
                         required: true,
                     },
-                    'categoria[investigacion_precio]': {
+                    'categoria[transcripcion_precio]': {
                         required: true,
                         currency: true
                     },
-                    'categoria[reprografia_precio]': {
+                    'categoria[reprografia_normal_precio]': {
+                        required: true,
+                        currency: true
+                    },
+                    'categoria[reprografia_grande_precio]': {
                         required: true,
                         currency: true
                     },
@@ -78,10 +98,13 @@
                     'categoria[nombre]': {
                         required: "Este campo es obligatorio.",
                     },
-                    'categoria[investigacion_precio]': {
+                    'categoria[transcripcion_precio]': {
                         required: "Este campo es obligatorio.",
                     },
-                    'categoria[reprografia_precio]': {
+                    'categoria[reprografia_normal_precio]': {
+                        required: "Este campo es obligatorio.",
+                    },
+                    'categoria[reprografia_grande_precio]': {
                         required: "Este campo es obligatorio.",
                     },
                     'categoria[certificacion_precio]': {
