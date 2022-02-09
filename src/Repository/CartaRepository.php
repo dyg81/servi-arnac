@@ -31,6 +31,34 @@ class CartaRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * @return Carta[] Returns an array of Carta objects
+     */
+    public function findByPendientes()
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.fecha_solicitud', 'ASC')
+            ->andWhere('c.estado = :val')
+            ->setParameter('val', 0)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    /**
+     * @return Carta[] Returns an array of Carta objects
+     */
+    public function findByRespondidas()
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.fecha_solicitud', 'ASC')
+            ->andWhere('c.estado != :val')
+            ->setParameter('val', 0)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     // /**
     //  * @return Carta[] Returns an array of Carta objects
     //  */

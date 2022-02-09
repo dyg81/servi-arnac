@@ -13,7 +13,7 @@
                     <a href="#" class="nav-link active">
                         <i class="nav-icon far fa-cog"></i>
                         <p>
-                            Gestión
+                            Gestión de Sala
                             <i class="right fas fa-angle-right"></i>
                         </p>
                     </a>
@@ -48,7 +48,7 @@
                     <a href="#" class="nav-link">
                         <i class="nav-icon far fa-sitemap"></i>
                         <p>
-                            Servicios
+                            Servicios del Archivo
                             <i class="right fas fa-angle-right"></i>
                         </p>
                     </a>
@@ -56,25 +56,25 @@
                         <li class="nav-item">
                             <a href="javascript:void(0)" class="nav-link">
                                 <i class="far fa-search nav-icon" style="font-size: 0.875em"></i>
-                                <p style="font-size: 0.875em">Investigación</p>
+                                <p style="font-size: 0.875em">Referencias Documentales</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="javascript:void(0)" class="nav-link">
                                 <i class="far fa-signature nav-icon" style="font-size: 0.875em"></i>
-                                <p style="font-size: 0.875em">Transcripción</p>
+                                <p style="font-size: 0.875em">Transcripciones</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="javascript:void(0)" class="nav-link">
                                 <i class="far fa-scanner-image nav-icon" style="font-size: 0.875em"></i>
-                                <p style="font-size: 0.875em">Reprografía</p>
+                                <p style="font-size: 0.875em">Reprografias</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="javascript:void(0)" class="nav-link">
                                 <i class="far fa-file-invoice nav-icon" style="font-size: 0.875em"></i>
-                                <p style="font-size: 0.875em">Certificación</p>
+                                <p style="font-size: 0.875em">Certificaciones</p>
                             </a>
                         </li>
                     </ul>
@@ -109,7 +109,8 @@
                                 <thead>
                                 <tr>
                                     <th>Cliente</th>
-                                    <th>Fecha de Solcitiud</th>
+                                    <th>Solicitado</th>
+                                    <th>Respondido</th>
                                     <th>Estado</th>
                                     <th style="width: 10px"></th>
                                     <th style="width: 10px"></th>
@@ -118,9 +119,18 @@
                                 <tbody>
                                 {% for carta in cartas %}
                                     <tr>
-                                        <td>{{ carta.cliente }}</td>
+                                        {% if carta.observaciones|length == 0 %}
+                                            <td>{{ carta.cliente }}</td>
+                                        {% else %}
+                                            <td>
+                                                <a href="{{ path('observacion_carta', { 'id': carta.id }) }}" class="modal-open">{{ carta.cliente }}</a>
+                                            </td>
+                                        {% endif %}
                                         <td>{{ carta.fechaSolicitud | date("d / m / Y") }}</td>
                                         {% if carta.estado == 0 %}
+                                            <td>
+                                                <span class="far fa-minus pl-3 text-md"></span>
+                                            </td>
                                             <td>
                                                 <span class="far fa-minus pl-3 text-md"></span>
                                             </td>
@@ -135,12 +145,14 @@
                                                 </a>
                                             </td>
                                         {% elseif carta.estado == 1 %}
+                                            <td>{{ carta.fechaRespuesta | date("d / m / Y") }}</td>
                                             <td>
                                                 <span class="far fa-check pl-3 text-md text-success"></span>
                                             </td>
                                             <td></td>
                                             <td></td>
                                         {% elseif carta.estado == 2 %}
+                                            <td>{{ carta.fechaRespuesta | date("d / m / Y") }}</td>
                                             <td>
                                                 <span class="far fa-times pl-3 text-md text-danger"></span>
                                             </td>
