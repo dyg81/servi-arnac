@@ -46,6 +46,8 @@ class CartaController extends AbstractController
     {
         $carta = new Carta();
         $form = $this->createForm(CartaType::class, $carta);
+        $form->remove('fondos');
+        $form->remove('observaciones');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -91,6 +93,8 @@ class CartaController extends AbstractController
     public function editar(Request $request, Carta $carta, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
     {
         $form = $this->createForm(CartaType::class, $carta);
+        $form->remove('fondos');
+        $form->remove('observaciones');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -168,5 +172,17 @@ class CartaController extends AbstractController
             ->setMethod('DELETE')
             ->getForm()
             ;
+    }
+
+    /**
+     * @Route("/observacion-cartas/{id}", name="observacion_carta", methods={"GET"})
+     * @param Carta $carta
+     * @return Response
+     */
+    public function observaciones(Carta $carta): Response
+    {
+        return $this->render('sala/cartas/observaciones.html.twig', [
+            'mensaje' => $carta->getObservaciones()
+        ]);
     }
 }

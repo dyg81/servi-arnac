@@ -1,0 +1,125 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    SAC | Autorizos
+{% endblock %}
+
+{% block menu %}
+    <div class="sidebar text-sm">
+        <nav class="mt-4">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
+                <li class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link">
+                        <i class="nav-icon far fa-cog"></i>
+                        <p>
+                            Estadísticas
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item has-treeview menu-open">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon far fa-file-chart-line"></i>
+                        <p>
+                            Autorizos
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link active">
+                                <i class="far fa-circle nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Pendientes</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('listar_cartas_respondidas') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Completados</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-primary card-outline card-tabs mt-2">
+                        <div class="card-header p-0 pt-1 border-bottom-0">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active font-italic font-weight-bolder">Gestión de Autorizos</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="table_wrapper" class="card-body">
+                            <table id="sac" class="table table-hover display nowrap" style="width: 100%;">
+                                <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Solicitado</th>
+                                    <th style="width: 10px"></th>
+                                    <th style="width: 10px"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for carta in cartas %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ asset('uploads/cartas/' ~ carta.documento) }}">{{ carta.cliente }}</a>
+                                        </td>
+                                        <td>{{ carta.fechaSolicitud | date("d / m / Y") }}</td>
+                                        <td>
+                                            <a href="{{ path('aprobar_carta_pendiente', { 'id': carta.id }) }}" class="text-muted modal-open">
+                                                <i class="fas fa-check-circle text-md text-success"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('denegar_carta_pendiente', { 'id': carta.id }) }}" class="text-muted mr-2 modal-open">
+                                                <i class="fas fa-times-circle text-md text-danger"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        {% for type, msgs in app.session.flashBag.all() %}
+        {% for msg in msgs %}
+
+        inputText = '{{ msg }}';
+        font = "0.875rem Nimrod MT";
+
+        canvas = document.createElement("canvas");
+        context = canvas.getContext("2d");
+        context.font = font;
+        width = context.measureText(inputText).width;
+        formattedWidth = Math.ceil(width) + 100;
+
+        Toast.fire({
+            icon: '{{ type }}',
+            title: '{{ msg }}',
+            width: formattedWidth,
+        });
+
+        {% endfor %}
+        {% endfor %}
+    </script>
+{% endblock %}

@@ -32,6 +32,9 @@ class CartaType extends AbstractType
                 'attr'          => ['class' => 'form-control'],
                 'required'      => false
             ])
+            ->add('observaciones', null, [
+                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Observaciones']
+            ])
         ;
     }
 

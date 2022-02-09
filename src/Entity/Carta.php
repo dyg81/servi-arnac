@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CartaRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -42,9 +43,19 @@ class Carta
     private $fecha_solicitud;
 
     /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $fecha_respuesta;
+
+    /**
      * @ORM\ManyToMany(targetEntity=Fondo::class, inversedBy="cartas")
      */
     private $fondos;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $observaciones;
 
     /**
      * Init the state of every new carta
@@ -122,20 +133,39 @@ class Carta
     }
 
     /**
-     * @return \DateTimeInterface|null
+     * @return DateTimeInterface|null
      */
-    public function getFechaSolicitud(): ?\DateTimeInterface
+    public function getFechaSolicitud(): ?DateTimeInterface
     {
         return $this->fecha_solicitud;
     }
 
     /**
-     * @param \DateTimeInterface $fecha_solicitud
+     * @param DateTimeInterface $fecha_solicitud
      * @return $this
      */
-    public function setFechaSolicitud(\DateTimeInterface $fecha_solicitud): self
+    public function setFechaSolicitud(DateTimeInterface $fecha_solicitud): self
     {
         $this->fecha_solicitud = $fecha_solicitud;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTimeInterface|null
+     */
+    public function getFechaRespuesta(): ?DateTimeInterface
+    {
+        return $this->fecha_respuesta;
+    }
+
+    /**
+     * @param DateTimeInterface|null $fecha_respuesta
+     * @return $this
+     */
+    public function setFechaRespuesta(?DateTimeInterface $fecha_respuesta): self
+    {
+        $this->fecha_respuesta = $fecha_respuesta;
 
         return $this;
     }
@@ -168,6 +198,25 @@ class Carta
     public function removeFondo(Fondo $fondo): self
     {
         $this->fondos->removeElement($fondo);
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getObservaciones(): ?string
+    {
+        return $this->observaciones;
+    }
+
+    /**
+     * @param string|null $observaciones
+     * @return $this
+     */
+    public function setObservaciones(?string $observaciones): self
+    {
+        $this->observaciones = $observaciones;
 
         return $this;
     }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-12-2021 a las 15:53:31
+-- Tiempo de generación: 09-02-2022 a las 01:10:51
 -- Versión del servidor: 10.4.17-MariaDB
 -- Versión de PHP: 7.2.34
 
@@ -20,6 +20,34 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `sac_tesis`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `carta_fondo`
+--
+
+CREATE TABLE `carta_fondo` (
+  `carta_id` int(11) NOT NULL,
+  `fondo_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `carta_fondo`
+--
+
+INSERT INTO `carta_fondo` (`carta_id`, `fondo_id`) VALUES
+(7, 14),
+(7, 15),
+(7, 16),
+(8, 15),
+(9, 14),
+(9, 15),
+(9, 16),
+(9, 17),
+(9, 18),
+(12, 17),
+(13, 18);
 
 -- --------------------------------------------------------
 
@@ -62,7 +90,15 @@ INSERT INTO `doctrine_migration_versions` (`version`, `executed_at`, `execution_
 ('DoctrineMigrations\\Version20211206215908', '2021-12-06 22:59:13', 31),
 ('DoctrineMigrations\\Version20211206225914', '2021-12-06 23:59:17', 33),
 ('DoctrineMigrations\\Version20211213211416', '2021-12-13 22:14:25', 120),
-('DoctrineMigrations\\Version20211219143618', '2021-12-19 15:36:28', 330);
+('DoctrineMigrations\\Version20211219143618', '2021-12-19 15:36:28', 330),
+('DoctrineMigrations\\Version20211219150725', '2021-12-19 16:07:36', 75),
+('DoctrineMigrations\\Version20211219150825', '2021-12-19 16:08:29', 84),
+('DoctrineMigrations\\Version20211219152327', '2021-12-19 16:23:32', 107),
+('DoctrineMigrations\\Version20211219153335', '2021-12-19 16:33:39', 58),
+('DoctrineMigrations\\Version20211219213212', '2021-12-19 22:32:16', 130),
+('DoctrineMigrations\\Version20220111211410', '2022-01-11 22:14:50', 150),
+('DoctrineMigrations\\Version20220130190148', '2022-01-30 20:02:00', 196),
+('DoctrineMigrations\\Version20220130200007', '2022-01-30 21:00:11', 28);
 
 -- --------------------------------------------------------
 
@@ -119,6 +155,34 @@ INSERT INTO `sac_anaquel` (`id`, `numero`, `identificador`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `sac_carta`
+--
+
+CREATE TABLE `sac_carta` (
+  `id` int(11) NOT NULL,
+  `cliente_id` int(11) NOT NULL,
+  `documento` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `estado` smallint(6) NOT NULL,
+  `fecha_solicitud` date NOT NULL,
+  `fecha_respuesta` date DEFAULT NULL,
+  `observaciones` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `sac_carta`
+--
+
+INSERT INTO `sac_carta` (`id`, `cliente_id`, `documento`, `estado`, `fecha_solicitud`, `fecha_respuesta`, `observaciones`) VALUES
+(7, 1, 'yrruyur', 2, '2021-12-19', '2021-12-20', 'asdasdasdas'),
+(8, 2, 'mmm', 1, '2022-01-11', '2020-01-14', NULL),
+(9, 5, 'mysites-apps-61e8334f39b41.txt', 1, '2022-01-19', '2022-01-30', ''),
+(10, 4, 'amazon.pdf', 2, '2022-01-19', '2022-01-30', 'no me da la gana de aprobarte nada...'),
+(12, 6, 'referencias-tesis-61f6bc6907d63.txt', 1, '2022-01-30', '2022-01-30', 'Inventario de hacienda queda fuera de tu alcance pepe grillo :)'),
+(13, 7, 'referencias-tesis-61f7080fbc6f4.txt', 1, '2022-01-30', '2022-01-30', NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `sac_categoria`
 --
 
@@ -126,20 +190,21 @@ CREATE TABLE `sac_categoria` (
   `id` int(11) NOT NULL,
   `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `identificador` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `investigacion_precio` double NOT NULL,
-  `reprografia_precio` double NOT NULL,
-  `certificacion_precio` double NOT NULL
+  `certificacion_precio` double NOT NULL,
+  `transcripcion_precio` double NOT NULL,
+  `reprografia_normal_precio` double NOT NULL,
+  `reprografia_grande_precio` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `sac_categoria`
 --
 
-INSERT INTO `sac_categoria` (`id`, `nombre`, `identificador`, `investigacion_precio`, `reprografia_precio`, `certificacion_precio`) VALUES
-(19, 'Personas naturales y jurídicas, con residencia permante en Cuba', 'personas-naturales-y-juridicas-con-residencia-permante-en-cuba', 40, 25, 40),
-(20, 'Personas naturales y jurídicas, con residencia en el exterior', 'personas-naturales-y-juridicas-con-residencia-en-el-exterior', 240, 120, 240),
-(21, 'Ciudadanos cubanos estudiantes de pregrado', 'ciudadanos-cubanos-estudiantes-de-pregrado', 2, 2, 2),
-(22, 'Jubilados sin anímos de lucro', 'jubilados-sin-animos-de-lucro', 5, 5, 5);
+INSERT INTO `sac_categoria` (`id`, `nombre`, `identificador`, `certificacion_precio`, `transcripcion_precio`, `reprografia_normal_precio`, `reprografia_grande_precio`) VALUES
+(19, 'Personas naturales y jurídicas, con residencia permante en Cuba', 'personas-naturales-y-juridicas-con-residencia-permante-en-cuba', 40, 40, 25, 50),
+(20, 'Personas naturales y jurídicas, con residencia en el exterior', 'personas-naturales-y-juridicas-con-residencia-en-el-exterior', 240, 240, 120, 120),
+(21, 'Ciudadanos cubanos estudiantes de pregrado', 'ciudadanos-cubanos-estudiantes-de-pregrado', 2, 2, 2, 2),
+(22, 'Jubilados sin anímos de lucro', 'jubilados-sin-animos-de-lucro', 5, 5, 5, 5);
 
 -- --------------------------------------------------------
 
@@ -168,7 +233,8 @@ INSERT INTO `sac_cliente` (`id`, `pais_id`, `categoria_id`, `nombre`, `identific
 (2, 1, 22, 'Yadelys Díaz Hernández', '88021112345', 'En algun lugar del campo, x supuesto q lajas!!!', '58522021', 'y@h.com', 'Fiscalizadora'),
 (4, 2, 20, 'John Smith', 'P58214863', '1020 Leisure Avenue, Tampa FL', '8132551344', 'js@yahoo.com', 'Investigador'),
 (5, 10, 19, 'Yadiel Tito Torres', 'ESP5856314', 'Madrid', '2254563978', 'tt@hotmail.com', 'Turista'),
-(6, 8, 21, 'Pepe Portilla', '8888888888', 'A la sasa', '55555555', 's@g.com', 'Sasa');
+(6, 8, 21, 'Pepe Portilla', '8888888888', 'A la sasa', '55555555', 's@g.com', 'Sasa'),
+(7, 1, 22, 'Jose de la Luz y Caballero', '00000000000', 'asdasdas', '000000000', 'asdasdsad', 'asdasdasdas');
 
 -- --------------------------------------------------------
 
@@ -392,6 +458,14 @@ INSERT INTO `sac_pais` (`id`, `nombre`, `identificador`) VALUES
 --
 
 --
+-- Indices de la tabla `carta_fondo`
+--
+ALTER TABLE `carta_fondo`
+  ADD PRIMARY KEY (`carta_id`,`fondo_id`),
+  ADD KEY `IDX_5120F62946A559E1` (`carta_id`),
+  ADD KEY `IDX_5120F629AA510E89` (`fondo_id`);
+
+--
 -- Indices de la tabla `doctrine_migration_versions`
 --
 ALTER TABLE `doctrine_migration_versions`
@@ -411,6 +485,13 @@ ALTER TABLE `fondo_deposito`
 ALTER TABLE `sac_anaquel`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `UNIQ_BDD01E0EF55AE19E` (`numero`);
+
+--
+-- Indices de la tabla `sac_carta`
+--
+ALTER TABLE `sac_carta`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `IDX_F7B6B38DE734E51` (`cliente_id`);
 
 --
 -- Indices de la tabla `sac_categoria`
@@ -497,6 +578,12 @@ ALTER TABLE `sac_anaquel`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
+-- AUTO_INCREMENT de la tabla `sac_carta`
+--
+ALTER TABLE `sac_carta`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
 -- AUTO_INCREMENT de la tabla `sac_categoria`
 --
 ALTER TABLE `sac_categoria`
@@ -506,7 +593,7 @@ ALTER TABLE `sac_categoria`
 -- AUTO_INCREMENT de la tabla `sac_cliente`
 --
 ALTER TABLE `sac_cliente`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `sac_deposito`
@@ -555,11 +642,24 @@ ALTER TABLE `sac_pais`
 --
 
 --
+-- Filtros para la tabla `carta_fondo`
+--
+ALTER TABLE `carta_fondo`
+  ADD CONSTRAINT `FK_5120F62946A559E1` FOREIGN KEY (`carta_id`) REFERENCES `sac_carta` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `FK_5120F629AA510E89` FOREIGN KEY (`fondo_id`) REFERENCES `sac_fondo` (`id`) ON DELETE CASCADE;
+
+--
 -- Filtros para la tabla `fondo_deposito`
 --
 ALTER TABLE `fondo_deposito`
   ADD CONSTRAINT `FK_15F3267D4140C3FC` FOREIGN KEY (`deposito_id`) REFERENCES `sac_deposito` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `FK_15F3267DAA510E89` FOREIGN KEY (`fondo_id`) REFERENCES `sac_fondo` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `sac_carta`
+--
+ALTER TABLE `sac_carta`
+  ADD CONSTRAINT `FK_F7B6B38DE734E51` FOREIGN KEY (`cliente_id`) REFERENCES `sac_cliente` (`id`);
 
 --
 -- Filtros para la tabla `sac_cliente`

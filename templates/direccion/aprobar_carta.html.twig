@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block modalContent %}
-    {{ form_start(form, {'action': path('editar_carta', {'id': carta.id})}) }}
+    {{ form_start(form, {'action': path('aprobar_carta_pendiente', {'id': carta.id})}) }}
     <div class="modal-header">
         <h5 class="modal-title text-muted pl-2"><span class="fa fa-check-circle pr-2"></span>
             Autorizos</h5>
@@ -15,15 +15,11 @@
     </div>
     <div class="modal-body text-xs">
         <div class="form-group">
-            {{ form_widget(form.cliente) }}
-        </div>
-        {#
-        <div class="form-group">
             {{ form_widget(form.fondos) }}
         </div>
-        #}
-        <div class="form-group">
-            {{ form_widget(form.documento_file) }}
+        <div class="form-group sac-form-group">
+            <span class="far fa-comment-alt-lines form-control-feedback"></span>
+            {{ form_widget(form.observaciones) }}
         </div>
     </div>
     <div class="modal-footer">
@@ -33,6 +29,7 @@
 
     <script>
         $(document).ready(function () {
+            autosize($('textarea'));
             $.fn.modal.Constructor.prototype._enforceFocus = function () {};
 
             const select_cliente = $('#carta_cliente').select2({
