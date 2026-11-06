@@ -1,0 +1,42 @@
+<script>
+    $(document).ready(function () {
+        autosize($('textarea'));
+
+        $('textarea').on('input change', function(e) {
+            $(e.target).valid();
+        });
+
+        $('.btn-save').click(function (e) {
+            if (!$('#sac-form').valid()) {
+                e.preventDefault()
+            }
+        });
+
+        $('#sac-form').validate({
+            rules: {
+                'carta[observaciones]': {
+                    required: true,
+                }
+            },
+            messages: {
+                'carta[observaciones]': {
+                    required: 'Este campo es obligatorio.'
+                }
+            },
+            errorElement: 'em',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                error.insertAfter(element);
+            },
+            success: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+            highlight: function (element) {
+                $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+            },
+            unhighlight: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+        });
+    });
+</script>

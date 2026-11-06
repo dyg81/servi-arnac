@@ -1,0 +1,63 @@
+<script>
+    $(document).ready(function () {
+        autosize($('textarea'));
+
+        $('#carta_fondos').bootstrapDualListbox({
+            moveOnSelect: true,
+            filterPlaceHolder: 'Buscar',
+            preserveSelectionOnMove: 'moved',
+            btnClass: 'btn-outline-secondary',
+            nonSelectedListLabel: '',
+            selectedListLabel: '',
+            nonSelectedFilter: '',
+            filterTextClear: '',
+            infoText: '',
+            infoTextFiltered: '',
+            infoTextEmpty: '',
+            moveAllLabel: 'Mover todo',
+            removeAllLabel: 'Eliminar todo',
+            btnMoveText: '<i class="fas fa-angle-right"></i>',
+            btnRemoveText: '<i class="fas fa-angle-left"></i>',
+            btnMoveAllText: '<i class="fas fa-angle-double-right"></i>',
+            btnRemoveAllText: '<i class="fas fa-angle-double-left"></i>',
+        });
+
+        $('select').on('input change', function(e) {
+            $(e.target).valid();
+        });
+
+        $('.btn-save').click(function (e) {
+            if (!$('#sac-form').valid()) {
+                e.preventDefault()
+            }
+        });
+
+        $('#sac-form').validate({
+            ignore: [],
+            rules: {
+                'carta[fondos][]': {
+                    required: true,
+                }
+            },
+            messages: {
+                'carta[fondos][]': {
+                    required: 'Este campo es obligatorio.'
+                }
+            },
+            errorElement: 'em',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                error.insertAfter(element);
+            },
+            success: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+            highlight: function (element) {
+                $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+            },
+            unhighlight: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+        });
+    });
+</script>

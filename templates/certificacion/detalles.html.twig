@@ -1,0 +1,58 @@
+
+{% extends '@Dyg81Modal/baseModal.html.twig' %}
+
+{% block modalSize %}
+    modal-lg
+{% endblock %}
+
+{% block modalBackdrop %}
+    data-backdrop="static"
+{% endblock %}
+
+{% block modalContent %}
+    <div class="modal-header">
+        <h5 class="modal-title m-0 font-weight-bold text-secondary">
+            <i class="fas fa-fw fa-share-square"></i>
+            Detalles del Servicio
+        </h5>
+    </div>
+    <div class="modal-body">
+        <div class="callout callout-info mt-3">
+            <h6 class="font-weight-bold">
+                Cliente:
+                <a class="font-weight-lighter text-decoration-none text-white-50">{{ certificacion.cliente }}</a>
+            </h6>
+            <div class="pt-3">
+                <table class="table table-hover" id="investigaciones">
+                    <thead>
+                    <tr>
+                        <th style="">Documento</th>
+                        <th style="">Fondo</th>
+                        <th style="">Estado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="text-sm">{{ certificacion.documentoNombre }}</td>
+                        <td class="text-sm">{{ certificacion.documentoFondo }}</td>
+                        <td><p class="badge badge-info text-white">{{ certificacion.estadocertificacion }}</p></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer row">
+        {% if certificacion.estado == constant('App\\Entity\\Certificacion::ESTADO_SOLICITADO') %}
+            <a href="{{ path('servicio_procesar_certificacion', {'id': certificacion.id}) }}" class="btn btn-sm btn-danger">
+                Procesar
+            </a>
+        {% elseif certificacion.estado == constant('App\\Entity\\Certificacion::ESTADO_EN_PROCESO') %}
+            <a href="{{ path('servicio_terminar_certificacion', {'id': certificacion.id}) }}" class="btn btn-sm btn-danger">
+                Terminar
+            </a>
+        {% endif %}
+        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cerrar</button>
+    </div>
+{% endblock %}
+

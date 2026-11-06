@@ -25,3 +25,22 @@ symfony.exe
 ###> upload directory ###
 /public/uploads/cartas/
 ###> upload directory ###
+
+###> archivos locales de desarrollo, no publicar en GitHub ###
+/docs/
+###< archivos locales de desarrollo, no publicar en GitHub ###
+
+###> dependencias y artefactos locales ###
+/node_modules/
+/coverage/
+/logs/
+/.DS_Store
+**/.DS_Store
+Thumbs.db
+*.swp
+*~
+###< dependencias y artefactos locales ###
+
+###> volcados de bases de datos locales (pueden contener datos personales) ###
+/db/*.sql
+###< volcados de bases de datos locales (pueden contener datos personales) ###

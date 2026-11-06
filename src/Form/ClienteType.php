@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Categoria;
+use App\Entity\CentroLaboral;
 use App\Entity\Cliente;
 use App\Entity\Pais;
 use Doctrine\ORM\EntityRepository;
@@ -16,44 +16,38 @@ class ClienteType extends AbstractType
     {
         $builder
             ->add('nombre', null, [
-                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Nombre(s) y Apellido(s)']
+                'attr' => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Nombre(s) y Apellido(s)']
             ])
             ->add('identificacion', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificación']
+                'attr' => ['class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Identificación']
             ])
             ->add('direccion', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Dirección']
+                'attr' => ['class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Dirección']
             ])
             ->add('telefono', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Teléfono']
+                'attr' => ['class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Teléfono']
             ])
             ->add('correo', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Correo']
+                'attr' => ['class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Correo']
             ])
-            ->add('ocupacion', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Ocupación']
+            ->add('centro_laboral', null, [
+                'class' => CentroLaboral::class,
+                'choice_label' => 'nombre',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('cl')->orderBy('cl.nombre', 'ASC');
+                },
+                'attr' => ['class' => 'form-control'],
+                'required' => false
             ])
             ->add('pais', null, [
-                'class'         => Pais::class,
-                'choice_label'  => 'nombre',
+                'class' => Pais::class,
+                'choice_label' => 'nombre',
                 'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('p')
-                        ->orderBy('p.nombre', 'ASC');
+                    return $er->createQueryBuilder('p')->orderBy('p.nombre', 'ASC');
                 },
-                'attr'          => ['class' => 'form-control'],
-                'required'      => false
-            ])
-            ->add('categoria', null, [
-                'class'         => Categoria::class,
-                'choice_label'  => 'nombre',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('c')
-                        ->orderBy('c.nombre', 'ASC');
-                },
-                'attr'          => ['class' => 'form-control'],
-                'required'      => false
-            ])
-        ;
+                'attr' => ['class' => 'form-control'],
+                'required' => false
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -1,0 +1,110 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    SAC | Admin
+{% endblock %}
+
+{% block menu %}
+    <div class="sidebar text-sm">
+        <nav class="mt-4">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon far fa-users"></i>
+                        <p>Usuarios</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('admin_listar_trazas') }}" class="nav-link">
+                        <i class="nav-icon far fa-file-signature"></i>
+                        <p>Seguridad</p>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-primary card-outline card-tabs mt-2">
+                        <div class="card-header p-0 pt-1 border-bottom-0">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active font-italic font-weight-bolder">Gestión de usuarios</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="table_wrapper" class="card-body">
+                            <div class="float-right pr-2">
+                                <a href="{{ path('admin_agregar_usuario') }}" class="btn btn-primary btn-sm modal-open">
+                                    <span class="icon"><i class="fas fa-plus"></i></span>
+                                    <span class=""> Agregar</span>
+                                </a>
+                            </div>
+                            <table id="sac" class="table table-hover table-striped display nowrap" style="width: 100%;">
+                                <thead>
+                                <tr>
+                                    <th>Nombres y Apellidos</th>
+                                    <th>Usuario</th>
+                                    <th>Roles</th>
+                                    <th style="width: 1%"></th>
+                                    <th style="width: 1%"></th>
+                                    <th style="width: 1%"></th>
+                                </tr>
+                                </thead>
+                                <tbody class="text-muted">
+                                {% for usuario in usuarios %}
+                                    <tr>
+                                        <td><span class="font-italic">{{ usuario.nombre }}</span></td>
+                                        <td>{{ usuario.usuario }}</td>
+                                        <td>
+                                            {% if usuario.roles[0] == 'ROLE_ADMIN' %}
+                                                Administrador del Sistema
+                                            {% elseif usuario.roles[0] == 'ROLE_SALA' %}
+                                                Jefe de Sala del Archivo
+                                            {% elseif usuario.roles[0] == 'ROLE_ESTACIONARIO' %}
+                                                Estacionario del Archivo
+                                            {% elseif usuario.roles[0] == 'ROLE_REGISTRO' %}
+                                                Técnico Archivista
+                                            {% elseif  usuario.roles[0] == 'ROLE_DIRECTIVO' %}
+                                                Directivo del Archivo
+                                            {% elseif  usuario.roles[0] == 'ROLE_TRANSCRIPCION' %}
+                                                Especialista en Paleología
+                                            {% elseif  usuario.roles[0] == 'ROLE_REPROGRAFIA' %}
+                                                Especialista en Reprografía
+                                            {% elseif  usuario.roles[0] == 'ROLE_CERTIFICACION' %}
+                                                Especialista en Certificación
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('admin_editar_perfil_usuario', {'id': usuario.id}) }}" class="text-muted modal-open" data-toggle="tooltip" data-placement="top" data-container=".content-wrapper" title="Editar perfil">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('admin_editar_contrasena_usuario', {'id': usuario.id}) }}" class="text-muted modal-open" data-toggle="tooltip" data-placement="top" data-container=".content-wrapper" title="Editar contraseña">
+                                                <i class="fas fa-user-lock"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% if not(app.user.usuario == usuario.usuario) %}
+                                                <a href="{{ path('admin_eliminar_usuario', {'id': usuario.id}) }}" class="text-muted mr-2 modal-open" data-toggle="tooltip" data-placement="top" data-container=".content-wrapper" title="Eliminar">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

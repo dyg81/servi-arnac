@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CartaRepository;
+use DateInterval;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=CartaRepository::class)
- * @ORM\Table(name="sac_carta")
+ * @ORM\Table(name="sac_sala_cartas")
  */
 class Carta
 {
@@ -38,33 +40,47 @@ class Carta
     private $estado;
 
     /**
-     * @ORM\Column(type="date")
-     */
-    private $fecha_solicitud;
-
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
-    private $fecha_respuesta;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Fondo::class, inversedBy="cartas")
-     */
-    private $fondos;
-
-    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $observaciones;
 
     /**
-     * Init the state of every new carta
+     * @ORM\Column(type="datetime")
+     */
+    private $fecha_solicitud;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $fecha_respuesta;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $fecha_vencimiento;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Fondo::class, inversedBy="cartas")
+     * @ORM\JoinTable(name="sac_sala_cartas_fondos")
+     */
+    private $fondos;
+
+    const CARTA_SOLICITADA = 0;
+    const CARTA_APROBADA = 1;
+    const CARTA_DENEGADA = 2;
+    const CARTA_VENCIDA = 3;
+
+
+    /**
+     * Init the object properties
      */
     public function __construct()
     {
-        $this->estado = 0;
-        $this->fecha_solicitud = new \DateTime('now');
+        $this->estado = self::CARTA_SOLICITADA;
         $this->fondos = new ArrayCollection();
+        $this->fecha_solicitud = new DateTime();
+        $this->fecha_respuesta = DATE_ADD(new DateTime(), DateInterval::createFromDateString('3 day'));
+        $this->fecha_vencimiento = DATE_ADD(new DateTime(), DateInterval::createFromDateString('1 year'));
     }
 
     /**
@@ -133,6 +149,25 @@ class Carta
     }
 
     /**
+     * @return string|null
+     */
+    public function getObservaciones(): ?string
+    {
+        return $this->observaciones;
+    }
+
+    /**
+     * @param string $observaciones
+     * @return $this
+     */
+    public function setObservaciones(string $observaciones): self
+    {
+        $this->observaciones = $observaciones;
+
+        return $this;
+    }
+
+    /**
      * @return DateTimeInterface|null
      */
     public function getFechaSolicitud(): ?DateTimeInterface
@@ -160,10 +195,10 @@ class Carta
     }
 
     /**
-     * @param DateTimeInterface|null $fecha_respuesta
+     * @param DateTimeInterface $fecha_respuesta
      * @return $this
      */
-    public function setFechaRespuesta(?DateTimeInterface $fecha_respuesta): self
+    public function setFechaRespuesta(DateTimeInterface $fecha_respuesta): self
     {
         $this->fecha_respuesta = $fecha_respuesta;
 
@@ -171,7 +206,26 @@ class Carta
     }
 
     /**
-     * @return Collection|Fondo[]
+     * @return DateTimeInterface|null
+     */
+    public function getFechaVencimiento(): ?DateTimeInterface
+    {
+        return $this->fecha_vencimiento;
+    }
+
+    /**
+     * @param DateTimeInterface $fecha_vencimiento
+     * @return $this
+     */
+    public function setFechaVencimiento(DateTimeInterface $fecha_vencimiento): self
+    {
+        $this->fecha_vencimiento = $fecha_vencimiento;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Fondo>
      */
     public function getFondos(): Collection
     {
@@ -198,25 +252,6 @@ class Carta
     public function removeFondo(Fondo $fondo): self
     {
         $this->fondos->removeElement($fondo);
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getObservaciones(): ?string
-    {
-        return $this->observaciones;
-    }
-
-    /**
-     * @param string|null $observaciones
-     * @return $this
-     */
-    public function setObservaciones(?string $observaciones): self
-    {
-        $this->observaciones = $observaciones;
 
         return $this;
     }

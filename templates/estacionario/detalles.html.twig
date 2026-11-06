@@ -1,0 +1,85 @@
+{% extends '@Dyg81Modal/baseModal.html.twig' %}
+
+{% block modalSize %}
+    modal-lg
+{% endblock %}
+
+{% block modalBackdrop %}
+    data-backdrop="static"
+{% endblock %}
+
+{% block modalContent %}
+    <div class="modal-header">
+        <h5 class="modal-title m-0 font-weight-bold text-secondary">
+            <i class="fas fa-fw fa-share-square"></i>
+            Detalles del Servicio
+        </h5>
+    </div>
+    <div class="modal-body">
+        <div class="callout callout-info mt-3">
+            <h6 class="font-weight-bold">
+                Cliente:
+                <a class="font-weight-lighter text-decoration-none text-white-50">{{ investigacion.cliente }}</a>
+            </h6>
+            <a class="font-weight-bold text-decoration-none text-white">Fondo a investigar: </a> <a
+                    class="font-weight-lighter text-decoration-none text-white-50">{{ investigacion.fondo }}</a>
+            <div class="pt-3">
+                <table class="table table-hover" id="investigaciones">
+                    <thead>
+                    <tr>
+                        <th style="">Documento(s)</th>
+                        <th style="">Ubicación</th>
+                        <th style="">Estado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for expediente in investigacion.expedientes %}
+                        <tr>
+                            <td class="text-sm">EXP: {{ expediente.numero }}</td>
+                            <td class="text-sm">{{ expediente.deposito }} / {{ expediente.estante }} / {{ expediente.anaquel }} / {{ expediente.legajo }}</td>
+                            <td>
+                                {% if expediente.estado == constant('App\\Entity\\Expediente::EXP_ESTADO_ARCHIVADO_EN_DEPOSITO') or expediente.estado == constant('App\\Entity\\Expediente::EXP_ESTADO_EN_SALA_RECEPCION') %}
+                                    <p class="badge badge-info text-white">{{ expediente.getEstadoExpediente }}</p>
+                                {% else %}
+                                    <p class="badge badge-danger text-white">No Disponible</p>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% for libro in investigacion.libros %}
+                        <tr>
+                            <td class="text-sm">LIB: {{ libro }}</td>
+                            <td class="text-sm">{{ libro.deposito }} / {{ libro.estante }} / {{ libro.anaquel }}</td>
+                            <td>
+                                {% if libro.estado == constant('App\\Entity\\Libro::LIB_ESTADO_ARCHIVADO_EN_DEPOSITO') or libro.estado == constant('App\\Entity\\Libro::LIB_ESTADO_EN_SALA_RECEPCION') %}
+                                    <p class="badge badge-info text-white">{{ libro.getEstadoLibro }}</p>
+                                {% else %}
+                                    <p class="badge badge-danger text-white">No Disponible</p>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="col-3">
+            <a href="{{ path('estacionario_procesar_investigacion', {'id': investigacion.id}) }}" class="btn btn-sm btn-danger" style="margin-left: -10.5rem !important;">
+                Procesar
+            </a>
+        </div>
+        <div class="col-3">
+            <a href="{{ path('estacionario_cancelar_investigacion', {'id': investigacion.id}) }}" class="btn btn-sm btn-primary" style="margin-left: -17.5rem !important;">
+                Cancelar
+            </a>
+        </div>
+        <div class="col-3">
+            <button type="button" class="btn btn-sm btn-default float-right" data-dismiss="modal">
+                Cerrar
+            </button>
+        </div>
+    </div>
+{% endblock %}
+

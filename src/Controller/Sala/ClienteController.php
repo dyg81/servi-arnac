@@ -3,11 +3,11 @@
 namespace App\Controller\Sala;
 
 use App\Entity\Cliente;
+use App\Entity\Traza;
 use App\Form\ClienteType;
-use App\Repository\ClienteRepository;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,136 +20,114 @@ use Symfony\Component\Routing\Annotation\Route;
 class ClienteController extends AbstractController
 {
     /**
-     * @Route("/listar-clientes", name="listar_clientes", methods={"GET"})
-     * @param ClienteRepository $clienteRepository
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @Route("/listar-clientes", name="sala_listar_clientes", methods={"GET"})
      * @return Response
      */
-    public function listar(ClienteRepository $clienteRepository): Response
+    public function listarClientes(): Response
     {
-        return $this->render('sala/clientes/listar.html.twig', [
-            'clientes' => $clienteRepository->findAll(),
+        return $this->render('sala/cliente/listar.html.twig', [
+            'clientes' => $this->entityManager->getRepository(Cliente::class)->findBy(array(), array('id' => 'DESC')),
         ]);
     }
 
     /**
-     * @Route("/agregar-clientes", name="agregar_cliente", methods={"GET", "POST"})
+     * @Route("/agregar-cliente", name="sala_agregar_cliente", methods={"GET", "POST"})
      * @param Request $request
-     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function agregar(Request $request, EntityManagerInterface $entityManager): Response
+    public function agregarCliente(Request $request): Response
     {
-        $cliente = new Cliente();
-        $form = $this->createForm(ClienteType::class, $cliente);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($cliente);
-
-            try {
-                $entityManager->flush();
-                $this->addFlash('success', 'El cliente se ha agregado correctamente.');
-            } catch (Exception $e) {
-                if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Cliente no agregado, ya existe en el sistema.');
-                } else
-                {
-                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
-                }
-            }
-
-            return new ModalRedirectResponse($this->generateUrl('listar_clientes'));
-        }
-
-        return $this->render('sala/clientes/agregar.html.twig', [
-            'cliente' => $cliente,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/editar-cliente/{id}", name="editar_cliente", methods={"GET", "POST"})
-     * @param Request $request
-     * @param Cliente $cliente
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     */
-    public function editar(Request $request, Cliente $cliente, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(ClienteType::class, $cliente);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $entityManager->flush();
-                $this->addFlash('success', 'El cliente se ha sido editado correctamente.');
-            } catch (Exception $e) {
-                if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Cliente no editado, ya existe en el sistema.');
-                } else
-                {
-                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
-                }
-            }
-
-            return new ModalRedirectResponse($this->generateUrl('listar_clientes'));
-        }
-
-        return $this->render('sala/clientes/editar.html.twig', [
-            'cliente' => $cliente,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/eliminar-clientes/{id}", name="eliminar_cliente", methods={"GET", "DELETE"})
-     * @param Request $request
-     * @param Cliente $cliente
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     */
-    public function eliminar(Request $request, Cliente $cliente, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createDeleteForm($cliente);
-
-        if ($request->getMethod() == "DELETE") {
+        if ($request->isXmlHttpRequest()) {
+            $cliente = new Cliente();
+            $form = $this->createForm(ClienteType::class, $cliente);
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager->remove($cliente);
+                $traza = new Traza();
+                $traza->setTipo('warning');
+                $traza->setUsuario($this->getUser()->getNombre());
+                $traza->setContenido('Ha creado el cliente ' . $cliente->getNombre() . ' con número de identificación ' . $cliente->getIdentificacion());
+
+                $this->entityManager->persist($traza);
+                $this->entityManager->persist($cliente);
 
                 try {
-                    $entityManager->flush();
-                    $this->addFlash('success', 'El cliente se ha eliminado correctamente.');
+                    $this->entityManager->flush();
+                    $this->addFlash('success', 'Cliente agregado correctamente.');
                 } catch (Exception $e) {
-                    if ($e->getErrorCode() == 1451)  {
-                        $this->addFlash('error', 'Cliente no eliminado, conserva facturas asociadas.');
-                    } else
-                    {
-                        $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    if ($e->getErrorCode() == 1062) {
+                        $this->addFlash('error', 'Cliente no agregado, ya existe en el sistema.');
+                    } else {
+                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
                     }
                 }
 
-                return new ModalRedirectResponse($this->generateUrl('listar_clientes'));
+                return new ModalRedirectResponse($this->generateUrl('sala_listar_clientes'));
             }
-        }
 
-        return $this->render('sala/clientes/eliminar.html.twig', array(
-            'cliente' => $cliente,
-            'form' => $form->createView()
-        ));
+            return $this->render('sala/cliente/agregar.html.twig', [
+                'cliente' => $cliente,
+                'form' => $form->createView(),
+            ]);
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
     }
 
     /**
+     * @Route("/editar-cliente/{id}", name="sala_editar_cliente", methods={"GET", "POST"})
+     * @param Request $request
      * @param Cliente $cliente
-     * @return FormInterface
+     * @return Response
      */
-    private function createDeleteForm(Cliente $cliente): FormInterface
+    public function editarCliente(Request $request, Cliente $cliente): Response
     {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('eliminar_cliente', array('id' => $cliente->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-            ;
+        if ($request->isXmlHttpRequest()) {
+            $form = $this->createForm(ClienteType::class, $cliente);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $traza = new Traza();
+                $traza->setTipo('warning');
+                $traza->setUsuario($this->getUser()->getNombre());
+                $traza->setContenido('Ha editado el cliente ' . $cliente->getNombre() . ' con número de identificación ' . $cliente->getIdentificacion());
+
+                $this->entityManager->persist($traza);
+                $this->entityManager->persist($cliente);
+
+                try {
+                    $this->entityManager->flush();
+                    $this->addFlash('success', 'Cliente editado correctamente.');
+                } catch (Exception $e) {
+                    if ($e->getErrorCode() == 1062) {
+                        $this->addFlash('error', 'Cliente no editado, ya existe en el sistema.');
+                    } else {
+                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    }
+                }
+
+                return new ModalRedirectResponse($this->generateUrl('sala_listar_clientes'));
+            }
+
+            return $this->render('sala/cliente/editar.html.twig', [
+                'cliente' => $cliente,
+                'form' => $form->createView(),
+            ]);
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
     }
 }

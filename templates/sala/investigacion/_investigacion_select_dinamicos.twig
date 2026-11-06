@@ -1,0 +1,145 @@
+<script>
+    let clienteSelect = $('#investigacion_cliente');
+    let fondoSelect = $('#investigacion_fondo');
+    let legajoSelect = $('#investigacion_legajos');
+    let expedienteSelect = $('#investigacion_expedientes');
+    let libroSelect = $('#investigacion_libros');
+
+    let primera_vez = true;
+
+    function errorMessage() {
+        let inputText = 'Ha ocurrido un error desconocido mientras se cargaban los datos.';
+        let font = '0.875rem Nimrod MT';
+
+        let canvas = document.createElement('canvas');
+        let context = canvas.getContext('2d');
+
+        context.font = font;
+
+        let width = context.measureText(inputText).width;
+        let formattedWidth = Math.ceil(width) + 100;
+
+        return Toast.fire({
+            icon: 'error',
+            title: inputText,
+            width: formattedWidth,
+        });
+    }
+
+    $(document).ready(function () {
+            $.ajax({
+                url: '{{ path('obtener_clientes_investigacion') }}',
+                type: 'GET',
+                dataType: 'JSON',
+                success: function (clientes) {
+                    clienteSelect.html('');
+                    clienteSelect.append('<option hidden disabled selected value></option>');
+
+                    $.each(clientes, function (key, cliente) {
+                        clienteSelect.append('<option value="' + cliente.id + '">' + cliente.nombre + '</option>');
+                    });
+                },
+                error: function () {
+                    errorMessage()
+                }
+            });
+        }
+    )
+
+    clienteSelect.change(function () {
+        $.ajax({
+            url: '{{ path('obtener_fondos_investigacion') }}',
+            type: 'GET',
+            dataType: 'JSON',
+            data: {
+                clienteid: clienteSelect.val()
+            },
+            success: function (fondos) {
+                if (primera_vez) {
+                    fondoSelect.prop('disabled', false).html('');
+                    primera_vez = false;
+                } else {
+                    fondoSelect.prop('disabled', false).html('').valid();
+                }
+
+                legajoSelect.prop('disabled', true).html('');
+                expedienteSelect.prop('disabled', true).html('');
+                libroSelect.prop('disabled', true).html('');
+
+                fondoSelect.append('<option hidden disabled selected value></option>');
+
+                $.each(fondos, function (key, fondo) {
+                    fondoSelect.append('<option value="' + fondo.id + '">' + fondo.numero + '</option>');
+                });
+            },
+            error: function () {
+                errorMessage()
+            }
+        });
+    });
+
+    fondoSelect.change(function () {
+        $.ajax({
+            url: '{{ path('obtener_legajos_investigacion') }}',
+            type: 'GET',
+            dataType: 'JSON',
+            data: {
+                fondoid: fondoSelect.val()
+            },
+            success: function (legajos) {
+                legajoSelect.prop('disabled', false).html('');
+                expedienteSelect.prop('disabled', true).html('');
+
+                legajoSelect.append('<option hidden disabled selected value></option>');
+
+                $.each(legajos, function (key, legajo) {
+                    legajoSelect.append('<option value="' + legajo.id + '">' + legajo.numero + '</option>');
+                });
+            },
+            error: function () {
+                errorMessage()
+            }
+        });
+
+        $.ajax({
+            url: '{{ path('obtener_libros_investigacion') }}',
+            type: 'GET',
+            dataType: 'JSON',
+            data: {
+                fondoid: fondoSelect.val()
+            },
+            success: function (libros) {
+                libroSelect.prop('disabled', false).html('');
+
+                $.each(libros, function (key, libro) {
+                    libroSelect.append('<option value="' + libro.id + '">' + libro.numero + '</option>');
+                });
+            },
+            error: function () {
+                errorMessage()
+            }
+        });
+    });
+
+    legajoSelect.change(function () {
+        $.ajax({
+            url: '{{ path('obtener_expedientes_investigacion') }}',
+            type: 'GET',
+            dataType: 'JSON',
+            data: {
+                legajoid: legajoSelect.val(),
+                fondoid: fondoSelect.val()
+            },
+            success: function (expedientes) {
+                expedienteSelect.prop('disabled', false).html('');
+
+                $.each(expedientes, function (key, expediente) {
+                    expedienteSelect.append('<option value="' + expediente.id + '">' + expediente.numero + '</option>');
+                });
+            },
+            error: function () {
+                errorMessage()
+            }
+        });
+    });
+</script>

@@ -11,38 +11,30 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EstanteType extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('numero', null, [
-                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificador'],
-                //'required' => false,
-            ])
-            ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-                /** @var $estante */
-                $estante = $event->getData();
+                'attr' => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Número'],
+            ]);
 
-                if (null !== $estanteNumero = $estante->getNumero()) {
-
-                    if ( strlen($estanteNumero) == 1 ) {
-                        $estanteNumero = '0'.$estanteNumero;
-                    }
-
-                    $estante->setNumero($estanteNumero);
-                    $estante->setIdentificador('EST' . strtoupper(str_replace(' ', '', $estanteNumero)));
-                }
-            })
-        ;
+        $builder->addEventListener(FormEvents::SUBMIT, array($this, 'submitData'));
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    function submitData(FormEvent $event)
+    {
+        $estante = $event->getData();
+
+        if (null !== $estanteNumero = $estante->getNumero()) {
+            if (strlen($estanteNumero) == 1) {
+                $estanteNumero = '0' . $estanteNumero;
+            }
+
+            $estante->setNumero($estanteNumero);
+        }
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Estante::class,

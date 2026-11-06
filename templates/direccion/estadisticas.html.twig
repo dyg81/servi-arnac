@@ -1,0 +1,243 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    Dirección | Estadísticas
+{% endblock %}
+
+{% block menu %}
+    <div class="sidebar text-sm">
+        <nav class="mt-4">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon far fa-chart-bar"></i>
+                        <p>Estadísticas</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('direccion_reportes') }}" class="nav-link">
+                        <i class="nav-icon far fa-cogs"></i>
+                        <p>Reportes</p>
+                    </a>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon far fa-file-chart-line"></i>
+                        <p>
+                            Autorizos
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ path('direccion_listar_cartas_pendientes') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Pendientes</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('direccion_listar_cartas_respondidas') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Completados</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row px-3 pt-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title font-weight-bolder">Datos Generales</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-lg-3 col-md-6">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-clipboard"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Fondos</span>
+                                            <span class="info-box-number">{{ fondos_totales|length }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3 col-md-6">
+                                    <div class="info-box mb-3">
+                                        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-file-alt"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Expedientes</span>
+                                            <span class="info-box-number">{{ expedientes_totales|length }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3 col-md-6">
+                                    <div class="info-box mb-3">
+                                        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-book-alt"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Libros</span>
+                                            <span class="info-box-number">{{ libros_totales|length }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3 col-md-6">
+                                    <div class="info-box mb-3">
+                                        <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Clientes</span>
+                                            <span class="info-box-number">{{ clientes_totales|length }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row px-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title font-weight-bolder">Estadísticas del Día</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-lg-6 col-md-6">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-search"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Investigaciones</span>
+                                            <span class="info-box-text">Solicitadas</span>
+                                            <span class="info-box-number">{{ investigaciones_del_dia|length }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6 col-md-6">
+                                    <div class="info-box mb-3">
+                                        <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-arrow-alt-square-right"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Documentos en</span>
+                                            <span class="info-box-text">Vitrina</span>
+                                            <span class="info-box-number">{{ expedientes_en_vitrina|length + libros_en_vitrina|length }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4 col-md-6">
+                                    <div class="info-box mb-3">
+                                        <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-signature"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Transcripciones</span>
+                                            <span class="info-box-text">Solicitadas</span>
+                                            <span class="info-box-number">{{ transcripciones_del_dia|length }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4 col-md-6">
+                                    <div class="info-box mb-3">
+                                        <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-scanner-image"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Reprografías</span>
+                                            <span class="info-box-text">Solicitadas</span>
+                                            <span class="info-box-number">{{ reprografias_del_dia|length }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4 col-md-6">
+                                    <div class="info-box mb-3">
+                                        <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-file-certificate"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Certificaciones</span>
+                                            <span class="info-box-text">Solicitadas</span>
+                                            <span class="info-box-number">{{ certificaciones_del_dia|length }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row px-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title font-weight-bolder">Servicios</h5>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-lg-6">
+                                    <canvas id="donutChart" style="min-height: 200px; height: 200px; max-height: 200px; max-width: 100%;"></canvas>
+                                </div>
+                                <div class="col-12 col-lg-6 pt-2">
+                                    <h6 class="text-center">
+                                        <strong>Fondos más solicitados</strong>
+                                    </h6>
+                                    {% set i = 1 %}
+                                    {% for fondo in fondos_mas_usados %}
+                                        {% if i == 1 %}
+                                            {% set color = 'bg-success' %}
+                                        {% elseif i == 2 %}
+                                            {% set color = 'bg-primary' %}
+                                        {% elseif i == 3 %}
+                                            {% set color = 'bg-secondary' %}
+                                        {% else %}
+                                            {% set color = 'bg-warning' %}
+                                        {% endif %}
+                                        <div class="progress-group">
+                                            {{ fondo.nombre }}
+                                            <span class="float-right"><b>{{ fondo.contador }} </b>({{ (fondo.contador / investigaciones_totales|length * 100)|round }}%)</span>
+                                            <div class="progress progress-sm">
+                                                <div class="progress-bar {{ color }}" style="width: {{ fondo.contador / investigaciones_totales|length * 100 }}%"></div>
+                                            </div>
+                                        </div>
+                                        {% set i = i + 1 %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row px-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Comportamiento Mensual</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ include('direccion/_donut_chart.html.twig') }}
+    {{ include('direccion/_bar_chart.html.twig') }}
+{% endblock %}
+
+{% block notificationes %}
+    {{ include('direccion/_direccion_notifications.html.twig') }}
+{% endblock %}

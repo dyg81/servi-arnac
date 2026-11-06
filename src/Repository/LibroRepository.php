@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * @extends ServiceEntityRepository<Libro>
+ *
  * @method Libro|null find($id, $lockMode = null, $lockVersion = null)
  * @method Libro|null findOneBy(array $criteria, array $orderBy = null)
  * @method Libro[]    findAll()
@@ -19,32 +21,62 @@ class LibroRepository extends ServiceEntityRepository
         parent::__construct($registry, Libro::class);
     }
 
-    // /**
-    //  * @return Libro[] Returns an array of Libro objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param $fondoid
+     * @return int|mixed|string
+     */
+    public function obtenerLibrosPorFondo($fondoid)
     {
         return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('l.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('l.fondo = :fondoid')
+            ->setParameter('fondoid', $fondoid)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Libro
+    /**
+     * @param $fondoid
+     * @param $depositoid
+     * @return int|mixed|string
+     */
+    public function obtenerLibrosPorFondoYDeposito($fondoid, $depositoid)
     {
         return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('l.deposito = :depositoid')
+            ->andWhere('l.fondo = :fondoid')
+            ->setParameter('depositoid', $depositoid)
+            ->setParameter('fondoid', $fondoid)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
+
+    /**
+     * @return Libro[] Returns an array of Libro objects
+     */
+    public function obtenerLibrosPorArchivar(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->where('l.estado = :estado_sala_recepcion')
+            ->orWhere('l.estado = :estado_transcripcion_terminada')
+            ->orWhere('l.estado = :estado_reprografia_terminada')
+            ->orWhere('l.estado = :estado_certificacion_terminada')
+            ->setParameter('estado_sala_recepcion', Libro::LIB_ESTADO_EN_SALA_RECEPCION)
+            ->setParameter('estado_transcripcion_terminada', Libro::LIB_ESTADO_TRANS_TERMINADA)
+            ->setParameter('estado_reprografia_terminada', Libro::LIB_ESTADO_DIG_TERMINADA)
+            ->setParameter('estado_certificacion_terminada', Libro::LIB_ESTADO_CERT_TERMINADA)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Libro[] Returns an array of Libro objects
+     */
+    public function obtenerLibrosEnVitrina(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->where('l.estado = :vitrina')
+            ->setParameter('vitrina', Libro::LIB_ESTADO_EN_VITRINA)
+            ->getQuery()
+            ->getResult();
+    }
 }

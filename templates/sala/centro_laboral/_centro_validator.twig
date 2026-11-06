@@ -1,0 +1,46 @@
+<script>
+    $(document).ready(function () {
+        $('input').on('input change', function(e) {
+            $(e.target).valid();
+        });
+
+        $('.btn-save').click(function (e) {
+            if (!$('#sac-form').valid()) {
+                e.preventDefault()
+            }
+        });
+
+        $.validator.addMethod('containAlphaNumericSpacesAndDots', function (value) {
+            return /^[0-9a-zA-ZáÁéÉíÍóÓúÚñÑüÜ.\s]+$/.test(value);
+        });
+
+        $('#sac-form').validate({
+            rules: {
+                'centro_laboral[nombre]': {
+                    required: true,
+                    containAlphaNumericSpacesAndDots: true,
+                }
+            },
+            messages: {
+                'centro_laboral[nombre]': {
+                    required: 'Este campo es obligatorio.',
+                    containAlphaNumericSpacesAndDots: 'Solo puede contener caracteres alfanuméricos, espacios y puntos.',
+                }
+            },
+            errorElement: 'em',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                error.insertAfter(element);
+            },
+            success: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+            highlight: function (element) {
+                $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+            },
+            unhighlight: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+        });
+    });
+</script>

@@ -3,11 +3,11 @@
 namespace App\Controller\Registro;
 
 use App\Entity\Legajo;
+use App\Entity\Traza;
 use App\Form\LegajoType;
-use App\Repository\LegajoRepository;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,124 +20,164 @@ use Symfony\Component\Routing\Annotation\Route;
 class LegajoController extends AbstractController
 {
     /**
-     * @Route("/listar-legajos", name="listar_legajos", methods={"GET"})
-     * @param LegajoRepository $legajoRepository
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @Route("/listar-legajos", name="registro_listar_legajos", methods={"GET"})
      * @return Response
      */
-    public function listar(LegajoRepository $legajoRepository): Response
+    public function listarLegajos(): Response
     {
-        return $this->render('registro/legajos/listar.html.twig', [
-            'legajos' => $legajoRepository->findAllOrderByAsc(),
+        return $this->render('registro/legajo/listar.html.twig', [
+            'legajos' => $this->entityManager->getRepository(Legajo::class)->findBy(array(), array('numero' => 'ASC')),
         ]);
     }
 
     /**
-     * @Route("/agregar-legajos", name="agregar_legajo", methods={"GET","POST"})
+     * @Route("/agregar-legajo", name="registro_agregar_legajo", methods={"GET", "POST"})
      * @param Request $request
-     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function agregar(Request $request, EntityManagerInterface $entityManager): Response
+    public function agregarLegajos(Request $request): Response
     {
-        $legajo = new Legajo();
-        $form = $this->createForm(LegajoType::class, $legajo);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($legajo);
-
-            try {
-                $entityManager->flush();
-                $this->addFlash('success', 'El legajo se ha agregado correctamente.');
-            } catch (Exception $e) {
-                if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Legajo no agregado, ya existe en el sistema.');
-                } else
-                {
-                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
-                }
-            }
-
-            return new ModalRedirectResponse($this->generateUrl('listar_legajos'));
-        }
-
-        return $this->render('registro/legajos/agregar.html.twig', [
-            'legajos' => $legajo,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/editar-legajos/{id}", name="editar_legajo", methods={"GET","POST"})
-     * @param Request $request
-     * @param Legajo $legajo
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     */
-    public function editar(Request $request, Legajo $legajo, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(LegajoType::class, $legajo);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $entityManager->flush();
-                $this->addFlash('success', 'El legajo se ha sido editado correctamente.');
-            } catch (Exception $e) {
-                if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Legajo no editado, ya existe en el sistema.');
-                } else
-                {
-                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
-                }
-            }
-
-            return new ModalRedirectResponse($this->generateUrl('listar_legajos'));
-        }
-
-        return $this->render('registro/legajos/editar.html.twig', [
-            'legajo' => $legajo,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/eliminar-legajos/{id}", name="eliminar_legajo", methods={"GET", "DELETE"})
-     * @param Request $request
-     * @param Legajo $legajo
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     */
-    public function eliminar(Request $request, Legajo $legajo, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createDeleteForm($legajo);
-
-        if ($request->getMethod() == "DELETE") {
+        if ($request->isXmlHttpRequest()) {
+            $legajo = new Legajo();
+            $form = $this->createForm(LegajoType::class, $legajo);
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager->remove($legajo);
+                $traza = new Traza();
+                $traza->setTipo('warning');
+                $traza->setUsuario($this->getUser()->getNombre());
+                $traza->setContenido('Ha creado un nuevo legajo con identificador LEG' . $legajo->getNumero());
+
+                $this->entityManager->persist($traza);
+                $this->entityManager->persist($legajo);
 
                 try {
-                    $entityManager->flush();
-                    $this->addFlash('success', 'El legajo se ha eliminado correctamente.');
+                    $this->entityManager->flush();
+                    $this->addFlash('success', 'Legajo agregado correctamente.');
                 } catch (Exception $e) {
-                    if ($e->getErrorCode() == 1451)  {
-                        $this->addFlash('error', 'Legajo no eliminado, conserva expedientes y/o libros asociados.');
-                    } else
-                    {
-                        $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    if ($e->getErrorCode() == 1062) {
+                        $this->addFlash('error', 'Legajo no agregado, ya existe en el sistema.');
+                    } else {
+                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
                     }
                 }
 
-                return new ModalRedirectResponse($this->generateUrl('listar_legajos'));
+                return new ModalRedirectResponse($this->generateUrl('registro_listar_legajos'));
             }
-        }
 
-        return $this->render('registro/legajos/eliminar.html.twig', array(
-            'legajo' => $legajo,
-            'form' => $form->createView()
-        ));
+            return $this->render('registro/legajo/agregar.html.twig', [
+                'legajo' => $legajo,
+                'form' => $form->createView(),
+            ]);
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
+    }
+
+    /**
+     * @Route("/editar-legajo/{id}", name="registro_editar_legajo", methods={"GET", "POST"})
+     * @param Request $request
+     * @param Legajo $legajo
+     * @return Response
+     */
+    public function editarLegajos(Request $request, Legajo $legajo): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $oldData = clone $legajo;
+
+            $form = $this->createForm(LegajoType::class, $legajo);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $traza = new Traza();
+                $traza->setTipo('warning');
+                $traza->setUsuario($this->getUser()->getNombre());
+                $traza->setContenido('Ha editado el legajo con identificador LEG' . $oldData->getNumero() . '. Nuevo identicador LEG' . $legajo->getNumero());
+
+                $this->entityManager->persist($traza);
+                $this->entityManager->persist($legajo);
+
+                try {
+                    $this->entityManager->flush();
+                    $this->addFlash('success', 'Legajo editado correctamente.');
+                } catch (Exception $e) {
+                    if ($e->getErrorCode() == 1062) {
+                        $this->addFlash('error', 'Legajo no editado, ya existe en el sistema.');
+                    } else {
+                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    }
+                }
+
+                return new ModalRedirectResponse($this->generateUrl('registro_listar_legajos'));
+            }
+
+            return $this->render('registro/legajo/editar.html.twig', [
+                'legajo' => $legajo,
+                'form' => $form->createView(),
+            ]);
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
+    }
+
+    /**
+     * @Route("/eliminar-legajo/{id}", name="registro_eliminar_legajo", methods={"GET", "DELETE"})
+     * @param Request $request
+     * @param Legajo $legajo
+     * @return Response
+     */
+    public function eliminarLegajo(Request $request, Legajo $legajo): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $form = $this->createDeleteForm($legajo);
+
+            if ($request->getMethod() == "DELETE") {
+                $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $traza = new Traza();
+                    $traza->setTipo('danger');
+                    $traza->setUsuario($this->getUser()->getNombre());
+                    $traza->setContenido('Ha eliminado el legajo con identificador LEG' . $legajo->getNumero());
+
+                    $this->entityManager->persist($traza);
+                    $this->entityManager->remove($legajo);
+
+                    try {
+                        $this->entityManager->flush();
+                        $this->addFlash('success', 'Legajo eliminado correctamente.');
+                    } catch (Exception $e) {
+                        if ($e->getErrorCode() == 1451) {
+                            $this->addFlash('error', 'Legajo no eliminado, conserva expedientes o libros asociados.');
+                        } else {
+                            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        }
+                    }
+
+                    return new ModalRedirectResponse($this->generateUrl('registro_listar_legajos'));
+                }
+            }
+
+            return $this->render('registro/legajo/eliminar.html.twig', array(
+                'legajo' => $legajo,
+                'form' => $form->createView()
+            ));
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
     }
 
     /**
@@ -147,9 +187,8 @@ class LegajoController extends AbstractController
     private function createDeleteForm(Legajo $legajo): FormInterface
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('eliminar_legajo', array('id' => $legajo->getId())))
+            ->setAction($this->generateUrl('registro_eliminar_legajo', array('id' => $legajo->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-            ;
+            ->getForm();
     }
 }

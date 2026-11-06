@@ -11,38 +11,33 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DepositoType extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('numero', null, [
-                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificador'],
-                //'required' => false,
-            ])
-            ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-                /** @var $deposito */
-                $deposito = $event->getData();
+                'attr' => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Número'],
+            ]);
 
-                if (null !== $depositoNumero = $deposito->getNumero()) {
-
-                    if ( strlen($depositoNumero) == 1 ) {
-                        $depositoNumero = '0'.$depositoNumero;
-                    }
-
-                    $deposito->setNumero($depositoNumero);
-                    $deposito->setIdentificador('DNAVE' . strtoupper(str_replace(' ', '', $depositoNumero)));
-                }
-            })
-        ;
+        $builder->addEventListener(FormEvents::SUBMIT, array($this, 'submitData'));
     }
 
     /**
-     * @param OptionsResolver $resolver
+     * @param FormEvent $event
      */
-    public function configureOptions(OptionsResolver $resolver)
+    function submitData(FormEvent $event)
+    {
+        $deposito = $event->getData();
+
+        if (null !== $depositoNumero = $deposito->getNumero()) {
+            if (strlen($depositoNumero) == 1) {
+                $depositoNumero = '0' . $depositoNumero;
+            }
+
+            $deposito->setNumero($depositoNumero);
+        }
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Deposito::class,

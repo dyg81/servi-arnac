@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block body_classes %}login-page{% endblock %}
+
+{% block body %}
+    <div class="login-box" style="margin-top: -250px">
+        <div class="error-page">
+            <h2 class="headline text-primary">404</h2>
+            <div class="error-content">
+                <h5 class="text-justify"><i class="fas fa-exclamation-triangle text-primary"></i> El recurso no ha sido encontrado.</h5>
+                <div class="dropdown-divider"></div>
+                <p class="text-justify text-sm">
+                    El recurso que ha solicitado no ha sido encontrado o es incorrecto. Notificar al administrador del
+                    sistema de forma inmediata.
+                </p>
+                <p class="text-justify text-sm">
+                    Sentimos las molestias ocasionadas. Para continuar trabajando, regrese a la <a href="{{ path('sac_login') }}" class="font-italic">página de inicio</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

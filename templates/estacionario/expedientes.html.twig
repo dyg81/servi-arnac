@@ -1,0 +1,114 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    Estacionario | Expedientes
+{% endblock %}
+
+{% block menu %}
+    <div class="sidebar text-sm">
+        <nav class="mt-4">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item has-treeview menu-open mt-2">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon far fa-sitemap"></i>
+                        <p>
+                            Estacionario
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ path('estacionario_listar_investigaciones_nuevas') }}" class="nav-link">
+                                <i class="far fa-newspaper nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Solicitudes Nuevas</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('estacionario_listar_investigaciones_procesadas') }}" class="nav-link">
+                                <i class="far fa-outdent nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Solicitudes Procesadas</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active">
+                                <i class="far fa-file-alt nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Expedientes por Archivar</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-primary card-outline card-tabs mt-2">
+                        <div class="card-header p-0 pt-1 border-bottom-0">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active font-italic font-weight-bolder">Fuera de Depósito</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="table_wrapper" class="card-body">
+                            <div class="float-right pr-2">
+                                <a href="{{ path('estacionario_archivar_documentos') }}" class="btn btn-primary btn-sm">
+                                    <span class="icon"><i class="fas fa-cloud-upload-alt"></i></span>
+                                    <span class=""> Archivar Todos</span>
+                                </a>
+                            </div>
+                            <table id="sac" class="table table-hover table-striped display nowrap" style="width: 100%;">
+                                <thead>
+                                <tr>
+                                    <th>Documento</th>
+                                    <th>Fondo</th>
+                                    <th>Ubicación</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody class="text-muted">
+                                {% for expediente in expedientes %}
+                                    <tr>
+                                        <td><span class="font-italic">Expediente {{ expediente.numero }}</span></td>
+                                        <td>{{ expediente.fondo }}</td>
+                                        <td>{{ expediente.deposito }} / {{ expediente.estante }} / {{ expediente.anaquel }} / {{ expediente.legajo }}</td>
+                                        <td><span class="badge badge-secondary text-white">{{ expediente.estadoExpediente }}</span></td>
+                                        <td>
+                                            <a href="{{ path('estacionario_archivar_documento', {'documento': expediente.id, 'tipo': 'exp'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".content-wrapper" title="Archivar">
+                                                <i class="fas fa-file-upload text-sm"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                {% for libro in libros %}
+                                    <tr>
+                                        <td><span class="font-italic">Libro {{ libro.anno }} (Tomo: {{ libro.tomo }})</span></td>
+                                        <td>{{ libro.fondo }}</td>
+                                        <td>{{ libro.deposito }} / {{ libro.estante }} / {{ libro.anaquel }}</td>
+                                        <td><span class="badge badge-secondary text-white">{{ libro.estadoLibro }}</span></td>
+                                        <td>
+                                            <a href="{{ path('estacionario_archivar_documento', {'documento': libro.id, 'tipo': 'lib'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".content-wrapper" title="Archivar">
+                                                <i class="fas fa-file-upload text-md"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block notificationes %}
+    {{ include('estacionario/_estacionario_notifications.html.twig') }}
+{% endblock %}

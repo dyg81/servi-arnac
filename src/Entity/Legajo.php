@@ -6,10 +6,11 @@ use App\Repository\LegajoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass=LegajoRepository::class)
- * @ORM\Table(name="sac_legajo")
+ * @ORM\Table(name="sac_registro_legajos")
  */
 class Legajo
 {
@@ -21,14 +22,15 @@ class Legajo
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=3, unique=true)
+     * @ORM\Column(type="string", length=3)
      */
-    private $legajo;
+    private $numero;
 
     /**
-     * @ORM\Column(type="string", length=7)
+     * @ORM\Column(type="string", length=10, unique=true)
+     * @Gedmo\Slug(fields={"numero"}, prefix="legajo-", unique=false)
      */
-    private $identificador;
+    private $slug;
 
     /**
      * @ORM\OneToMany(targetEntity=Expediente::class, mappedBy="legajo")
@@ -36,7 +38,7 @@ class Legajo
     private $expedientes;
 
     /**
-     * Init the array's collections for every new legajo
+     * Init the object properties
      */
     public function __construct()
     {
@@ -44,11 +46,11 @@ class Legajo
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function __toString()
     {
-        return $this->identificador;
+        return 'LEG' . $this->getNumero();
     }
 
     /**
@@ -62,18 +64,18 @@ class Legajo
     /**
      * @return string|null
      */
-    public function getLegajo(): ?string
+    public function getNumero(): ?string
     {
-        return $this->legajo;
+        return $this->numero;
     }
 
     /**
-     * @param string $legajo
+     * @param string $numero
      * @return $this
      */
-    public function setLegajo(string $legajo): self
+    public function setNumero(string $numero): self
     {
-        $this->legajo = $legajo;
+        $this->numero = $numero;
 
         return $this;
     }
@@ -81,24 +83,24 @@ class Legajo
     /**
      * @return string|null
      */
-    public function getIdentificador(): ?string
+    public function getSlug(): ?string
     {
-        return $this->identificador;
+        return $this->slug;
     }
 
     /**
-     * @param string $identificador
+     * @param string $slug
      * @return $this
      */
-    public function setIdentificador(string $identificador): self
+    public function setSlug(string $slug): self
     {
-        $this->identificador = $identificador;
+        $this->slug = $slug;
 
         return $this;
     }
 
     /**
-     * @return Collection|Expediente[]
+     * @return Collection<int, Expediente>
      */
     public function getExpedientes(): Collection
     {

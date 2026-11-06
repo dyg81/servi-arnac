@@ -1,0 +1,60 @@
+<a id="notificacionesTranscripcion" hidden href="{{ path('servicio_listar_transcripciones') }}" class="dropdown-item">
+    <div class="media">
+        <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol"
+             class="img-size-50 mr-3 mt-1 img-circle">
+        <div class="media-body">
+            <h3 class="dropdown-item-title text-sm">
+                Actualmente, existen
+                <span class="float-right text-sm text-info"><i class="fas fa-star"></i></span>
+            </h3>
+            <p class="text-xs">sin procesar:</p>
+        </div>
+    </div>
+</a>
+
+<script>
+    let bellSelector = document.querySelector('#notificationBell');
+    let notificacionesSelector = document.querySelector('#notificationsBlock');
+    let transcripcionesSelector = document.querySelector('#notificacionesTranscripcion');
+
+    function checkNewInfo() {
+        $.ajax({
+            url: '{{ path('transcripcion_notificaciones') }}',
+            type: 'GET',
+            dataType: 'JSON',
+            success: function (data) {
+                const transcripcionesNuevas = data[0];
+
+                transcripcionesSelector.hidden = true;
+
+                if ((transcripcionesNuevas) !== 0) {
+                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i><span class="badge badge-danger navbar-badge">' + transcripcionesNuevas + '</span>';
+                    notificacionesSelector.hidden = false;
+                    transcripcionesSelector.hidden = false;
+
+                    if (transcripcionesSelector.querySelector('em:last-child')) {
+                        transcripcionesSelector.querySelector('em:last-child').remove();
+                    }
+
+                    let child = document.createElement('em');
+                    child.classList.add('text-xs');
+                    child.classList.add('text-muted');
+                    child.innerHTML = transcripcionesNuevas + ' nuevo(s) servicio(s)';
+
+                    parent = transcripcionesSelector.querySelector('.media-body');
+                    parent.appendChild(child);
+                } else {
+                    notificacionesSelector.hidden = true;
+                    notificacionesSelector.classList.remove('show');
+                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i>';
+                }
+            },
+
+            complete: function () {
+                setTimeout(checkNewInfo, 300000);
+            }
+        });
+    }
+
+    setTimeout(checkNewInfo, 1000);
+</script>

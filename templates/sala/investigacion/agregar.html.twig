@@ -1,0 +1,77 @@
+{% extends '@Dyg81Modal/baseModal.html.twig' %}
+
+{% block modalBackdrop %}
+    data-backdrop="static"
+{% endblock %}
+
+{% block modalContent %}
+    {{ form_start(form, {'action': path('sala_agregar_investigacion')}) }}
+        <div class="modal-header">
+            <h5 class="modal-title text-muted pl-2">
+                <span class="fa fa-plus-circle pr-2"></span>
+                Investigación
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div class="modal-body text-xs">
+            <div class="row">
+                <div class="form-group col-12">
+                    {{ form_widget(form.cliente) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-12">
+                    {{ form_widget(form.fondo, {'attr': {'disabled': 'false'}}) }}
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <em class="text-muted text-md">
+                            <span class="far fa-file-alt pr-1"></span>
+                            Legajos / Expedientes
+                        </em>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <select id="investigacion_legajos" name="investigacion[legajos][]" disabled></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12">
+                            {{ form_widget(form.expedientes, {'attr': {'disabled': 'false', 'class': 'require-from-group'}}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <em class="text-muted text-md">
+                            <span class="far fa-book-alt pr-1"></span>
+                            Libros
+                        </em>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="form-group col-12">
+                            {{ form_widget(form.libros, {'attr': {'disabled': 'false', 'class': 'require-from-group'}}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-sm btn-primary btn-save mr-2">Guardar</button>
+            <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>
+        </div>
+        {{ include('sala/investigacion/_investigacion_select_dinamicos.twig') }}
+        {{ include('sala/investigacion/_investigacion_validator.twig') }}
+    {{ form_end(form) }}
+{% endblock %}
+

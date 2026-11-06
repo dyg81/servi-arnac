@@ -1,0 +1,47 @@
+<script>
+    $('#libro_fondo').change(function () {
+        let expedienteSelector = $(this);
+
+        $('#libro_deposito').val(null).trigger('change');
+        $('#libro_estante').val(null).trigger('change');
+        $('#libro_anaquel').val(null).trigger('change');
+
+        $.ajax({
+            url: '{{ path('obtener_depositos_por_fondo') }}',
+            type: 'GET',
+            dataType: 'JSON',
+            data: {
+                fondoid: expedienteSelector.val()
+            },
+            success: function (depositos) {
+                let depositosSelect = $('#libro_deposito');
+
+                depositosSelect.html('');
+                depositosSelect.prop('disabled', false);
+                depositosSelect.append('<option value="" selected="selected"></option>');
+
+                $.each(depositos, function (key, deposito) {
+                    depositosSelect.append('<option value="' + deposito.id + '">' + deposito.identificador + '</option>');
+                });
+            },
+            error: function () {
+                let inputText = 'Ha ocurrido un error desconocido mientras se cargaban los datos.';
+                let font = '0.875rem Nimrod MT';
+
+                let canvas = document.createElement('canvas');
+                let context = canvas.getContext('2d');
+
+                context.font = font;
+
+                let width = context.measureText(inputText).width;
+                let formattedWidth = Math.ceil(width) + 100;
+
+                Toast.fire({
+                    icon: 'error',
+                    title: inputText,
+                    width: formattedWidth,
+                });
+            }
+        });
+    });
+</script>

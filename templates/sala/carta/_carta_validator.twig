@@ -1,0 +1,76 @@
+<script>
+    $(document).ready(function () {
+        $.fn.modal.Constructor.prototype._enforceFocus = function () {};
+
+        $('#carta_cliente').select2({
+            theme: 'bootstrap4',
+            width: 'style',
+            placeholder: '<i class=\"far fa-user-friends\"></i>&nbsp;&nbsp;&nbsp; Clientes',
+            allowClear: Boolean($(this).data('allow-clear')),
+            language: {
+                noResults: function () {
+                    return 'No hay resultados';
+                }
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            }
+        });
+
+        $('input').on('input change', function(e) {
+            $(e.target).valid();
+        });
+
+        $('select').on('input change', function(e) {
+            $(e.target).valid();
+        });
+
+        $('.btn-save').click(function (e) {
+            if (!$('#sac-form').valid()) {
+                e.preventDefault()
+            }
+        });
+
+        $('#sac-form').validate({
+            ignore: [],
+            rules: {
+                'carta[cliente]': {
+                    required: true,
+                },
+                'carta[documento_file]': {
+                    required: true,
+                    accept: 'application/pdf,image/png,image/jpeg'
+                },
+            },
+            messages: {
+                'carta[cliente]': {
+                    required: 'Este campo es obligatorio.'
+                }
+                ,
+                'carta[documento_file]': {
+                    required: 'Este campo es obligatorio.',
+                    accept: 'Solo se permiten archivos con extensión .PDF .PNG .JPEG o .JPG'
+                },
+            },
+            errorElement: 'em',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+
+                if (element.hasClass('select2-hidden-accessible')) {
+                    error.insertAfter(element.next('.select2-container'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            success: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+            highlight: function (element) {
+                $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+            },
+            unhighlight: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+        });
+    });
+</script>

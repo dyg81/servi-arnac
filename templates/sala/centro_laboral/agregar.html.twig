@@ -1,0 +1,30 @@
+{% extends '@Dyg81Modal/baseModal.html.twig' %}
+
+{% block modalBackdrop %}
+    data-backdrop="static"
+{% endblock %}
+
+{% block modalContent %}
+    {{ form_start(form, {'action': path('sala_agregar_centro_laboral')}) }}
+        <div class="modal-header">
+            <h5 class="modal-title text-muted pl-2">
+                <span class="fa fa-plus-circle pr-2"></span>
+                Centro Laboral
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div class="modal-body text-xs">
+            <div class="form-group sac-form-group">
+                <span class="far fa-link form-control-feedback text-md"></span>
+                {{ form_widget(form.nombre) }}
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-sm btn-primary btn-save mr-2">Guardar</button>
+            <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>
+        </div>
+        {{ include('sala/centro_laboral/_centro_validator.twig') }}
+    {{ form_end(form) }}
+{% endblock %}

@@ -1,15 +1,32 @@
 security:
+    encoders:
+        App\Entity\Usuario:
+            algorithm: bcrypt
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        users_in_memory: { memory: null }
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\Usuario
+                property: usuario
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             anonymous: lazy
-            provider: users_in_memory
-
+            provider: app_user_provider
+            form_login:
+                login_path: sac_login
+                check_path: sac_login
+                csrf_token_generator: security.csrf.token_manager
+                default_target_path: sac_login
+                always_use_default_target_path: true
+            logout:
+                path: sac_logout
+            guard:
+                authenticators:
+                    - App\Security\LoginFormAuthenticator
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
@@ -19,5 +36,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/sala, roles: ROLE_SALA }
+        - { path: ^/estacionario, roles: ROLE_ESTACIONARIO }
+        - { path: ^/registro, roles: ROLE_REGISTRO }
+        - { path: ^/direccion, roles: ROLE_DIRECTIVO }
+        - { path: ^/transcripcion, roles: ROLE_TRANSCRIPCION }
+        - { path: ^/reprografia, roles: ROLE_REPROGRAFIA }
+        - { path: ^/certificacion, roles: ROLE_CERTIFICACION }

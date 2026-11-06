@@ -1,5 +1,6 @@
 /*
-    Nimrod Font Face
+    Nimrod Fonts. Fuente utilizada en el Archivo Nacional
+    como parte de su diseño corporativo.
 */
 body {
     font-family: "Nimrod MT", Helvetica, serif;
@@ -9,77 +10,15 @@ body {
 }
 
 /*
-    Modos Dark/Light
-*/
-.theme-switch-wrapper {
-    display: flex;
-    align-items: center;
-}
-
-.theme-switch-wrapper em {
-    margin-left: 10px;
-    font-size: 1rem;
-}
-
-.theme-switch {
-    display: inline-block;
-    height: 16px;
-    position: relative;
-    width: 32px;
-    margin-bottom: -1px !important;
-}
-
-.theme-switch input {
-    display:none;
-}
-
-.slider {
-    background-color: #ccc;
-    bottom: 0;
-    cursor: pointer;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    transition: .4s;
-}
-
-.slider:before {
-    background-color: #fff;
-    bottom: 1px;
-    content: "";
-    height: 14px;
-    left: 1px;
-    position: absolute;
-    transition: .4s;
-    width: 14px;
-}
-
-input:checked + .slider {
-    background-color: #7f7f7f;
-}
-
-input:checked + .slider:before {
-    transform: translateX(16px);
-}
-
-.slider.round {
-    border-radius: 34px;
-}
-
-.slider.round:before {
-    border-radius: 50%;
-}
-
-/*
-    Posición del avatar del usuario
+    Posición del avatar del usuario para una mejor ubicación
+    del mismo.
 */
 .navbar-nav > .user-menu .user-image {
     margin-top: -5px;
 }
 
 /*
-    Iconos dentro del input
+    Estilos para lograr ubicar los iconos dentro de los INPUT.
 */
 .sac-form-group .form-control {
     padding-left: 2.375rem;
@@ -98,14 +37,15 @@ input:checked + .slider:before {
 }
 
 /*
-    Tamaño del textarea
+    Calculo para el tamaño inicial de los TEXTAREA.
 */
 textarea.form-control {
     height: calc(2.25rem + 2px);
 }
 
 /*
-    Customizacion del dataTable para el uso del plugin pageResize
+    Estilos para lograr una mejor ubicación de las tablas al usar
+    el plugin pageResize en los dataTables.
 */
 #table_wrapper {
     position: relative;
@@ -114,7 +54,8 @@ textarea.form-control {
 }
 
 /*
-    Customización de la librería Select2
+    Mejoras en los estilos de la librería Select2 para que se corresponda
+    en algunos casos con el diseño corporativo del Archivo Nacional.
 */
 .select2-container--bootstrap4 .select2-selection {
     border-top: none;
@@ -182,8 +123,13 @@ form.was-validated select:valid ~ .select2-container--bootstrap4 .select2-select
     background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
 }
 
+.select2-container--bootstrap4.select2-container--disabled .select2-selection, .select2-container--bootstrap4.select2-container--disabled.select2-container--focus .select2-selection {
+    background-color: inherit;
+}
+
 /*
-    Customización de colores para el uso de la libreria Dual Listbox
+    Cambios en estilos y colores de la libreria Dual Listbox para que se
+    corresponda con el concepto corporativo del Archivo Nacional.
 */
 select {
     font-size: 1rem;
@@ -195,15 +141,15 @@ select {
 select option:hover,
 select option:focus,
 select option:active,
-select option:checked
-{
-    background: linear-gradient(#634c3c,#634c3c);
+select option:checked {
+    background: linear-gradient(#634c3c, #634c3c);
     background-color: #634c3c !important;
     color: #fff;
 }
 
 /*
-    Customización de la libreria SweetAlert2
+    Cambios en los estilos de la libreria SweetAlert2 para lograr que
+    los mensajes se muestren en una sola linea.
 */
 .swal2-container {
     padding: 0.4em;

@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * @extends ServiceEntityRepository<Pais>
+ *
  * @method Pais|null find($id, $lockMode = null, $lockVersion = null)
  * @method Pais|null findOneBy(array $criteria, array $orderBy = null)
  * @method Pais[]    findAll()
@@ -18,45 +20,4 @@ class PaisRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Pais::class);
     }
-
-    /**
-     * @return Pais[]
-     */
-    public function findAllOrderByAsc()
-    {
-        return $this->createQueryBuilder('p')
-            ->orderBy('p.nombre', 'ASC')
-            ->getQuery()
-            ->getResult()
-            ;
-    }
-
-    // /**
-    //  * @return Pais[] Returns an array of Pais objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Pais
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

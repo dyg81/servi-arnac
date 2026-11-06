@@ -20,7 +20,6 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-            - '../src/Tests/'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -33,3 +32,9 @@ services:
     App\Service\FileUploader:
         arguments:
             $targetDirectory: '%documentos_directory%'
+
+    App\Service\IdHasher:
+        arguments:
+            $entropyString: '%env(HASHER_ENTROPY)%'
+            $hashPadding: '%env(HASHER_PADDING)%'
+            $hashAlphabet: '%env(HASHER_CUSTOM_ALPHABET)%'

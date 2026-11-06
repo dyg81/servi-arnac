@@ -1,0 +1,101 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    Estacionario | Solicitudes Procesadas
+{% endblock %}
+
+{% block menu %}
+    <div class="sidebar text-sm">
+        <nav class="mt-4">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item has-treeview menu-open mt-2">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon far fa-sitemap"></i>
+                        <p>
+                            Estacionario
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ path('estacionario_listar_investigaciones_nuevas') }}" class="nav-link">
+                                <i class="far fa-newspaper nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Solicitudes Nuevas</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active">
+                                <i class="far fa-outdent nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Solicitudes Procesadas</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('estacionario_listar_documentos_por_archivar') }}" class="nav-link">
+                                <i class="far fa-file-alt nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Documentos por Archivar</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-primary card-outline card-tabs mt-2">
+                        <div class="card-header p-0 pt-1 border-bottom-0">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active font-italic font-weight-bolder">Investigaciones Procesadas</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="table_wrapper" class="card-body">
+                            <table id="sac" class="table table-hover table-striped display nowrap" style="width: 100%;">
+                                <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Fecha/Hora de Solicitud</th>
+                                    <th>Fondo a Investigar</th>
+                                    <th>Estado del Servicio</th>
+                                </tr>
+                                </thead>
+                                <tbody class="text-muted">
+                                {% for investigacion in investigaciones %}
+                                    <tr>
+                                        <td><span class="font-italic">{{ investigacion.cliente }}</span></td>
+                                        <td>{{ investigacion.fechaSolicitud|date('d-m-Y / H:i') }}</td>
+                                        <td>{{ investigacion.fondo }}</td>
+                                        <td>
+                                            {% if investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_SALA_CLIENTE') %}
+                                                <span class="badge badge-danger text-white">{{ investigacion.estadoInvestigacion }} : {{ investigacion.fechaActualizacion|date('d-m-Y / H:i') }}</span>
+                                            {% elseif investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_TERMINADO') %}
+                                                <span class="badge badge-success text-white">{{ investigacion.estadoInvestigacion }} : {{ investigacion.fechaActualizacion|date('d-m-Y / H:i') }}</span>
+                                            {% elseif investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_PAUSADO') %}
+                                                <span class="badge badge-warning text-white">{{ investigacion.estadoInvestigacion }} : {{ investigacion.fechaActualizacion|date('d-m-Y / H:i') }}</span>
+                                            {% elseif investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_CANCELADO') %}
+                                                <span class="badge badge-primary text-white">{{ investigacion.estadoInvestigacion }} : {{ investigacion.fechaActualizacion|date('d-m-Y / H:i') }}</span>
+                                            {% else %}
+                                                <span class="badge badge-info text-white">{{ investigacion.estadoInvestigacion }} : {{ investigacion.fechaActualizacion|date('d-m-Y / H:i') }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block notificationes %}
+    {{ include('estacionario/_estacionario_notifications.html.twig') }}
+{% endblock %}

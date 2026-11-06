@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body_classes %}login-page{% endblock %}
+
+{% block body %}
+    <div class="login-box" style="margin-top: -250px">
+        <div class="error-page">
+            <h2 class="headline text-danger">403</h2>
+            <div class="error-content">
+                <h5 class="text-justify"><i class="fas fa-exclamation-triangle text-danger"></i> El acceso al recurso ha sido denegado.</h5>
+                <div class="dropdown-divider"></div>
+                <p class="text-justify text-sm">
+                    El recurso que ha solicitado ha denegado su acceso de acuerdo a las políticas del sistema. Si cree
+                    que se trata de un error notificar al administrador del sistema de forma inmediata.
+                </p>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <p class="text-justify text-sm">
+                        Sentimos las molestias ocasionadas. Para continuar trabajando, regrese a la <a href="{{ path(app.user.ruta) }}"> página matriz</a>.
+                    </p>
+                {% else %}
+                    <p class="text-justify text-sm">
+                        Sentimos las molestias ocasionadas. Para continuar trabajando, regrese a la <a href="{{ path('sac_login') }}" class="font-italic">página de inicio</a>.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

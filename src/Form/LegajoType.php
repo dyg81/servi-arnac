@@ -11,39 +11,31 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LegajoType extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('legajo', null, [
-                'attr' => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificador']
+            ->add('numero', null, [
+                'attr' => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Número'],
+            ]);
 
-            ])
-            ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-                /** @var $legajo */
-                $legajo = $event->getData();
-
-                if (null !== $legajoNombre = $legajo->getLegajo()) {
-                    /*if (intval($legajoNombre)) {
-                        if (strlen($legajoNombre) == 1) {
-                            $legajoNombre = '00' . $legajoNombre;
-                        } elseif (strlen($legajoNombre) == 2) {
-                            $legajoNombre = '0' . $legajoNombre;
-                        }
-                    }*/
-
-                    $legajo->setLegajo(strtoupper($legajoNombre));
-                    $legajo->setIdentificador('LEG_' . strtoupper(str_replace(' ', '', $legajoNombre)));
-                }
-            });
+        $builder->addEventListener(FormEvents::SUBMIT, array($this, 'submitData'));
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
+    function submitData(FormEvent $event)
+    {
+        $legajo = $event->getData();
+
+        if (null !== $legajoNumero = $legajo->getNumero()) {
+            if (strlen($legajoNumero) == 1) {
+                $legajoNumero = '00' . $legajoNumero;
+            } elseif (strlen($legajoNumero) == 2) {
+                $legajoNumero = '0' . $legajoNumero;
+            }
+
+            $legajo->setNumero($legajoNumero);
+        }
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

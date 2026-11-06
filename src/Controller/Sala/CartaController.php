@@ -3,17 +3,14 @@
 namespace App\Controller\Sala;
 
 use App\Entity\Carta;
+use App\Entity\Traza;
 use App\Form\CartaType;
-use App\Repository\CartaRepository;
 use App\Service\FileUploader;
-use AppBundle\Library\Urlizer\Urlizer;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,141 +21,176 @@ use Symfony\Component\Routing\Annotation\Route;
 class CartaController extends AbstractController
 {
     /**
-     * @Route("/listar-cartas", name="listar_cartas", methods={"GET"})
-     * @param CartaRepository $cartaRepository
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @Route("/listar-cartas", name="sala_listar_cartas", methods={"GET"})
      * @return Response
      */
-    public function listar(CartaRepository $cartaRepository): Response
+    public function listarCartas(): Response
     {
-        return $this->render('sala/cartas/listar.html.twig', [
-            'cartas' => $cartaRepository->findByFechaSolicitud(),
+        return $this->render('sala/carta/listar.html.twig', [
+            'cartas' => $this->entityManager->getRepository(Carta::class)->obtenerCartasOrdenadasPorFechaSolicitud(),
         ]);
     }
 
     /**
-     * @Route("/agregar-cartas", name="agregar_carta", methods={"GET", "POST"})
+     * @Route("/agregar-carta", name="sala_agregar_carta", methods={"GET", "POST"})
      * @param Request $request
-     * @param EntityManagerInterface $entityManager
      * @param FileUploader $fileUploader
      * @return Response
      */
-    public function agregar(Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
+    public function agregarCarta(Request $request, FileUploader $fileUploader): Response
     {
-        $carta = new Carta();
-        $form = $this->createForm(CartaType::class, $carta);
-        $form->remove('fondos');
-        $form->remove('observaciones');
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UploadedFile $documentoFile */
-            $documentoFile = $form->get('documento_file')->getData();
-
-            if ($documentoFile) {
-                $newFilename = $fileUploader->upload($documentoFile);
-                $carta->setDocumento($newFilename);
-            }
-
-            $entityManager->persist($carta);
-
-            try {
-                $entityManager->flush();
-                $this->addFlash('success', 'La carta se ha agregado correctamente.');
-            } catch (Exception $e) {
-                if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Carta no agregada, ya existe en el sistema.');
-                } else
-                {
-                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
-                }
-            }
-
-            return new ModalRedirectResponse($this->generateUrl('listar_cartas'));
-        }
-
-        return $this->render('sala/cartas/agregar.html.twig', [
-            'carta' => $carta,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/editar-cartas/{id}", name="editar_carta", methods={"GET", "POST"})
-     * @param Request $request
-     * @param Carta $carta
-     * @param EntityManagerInterface $entityManager
-     * @param FileUploader $fileUploader
-     * @return Response
-     */
-    public function editar(Request $request, Carta $carta, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
-    {
-        $form = $this->createForm(CartaType::class, $carta);
-        $form->remove('fondos');
-        $form->remove('observaciones');
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UploadedFile $documentoFile */
-            $documentoFile = $form->get('documento_file')->getData();
-
-            if ($documentoFile) {
-                $newFilename = $fileUploader->upload($documentoFile);
-                $carta->setDocumento($newFilename);
-            }
-
-            try {
-                $entityManager->flush();
-                $this->addFlash('success', 'La carta se ha sido editado correctamente.');
-            } catch (Exception $e) {
-                if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Carta no editada, ya existe en el sistema.');
-                } else
-                {
-                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
-                }
-            }
-
-            return new ModalRedirectResponse($this->generateUrl('listar_cartas'));
-        }
-
-        return $this->render('sala/cartas/editar.html.twig', [
-            'carta' => $carta,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/eliminar-cartas/{id}", name="eliminar_carta", methods={"GET", "DELETE"})
-     * @param Request $request
-     * @param Carta $carta
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     */
-    public function eliminar(Request $request, Carta $carta, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createDeleteForm($carta);
-
-        if ($request->getMethod() == "DELETE") {
+        if ($request->isXmlHttpRequest()) {
+            $carta = new Carta();
+            $form = $this->createForm(CartaType::class, $carta);
+            $form->remove('fondos');
+            $form->remove('observaciones');
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager->remove($carta);
+                $documentoFile = $form->get('documento_file')->getData();
 
-                try {
-                    $entityManager->flush();
-                    $this->addFlash('success', 'La solicitud se ha eliminado correctamente.');
-                } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                if ($documentoFile) {
+                    $newFilename = $fileUploader->upload($documentoFile);
+                    $carta->setDocumento($newFilename);
                 }
 
-                return new ModalRedirectResponse($this->generateUrl('listar_cartas'));
-            }
-        }
+                $traza = new Traza();
+                $traza->setTipo('warning');
+                $traza->setUsuario($this->getUser()->getNombre());
+                $traza->setContenido('Ha añadido la carta de solicitud del cliente ' . $carta->getCliente());
 
-        return $this->render('sala/cartas/eliminar.html.twig', array(
-            'carta' => $carta,
-            'form' => $form->createView()
-        ));
+                $this->entityManager->persist($traza);
+                $this->entityManager->persist($carta);
+
+                try {
+                    $this->entityManager->flush();
+                    $this->addFlash('success', 'Carta agregada correctamente.');
+                } catch (Exception $e) {
+                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                }
+
+                return new ModalRedirectResponse($this->generateUrl('sala_listar_cartas'));
+            }
+
+            return $this->render('sala/carta/agregar.html.twig', [
+                'carta' => $carta,
+                'form' => $form->createView(),
+            ]);
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
+    }
+
+    /**
+     * @Route("/editar-carta/{id}", name="sala_editar_carta", methods={"GET", "POST"})
+     * @param Request $request
+     * @param Carta $carta
+     * @param FileUploader $fileUploader
+     * @return Response
+     */
+    public function editarCarta(Request $request, Carta $carta, FileUploader $fileUploader): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $form = $this->createForm(CartaType::class, $carta);
+            $form->remove('fondos');
+            $form->remove('cliente');
+            $form->remove('observaciones');
+            $form->handleRequest($request);
+
+            if ($request->getMethod() == 'GET') {
+                $cliente = $form->getData()->getCliente();
+            }
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $documentoFile = $form->get('documento_file')->getData();
+
+                if ($documentoFile) {
+                    $newFilename = $fileUploader->upload($documentoFile);
+                    $carta->setDocumento($newFilename);
+                }
+
+                $traza = new Traza();
+                $traza->setTipo('warning');
+                $traza->setUsuario($this->getUser()->getNombre());
+                $traza->setContenido('Ha editado la carta de solicitud del cliente ' . $carta->getCliente());
+
+                $this->entityManager->persist($traza);
+                $this->entityManager->persist($carta);
+
+                try {
+                    $this->entityManager->flush();
+                    $this->addFlash('success', 'Carta editada correctamente.');
+                } catch (Exception $e) {
+                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                }
+
+                return new ModalRedirectResponse($this->generateUrl('sala_listar_cartas'));
+            }
+
+            return $this->render('sala/carta/editar.html.twig', [
+                'carta' => $carta,
+                'cliente' => $cliente,
+                'form' => $form->createView(),
+            ]);
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
+    }
+
+    /**
+     * @Route("/eliminar-carta/{id}", name="sala_eliminar_carta", methods={"GET", "DELETE"})
+     * @param Request $request
+     * @param Carta $carta
+     * @return Response
+     */
+    public function eliminarCarta(Request $request, Carta $carta): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $form = $this->createDeleteForm($carta);
+
+            if ($request->getMethod() == "DELETE") {
+                $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $traza = new Traza();
+                    $traza->setTipo('danger');
+                    $traza->setUsuario($this->getUser()->getNombre());
+                    $traza->setContenido('Ha eliminado la carta de solicitud del cliente ' . $carta->getCliente());
+
+                    $this->entityManager->persist($traza);
+                    $this->entityManager->remove($carta);
+
+                    try {
+                        $this->entityManager->flush();
+                        $this->addFlash('success', 'Carta eliminada correctamente.');
+                    } catch (Exception $e) {
+                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    }
+
+                    return new ModalRedirectResponse($this->generateUrl('sala_listar_cartas'));
+                }
+            }
+
+            return $this->render('sala/carta/eliminar.html.twig', array(
+                'carta' => $carta,
+                'form' => $form->createView()
+            ));
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
     }
 
     /**
@@ -168,21 +200,42 @@ class CartaController extends AbstractController
     private function createDeleteForm(Carta $carta): FormInterface
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('eliminar_carta', array('id' => $carta->getId())))
+            ->setAction($this->generateUrl('sala_eliminar_carta', array('id' => $carta->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-            ;
+            ->getForm();
     }
 
     /**
-     * @Route("/observacion-cartas/{id}", name="observacion_carta", methods={"GET"})
+     * @Route("/observacion-carta/{id}", name="observacion_carta", methods={"GET"})
+     * @param Request $request
      * @param Carta $carta
      * @return Response
      */
-    public function observaciones(Carta $carta): Response
+    public function observacionCarta(Request $request, Carta $carta): Response
     {
-        return $this->render('sala/cartas/observaciones.html.twig', [
-            'mensaje' => $carta->getObservaciones()
-        ]);
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('sala/carta/observaciones.html.twig', [
+                'mensaje' => $carta->getObservaciones()
+            ]);
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
+    }
+
+    /**
+     * @Route("/ver-fondos/{id}", name="sala_ver_fondos")
+     * @param Request $request
+     * @param Carta $carta
+     * @return Response
+     */
+    public function verFondos(Request $request, Carta $carta): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('sala/carta/fondos.html.twig', [
+                'carta' => $carta,
+            ]);
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
     }
 }

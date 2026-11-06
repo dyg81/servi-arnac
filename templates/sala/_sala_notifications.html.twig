@@ -1,0 +1,148 @@
+<a id="notificacionesVitrina" hidden href="{{ path('sala_listar_documentos_en_vitrina') }}" class="dropdown-item">
+    <div class="media">
+        <img src="{{ asset('assets/dist/img/warning-red.png') }}" alt="Alert Symbol" class="img-size-50 mr-3 mt-1 img-circle">
+        <div class="media-body">
+            <h3 class="dropdown-item-title text-sm">
+                Actualmente, existen
+                <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+            </h3>
+            <p class="text-xs">en vitrina:</p>
+        </div>
+    </div>
+</a>
+<div id="notificacionesDivisor1" hidden class="dropdown-divider"></div>
+<a id="notificacionesInvestigacion" hidden href="{{ path('sala_listar_investigaciones') }}" class="dropdown-item">
+    <div class="media">
+        <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol" class="img-size-50 mr-3 mt-1 img-circle">
+        <div class="media-body">
+            <h3 class="dropdown-item-title text-sm">
+                El estacionario
+                <span class="float-right text-sm text-info"><i class="fas fa-star"></i></span>
+            </h3>
+            <p class="text-xs">ha actualizado:</p>
+        </div>
+    </div>
+</a>
+<div id="notificacionesDivisor2" hidden class="dropdown-divider"></div>
+<a id="notificacionesCarta" hidden href="{{ path('sala_listar_cartas') }}" class="dropdown-item">
+    <div class="media">
+        <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol" class="img-size-50 mr-3 mt-1 img-circle">
+        <div class="media-body">
+            <h3 class="dropdown-item-title text-sm">
+                El dpto directivo
+                <span class="float-right text-sm text-info"><i class="fas fa-star"></i></span>
+            </h3>
+            <p class="text-xs">ha procesado:</p>
+        </div>
+    </div>
+</a>
+
+<script>
+    let bellSelector = document.querySelector('#notificationBell');
+    let cartasSelector = document.querySelector('#notificacionesCarta');
+    let vitrinasSelector = document.querySelector('#notificacionesVitrina');
+    let divisor1Selector = document.querySelector('#notificacionesDivisor1');
+    let divisor2Selector = document.querySelector('#notificacionesDivisor2');
+    let notificacionesSelector = document.querySelector('#notificationsBlock');
+    let investigacionesSelector = document.querySelector('#notificacionesInvestigacion');
+
+    function checkNewInfo() {
+        $.ajax({
+            url: '{{ path('sala_notificaciones') }}',
+            type: 'GET',
+            dataType: 'JSON',
+            success: function (data) {
+                const vitrinasVencidas = data[1];
+                const cartasProcesadas = data[2];
+                const investigacionesProcesadas = data[0];
+                const notificacionesTotal = investigacionesProcesadas + vitrinasVencidas + cartasProcesadas;
+
+                divisor1Selector.hidden = true;
+                divisor2Selector.hidden = true;
+                vitrinasSelector.hidden = true;
+                investigacionesSelector.hidden = true;
+
+                if ((notificacionesTotal) !== 0) {
+                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i><span class="badge badge-danger navbar-badge">' + notificacionesTotal + '</span>';
+                    notificacionesSelector.hidden = false;
+
+                    if ((vitrinasVencidas !== 0) && (investigacionesProcesadas !== 0) && (cartasProcesadas !== 0)) {
+                        divisor1Selector.hidden = false;
+                        divisor2Selector.hidden = false;
+                    }
+
+                    if ((vitrinasVencidas !== 0) && (investigacionesProcesadas !== 0) && (cartasProcesadas === 0)) {
+                        divisor1Selector.hidden = false;
+                    }
+
+                    if ((vitrinasVencidas === 0) && (investigacionesProcesadas !== 0) && (cartasProcesadas !== 0)) {
+                        divisor2Selector.hidden = false;
+                    }
+
+                    if ((vitrinasVencidas !== 0) && (investigacionesProcesadas === 0) && (cartasProcesadas !== 0)) {
+                        divisor1Selector.hidden = false;
+                    }
+
+                    if (investigacionesProcesadas !== 0) {
+                        investigacionesSelector.hidden = false;
+
+                        if (investigacionesSelector.querySelector('em:last-child')) {
+                            investigacionesSelector.querySelector('em:last-child').remove();
+                        }
+
+                        let child = document.createElement('em');
+                        child.classList.add('text-xs');
+                        child.classList.add('text-muted');
+                        child.innerHTML = investigacionesProcesadas + ' nueva(s) investigacion(es)';
+
+                        parent = investigacionesSelector.querySelector('.media-body');
+                        parent.appendChild(child);
+                    }
+
+                    if (vitrinasVencidas !== 0) {
+                        vitrinasSelector.hidden = false;
+
+                        if (vitrinasSelector.querySelector('em:last-child')) {
+                            vitrinasSelector.querySelector('em:last-child').remove();
+                        }
+
+                        let child = document.createElement('em');
+                        child.classList.add('text-xs');
+                        child.classList.add('text-muted');
+                        child.innerHTML = vitrinasVencidas + ' documento(s) vencido(s)';
+
+                        parent = vitrinasSelector.querySelector('.media-body');
+                        parent.appendChild(child);
+                    }
+
+                    if (cartasProcesadas !== 0) {
+                        cartasSelector.hidden = false;
+
+                        if (cartasSelector.querySelector('em:last-child')) {
+                            cartasSelector.querySelector('em:last-child').remove();
+                        }
+
+                        let child = document.createElement('em');
+                        child.classList.add('text-xs');
+                        child.classList.add('text-muted');
+                        child.innerHTML = cartasProcesadas + ' nueva(s) solicitud(es)';
+
+                        parent = cartasSelector.querySelector('.media-body');
+                        parent.appendChild(child);
+                    }
+
+                } else {
+                    notificacionesSelector.hidden = true;
+                    notificacionesSelector.classList.remove('show');
+                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i>';
+                }
+            },
+
+            complete: function () {
+                setTimeout(checkNewInfo, 300000);
+            }
+        });
+    }
+
+    setTimeout(checkNewInfo, 1000);
+</script>

@@ -1,0 +1,60 @@
+<a id="notificacionesReprografia" hidden href="{{ path('servicio_listar_reprografias') }}" class="dropdown-item">
+    <div class="media">
+        <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol"
+             class="img-size-50 mr-3 mt-1 img-circle">
+        <div class="media-body">
+            <h3 class="dropdown-item-title text-sm">
+                Actualmente, existen
+                <span class="float-right text-sm text-info"><i class="fas fa-star"></i></span>
+            </h3>
+            <p class="text-xs">sin procesar:</p>
+        </div>
+    </div>
+</a>
+
+<script>
+    let bellSelector = document.querySelector('#notificationBell');
+    let notificacionesSelector = document.querySelector('#notificationsBlock');
+    let reprografiasSelector = document.querySelector('#notificacionesReprografia');
+
+    function checkNewInfo() {
+        $.ajax({
+            url: '{{ path('reprografia_notificaciones') }}',
+            type: 'GET',
+            dataType: 'JSON',
+            success: function (data) {
+                const reprografiasNuevas = data[0];
+
+                reprografiasSelector.hidden = true;
+
+                if ((reprografiasNuevas) !== 0) {
+                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i><span class="badge badge-danger navbar-badge">' + reprografiasNuevas + '</span>';
+                    notificacionesSelector.hidden = false;
+                    reprografiasSelector.hidden = false;
+
+                    if (reprografiasSelector.querySelector('em:last-child')) {
+                        reprografiasSelector.querySelector('em:last-child').remove();
+                    }
+
+                    let child = document.createElement('em');
+                    child.classList.add('text-xs');
+                    child.classList.add('text-muted');
+                    child.innerHTML = reprografiasNuevas + ' nuevo(s) servicio(s)';
+
+                    parent = reprografiasSelector.querySelector('.media-body');
+                    parent.appendChild(child);
+                } else {
+                    notificacionesSelector.hidden = true;
+                    notificacionesSelector.classList.remove('show');
+                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i>';
+                }
+            },
+
+            complete: function () {
+                setTimeout(checkNewInfo, 300000);
+            }
+        });
+    }
+
+    setTimeout(checkNewInfo, 1000);
+</script>

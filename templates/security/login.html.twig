@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block body_classes %}
+    hold-transition login-page
+{% endblock %}
+
+{% block body %}
+    <div class="login-box" style="margin-top: -250px">
+        <div class="login-logo">
+            <img src="{{ asset('assets/dist/img/arnac-logo-black.png') }}" alt="ARNAC Logo" class="brand-image img-circle elevation-4" style="width: 15%">
+            <a><b>Servi</b>ARNAC</a>
+        </div>
+        <div class="card card-outline card-primary">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Inicia sesión para acceder</p>
+                <form action="{{ path('sac_login') }}" method="post">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" autocomplete="off" autofocus placeholder="Usuario" id="username" name="_username" value="{{ last_username }}">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" placeholder="Contraseña" id="password" name="_password">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <div class="row">
+                        <div class="col-8">
+                        </div>
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">Iniciar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {% if error %}
+        <script>
+            jQuery(document).ready(function () {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+
+                const inputText = '{{ error.messageKey|trans(error.messageData, 'security') }}';
+                const font = "0.875rem Nimrod MT";
+
+                const canvas = document.createElement("canvas");
+                let context = canvas.getContext("2d");
+                context.font = font;
+                const width = context.measureText(inputText).width;
+                const formattedWidth = Math.ceil(width) + 100;
+
+                Toast.fire({
+                    icon: 'error',
+                    title: inputText,
+                    width: formattedWidth,
+                });
+            })
+        </script>
+    {% endif %}
+{% endblock %}

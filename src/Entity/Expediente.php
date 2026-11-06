@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\ExpedienteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass=ExpedienteRepository::class)
- * @ORM\Table(name="sac_expediente")
+ * @ORM\Table(name="sac_registro_expedientes")
  */
 class Expediente
 {
@@ -19,20 +22,26 @@ class Expediente
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=3)
+     * @ORM\Column(type="string", length=4)
      */
     private $numero;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
+     * @Gedmo\Slug(handlers={
+     *      @Gedmo\SlugHandler(class="Gedmo\Sluggable\Handler\RelativeSlugHandler", options={
+     *          @Gedmo\SlugHandlerOption(name="relationField", value="fondo"),
+     *          @Gedmo\SlugHandlerOption(name="relationSlugField", value="slug"),
+     *          @Gedmo\SlugHandlerOption(name="separator", value="-expediente-")
+     *      })
+     * }, fields={"numero"}, unique=false)
      */
-    private $identificador;
+    private $slug;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Deposito::class, inversedBy="expedientes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="text")
      */
-    private $deposito;
+    private $contenido;
 
     /**
      * @ORM\ManyToOne(targetEntity=Fondo::class, inversedBy="expedientes")
@@ -41,10 +50,10 @@ class Expediente
     private $fondo;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Legajo::class, inversedBy="expedientes")
+     * @ORM\ManyToOne(targetEntity=Deposito::class, inversedBy="expedientes")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $legajo;
+    private $deposito;
 
     /**
      * @ORM\ManyToOne(targetEntity=Estante::class, inversedBy="expedientes")
@@ -59,31 +68,43 @@ class Expediente
     private $anaquel;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\ManyToOne(targetEntity=Legajo::class, inversedBy="expedientes")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $descripcion;
+    private $legajo;
 
     /**
      * @ORM\Column(type="smallint")
      */
     private $estado;
 
-    const EXP_ESTADO_ARCHIVADO_EN_DEPOSITO  = 0;
-    const EXP_ESTADO_SOLICITADO_PARA_SALA   = 1;
-    const EXP_ESTADO_RESERVADO_EN_SALA      = 2;
-    const EXP_ESTADO_EN_SALA_RECEPCION      = 3;
-    const EXP_ESTADO_RESERVADO_PARA_TRANS   = 4;
-    const EXP_ESTADO_RESERVADO_PARA_DIG     = 5;
-    const EXP_ESTADO_RESERVADO_PARA_CERT    = 6;
-    const EXP_ESTADO_TRANS_EN_PROCESO       = 7;
-    const EXP_ESTADO_DIG_EN_PROCESO         = 8;
-    const EXP_ESTADO_CERT_EN_PROCESO        = 9;
-    const EXP_ESTADO_TRANS_TERMINADA        = 10;
-    const EXP_ESTADO_DIG_TERMINADA          = 11;
-    const EXP_ESTADO_CERT_TERMINADA         = 12;
-    const EXP_ESTADO_EN_VITRINA             = 13;
-    const EXP_ESTADO_NO_ENCONTRADO          = 98;
-    const EXP_ESTADO_NO_USABLE              = 99;
+    /**
+     * @ORM\ManyToMany(targetEntity=Investigacion::class, mappedBy="expedientes")
+     */
+    private $investigaciones;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $vitrina;
+
+    const EXP_ESTADO_ARCHIVADO_EN_DEPOSITO = 0;
+    const EXP_ESTADO_SOLICITADO_PARA_SALA = 1;
+    const EXP_ESTADO_RESERVADO_EN_SALA = 2;
+    const EXP_ESTADO_EN_SALA_RECEPCION = 3;
+    const EXP_ESTADO_RESERVADO_PARA_TRANS = 4;
+    const EXP_ESTADO_RESERVADO_PARA_DIG = 5;
+    const EXP_ESTADO_RESERVADO_PARA_CERT = 6;
+    const EXP_ESTADO_TRANS_EN_PROCESO = 7;
+    const EXP_ESTADO_DIG_EN_PROCESO = 8;
+    const EXP_ESTADO_CERT_EN_PROCESO = 9;
+    const EXP_ESTADO_TRANS_TERMINADA = 10;
+    const EXP_ESTADO_DIG_TERMINADA = 11;
+    const EXP_ESTADO_CERT_TERMINADA = 12;
+    const EXP_ESTADO_EN_VITRINA = 13;
+    const EXP_ESTADO_NO_ENCONTRADO = 98;
+    const EXP_ESTADO_NO_USABLE = 99;
+
 
     /**
      * @return array
@@ -91,31 +112,31 @@ class Expediente
     static public function getEstados(): array
     {
         $estados = array(
-            self::EXP_ESTADO_ARCHIVADO_EN_DEPOSITO  => "Archivado en Depósito",
-            self::EXP_ESTADO_SOLICITADO_PARA_SALA   => "Solicitado para Sala",
-            self::EXP_ESTADO_RESERVADO_EN_SALA      => "Reservado en Sala",
-            self::EXP_ESTADO_EN_SALA_RECEPCION      => "En Recepción",
-            self::EXP_ESTADO_RESERVADO_PARA_TRANS   => "Reservado para Transcripción",
-            self::EXP_ESTADO_RESERVADO_PARA_DIG     => "Reservado para Digitalización",
-            self::EXP_ESTADO_RESERVADO_PARA_CERT    => "Reservado para Certificación",
-            self::EXP_ESTADO_TRANS_EN_PROCESO       => "Transcripción en Proceso",
-            self::EXP_ESTADO_DIG_EN_PROCESO         => "Digitalización en Proceso",
-            self::EXP_ESTADO_CERT_EN_PROCESO        => "Certificación en Proceso",
-            self::EXP_ESTADO_TRANS_TERMINADA        => "Transcripción Terminada",
-            self::EXP_ESTADO_DIG_TERMINADA          => "Transcripción Terminada",
-            self::EXP_ESTADO_CERT_TERMINADA         => "Certificación Terminada",
-            self::EXP_ESTADO_EN_VITRINA             => "Expediente en Vitrina",
-            self::EXP_ESTADO_NO_ENCONTRADO          => "Expediente no Encontrado",
-            self::EXP_ESTADO_NO_USABLE              => "Expediente no Usable"
+            self::EXP_ESTADO_ARCHIVADO_EN_DEPOSITO => "Archivado en Depósito",
+            self::EXP_ESTADO_SOLICITADO_PARA_SALA => "Solicitado para Sala",
+            self::EXP_ESTADO_RESERVADO_EN_SALA => "Reservado en Sala",
+            self::EXP_ESTADO_EN_SALA_RECEPCION => "En Recepción",
+            self::EXP_ESTADO_RESERVADO_PARA_TRANS => "Reservado para Transcripción",
+            self::EXP_ESTADO_RESERVADO_PARA_DIG => "Reservado para Digitalización",
+            self::EXP_ESTADO_RESERVADO_PARA_CERT => "Reservado para Certificación",
+            self::EXP_ESTADO_TRANS_EN_PROCESO => "Transcripción en Proceso",
+            self::EXP_ESTADO_DIG_EN_PROCESO => "Digitalización en Proceso",
+            self::EXP_ESTADO_CERT_EN_PROCESO => "Certificación en Proceso",
+            self::EXP_ESTADO_TRANS_TERMINADA => "Transcripción Terminada",
+            self::EXP_ESTADO_DIG_TERMINADA => "Reprografía Terminada",
+            self::EXP_ESTADO_CERT_TERMINADA => "Certificación Terminada",
+            self::EXP_ESTADO_EN_VITRINA => "Expediente en Vitrina",
+            self::EXP_ESTADO_NO_ENCONTRADO => "Expediente no Encontrado",
+            self::EXP_ESTADO_NO_USABLE => "Expediente no Usable"
         );
 
         return $estados;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getEstadoExpediente()
+    public function getEstadoExpediente(): string
     {
         $estados = self::getEstados();
 
@@ -123,11 +144,21 @@ class Expediente
     }
 
     /**
-     * Init the state of every new expediente
+     * Init the object properties
      */
     public function __construct()
     {
+        $this->vitrina = false;
+        $this->investigaciones = new ArrayCollection();
         $this->estado = self::EXP_ESTADO_ARCHIVADO_EN_DEPOSITO;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function __toString()
+    {
+        return 'EXP' . $this->getNumero();
     }
 
     /**
@@ -160,37 +191,37 @@ class Expediente
     /**
      * @return string|null
      */
-    public function getIdentificador(): ?string
+    public function getSlug(): ?string
     {
-        return $this->identificador;
+        return $this->slug;
     }
 
     /**
-     * @param string $identificador
+     * @param string $slug
      * @return $this
      */
-    public function setIdentificador(string $identificador): self
+    public function setSlug(string $slug): self
     {
-        $this->identificador = $identificador;
+        $this->slug = $slug;
 
         return $this;
     }
 
     /**
-     * @return deposito|null
+     * @return string|null
      */
-    public function getDeposito(): ?deposito
+    public function getContenido(): ?string
     {
-        return $this->deposito;
+        return $this->contenido;
     }
 
     /**
-     * @param deposito|null $deposito
+     * @param string $contenido
      * @return $this
      */
-    public function setDeposito(?deposito $deposito): self
+    public function setContenido(string $contenido): self
     {
-        $this->deposito = $deposito;
+        $this->contenido = $contenido;
 
         return $this;
     }
@@ -215,37 +246,37 @@ class Expediente
     }
 
     /**
-     * @return legajo|null
+     * @return Deposito|null
      */
-    public function getLegajo(): ?legajo
+    public function getDeposito(): ?Deposito
     {
-        return $this->legajo;
+        return $this->deposito;
     }
 
     /**
-     * @param legajo|null $legajo
+     * @param Deposito|null $deposito
      * @return $this
      */
-    public function setLegajo(?legajo $legajo): self
+    public function setDeposito(?Deposito $deposito): self
     {
-        $this->legajo = $legajo;
+        $this->deposito = $deposito;
 
         return $this;
     }
 
     /**
-     * @return estante|null
+     * @return Estante|null
      */
-    public function getEstante(): ?estante
+    public function getEstante(): ?Estante
     {
         return $this->estante;
     }
 
     /**
-     * @param estante|null $estante
+     * @param Estante|null $estante
      * @return $this
      */
-    public function setEstante(?estante $estante): self
+    public function setEstante(?Estante $estante): self
     {
         $this->estante = $estante;
 
@@ -253,18 +284,18 @@ class Expediente
     }
 
     /**
-     * @return anaquel|null
+     * @return Anaquel|null
      */
-    public function getAnaquel(): ?anaquel
+    public function getAnaquel(): ?Anaquel
     {
         return $this->anaquel;
     }
 
     /**
-     * @param anaquel|null $anaquel
+     * @param Anaquel|null $anaquel
      * @return $this
      */
-    public function setAnaquel(?anaquel $anaquel): self
+    public function setAnaquel(?Anaquel $anaquel): self
     {
         $this->anaquel = $anaquel;
 
@@ -272,20 +303,20 @@ class Expediente
     }
 
     /**
-     * @return string|null
+     * @return Legajo|null
      */
-    public function getDescripcion(): ?string
+    public function getLegajo(): ?Legajo
     {
-        return $this->descripcion;
+        return $this->legajo;
     }
 
     /**
-     * @param string $descripcion
+     * @param Legajo|null $legajo
      * @return $this
      */
-    public function setDescripcion(string $descripcion): self
+    public function setLegajo(?Legajo $legajo): self
     {
-        $this->descripcion = $descripcion;
+        $this->legajo = $legajo;
 
         return $this;
     }
@@ -305,6 +336,60 @@ class Expediente
     public function setEstado(int $estado): self
     {
         $this->estado = $estado;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Investigacion>
+     */
+    public function getInvestigaciones(): Collection
+    {
+        return $this->investigaciones;
+    }
+
+    /**
+     * @param Investigacion $investigacione
+     * @return $this
+     */
+    public function addInvestigacione(Investigacion $investigacione): self
+    {
+        if (!$this->investigaciones->contains($investigacione)) {
+            $this->investigaciones[] = $investigacione;
+            $investigacione->addExpediente($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Investigacion $investigacione
+     * @return $this
+     */
+    public function removeInvestigacione(Investigacion $investigacione): self
+    {
+        if ($this->investigaciones->removeElement($investigacione)) {
+            $investigacione->removeExpediente($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getVitrina(): ?bool
+    {
+        return $this->vitrina;
+    }
+
+    /**
+     * @param bool $vitrina
+     * @return $this
+     */
+    public function setVitrina(bool $vitrina): self
+    {
+        $this->vitrina = $vitrina;
 
         return $this;
     }

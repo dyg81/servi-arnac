@@ -1,72 +1,93 @@
 {% extends 'base.html.twig' %}
 
+{% block body_classes %}
+    sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed dark-mode animsition
+{% endblock %}
+
 {% block body %}
     <div class="wrapper">
         <nav class="main-header navbar navbar-expand navbar-dark">
             <ul class="navbar-nav ml-auto mr-3">
-                <li class="theme-switch-wrapper mr-2">
-                    <label class="theme-switch" for="checkbox">
-                        <input type="checkbox" id="checkbox"/>
-                        <div class="slider round"></div>
-                    </label>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                        <i class="fas fa-expand-arrows-alt mt-1" data-toggle="tooltip" title="Sasa!!!"></i>
-                    </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="fas fa-bell mt-1"></i>
-                        <span class="badge badge-danger navbar-badge">18</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <a href="#" class="dropdown-item">
-                            <div class="media">
-                                <img src="{{ asset('assets/dist/img/warning-red.png') }}" alt="Warning Symbol" class="img-size-50 mr-3 mt-1 img-circle">
-                                <div class="media-body">
-                                    <h3 class="dropdown-item-title text-sm">
-                                        Autorizaciones
-                                        <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                                    </h3>
-                                    <p class="text-xs">que vencen en hoy:</p>
-                                    <p class="text-xs text-muted"><i class="far fa-envelope mr-1"></i> 4 restantes</p>
-                                </div>
-                            </div>
+                {% if not(app.user.roles[0] == 'ROLE_ADMIN') and not(app.user.roles[0] == 'ROLE_REGISTRO') %}
+                    <li class="nav-item dropdown">
+                        <a id="notificationBell" class="nav-link" data-toggle="dropdown" href="#">
+                            <i class="fas fa-bell mt-1"></i>
                         </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <div class="media">
-                                <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol" class="img-size-50 mr-3 mt-1 img-circle">
-                                <div class="media-body">
-                                    <h3 class="dropdown-item-title">
-                                        Autorizaciones
-                                        <span class="float-right text-sm text-info"><i class="fas fa-star"></i></span>
-                                    </h3>
-                                    <p class="text-xs">pendientes en total:</p>
-                                    <p class="text-xs text-muted"><i class="far fa-envelope mr-1"></i> 14 restantes</p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </li>
-
+                        <div id="notificationsBlock" hidden class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                            {% block notificationes %}{% endblock %}
+                        </div>
+                    </li>
+                {% endif %}
                 <li class="nav-item dropdown user-menu">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                        <img src="{{ asset('assets/dist/img/user.png') }}" class="user-image img-circle elevation-2"
-                             alt="User Image">
+                        <img src="{{ asset('assets/dist/img/user.png') }}" class="user-image img-circle elevation-2" alt="User Image">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li class="user-header bg-secondary">
                             <img src="{{ asset('assets/dist/img/user.png') }}" class="img-circle elevation-2" alt="User Image">
                             <p>
-                                Yadiel Diaz Hernadez
-                                <small>Desarrollador Principal</small>
+                                <small class="font-italic">{{ app.user.nombre }}</small>
+                                <div class="mt-n2 font-weight-bold">
+                                    {% if app.user.roles[0] == 'ROLE_ADMIN' %}
+                                        Administrador del Sistema
+                                    {% elseif app.user.roles[0] == 'ROLE_SALA' %}
+                                        Jefe de Sala de Lectura
+                                    {% elseif app.user.roles[0] == 'ROLE_ESTACIONARIO' %}
+                                        Estacionario
+                                    {% elseif app.user.roles[0] == 'ROLE_REGISTRO' %}
+                                        Técnico Archivista
+                                    {% elseif  app.user.roles[0] == 'ROLE_DIRECTIVO' %}
+                                        Directivo
+                                    {% elseif  app.user.roles[0] == 'ROLE_TRANSCRIPCION' %}
+                                        Especialista en Paleología
+                                    {% elseif  app.user.roles[0] == 'ROLE_REPROGRAFIA' %}
+                                        Especialista en Reprografía
+                                    {% elseif  app.user.roles[0] == 'ROLE_CERTIFICACION' %}
+                                        Especialista en Certificación
+                                    {% endif %}
+                                </div>
                             </p>
                         </li>
                         <li class="user-footer">
-                            <a href="#" class="btn btn-default">Perfil</a>
-                            <a href="#" class="btn btn-default float-right">Cerrar</a>
+                            <div class="row">
+                                <div class="col-4">
+                                    {% if app.user.roles[0] == 'ROLE_SALA' %}
+                                        <a id="pwd-change" href="{{ path('sala_editar_contrasena', {'id': app.user.id, 'ruta': app.request.attributes.get('_route')}) }}" class="btn btn-block btn-sm btn-default pl-2 modal-open" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cambiar Contraseña">
+                                            <i class="fas fa-lock"></i>
+                                        </a>
+                                    {% elseif app.user.roles[0] == 'ROLE_ESTACIONARIO' %}
+                                        <a id="pwd-change" href="{{ path('estacionario_editar_contrasena', {'id': app.user.id, 'ruta': app.request.attributes.get('_route')}) }}" class="btn btn-block btn-sm btn-default pl-2 modal-open" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cambiar Contraseña">
+                                            <i class="fas fa-lock"></i>
+                                        </a>
+                                    {% elseif app.user.roles[0] == 'ROLE_REGISTRO' %}
+                                        <a id="pwd-change" href="{{ path('registro_editar_contrasena', {'id': app.user.id, 'ruta': app.request.attributes.get('_route')}) }}" class="btn btn-block btn-sm btn-default pl-2 modal-open" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cambiar Contraseña">
+                                            <i class="fas fa-lock"></i>
+                                        </a>
+                                    {% elseif  app.user.roles[0] == 'ROLE_DIRECTIVO' %}
+                                        <a id="pwd-change" href="{{ path('direccion_editar_contrasena', {'id': app.user.id, 'ruta': app.request.attributes.get('_route')}) }}" class="btn btn-block btn-sm btn-default pl-2 modal-open" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cambiar Contraseña">
+                                            <i class="fas fa-lock"></i>
+                                        </a>
+                                    {% elseif  app.user.roles[0] == 'ROLE_TRANSCRIPCION' %}
+                                        <a id="pwd-change" href="{{ path('transcripcion_editar_contrasena', {'id': app.user.id, 'ruta': app.request.attributes.get('_route')}) }}" class="btn btn-block btn-sm btn-default pl-2 modal-open" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cambiar Contraseña">
+                                            <i class="fas fa-lock"></i>
+                                        </a>
+                                    {% elseif  app.user.roles[0] == 'ROLE_REPROGRAFIA' %}
+                                        <a id="pwd-change" href="{{ path('reprografia_editar_contrasena', {'id': app.user.id, 'ruta': app.request.attributes.get('_route')}) }}" class="btn btn-block btn-sm btn-default pl-2 modal-open" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cambiar Contraseña">
+                                            <i class="fas fa-lock"></i>
+                                        </a>
+                                    {% elseif  app.user.roles[0] == 'ROLE_CERTIFICACION' %}
+                                        <a id="pwd-change" href="{{ path('certificacion_editar_contrasena', {'id': app.user.id, 'ruta': app.request.attributes.get('_route')}) }}" class="btn btn-block btn-sm btn-default pl-2 modal-open" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cambiar Contraseña">
+                                            <i class="fas fa-lock"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                <div class="col-4 offset-4">
+                                    <a href="{{ path('sac_cerrar') }}" class="btn btn-block btn-sm btn-default" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cerrar Sesión">
+                                        <i class="fas fa-share"></i>
+                                    </a>
+                                </div>
+
+                            </div>
                         </li>
                     </ul>
                 </li>
@@ -75,10 +96,9 @@
 
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <span class="brand-link pl-2">
-            <img src="{{ asset('assets/dist/img/arnac-logo-white.png') }}" alt="ARNAC Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-            <span class="brand-text font-weight-light font-italic pl-3">Servi ARNAC</span>
-        </span>
-
+                <img src="{{ asset('assets/dist/img/arnac-logo-white.png') }}" alt="ARNAC Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                <span class="brand-text font-weight-light font-italic pl-3">Servi ARNAC</span>
+            </span>
             {% block menu %}{% endblock %}
         </aside>
 
@@ -88,9 +108,34 @@
 
         <footer class="main-footer text-xs">
             <div class="float-right d-none d-sm-inline">
-                Todos los derechos reservados.
+                ARNAC - Por la preservación de la memoria histórica.
             </div>
-            &copy; 2021 <strong>TITOTorres & Grupo de Desarrollo ARTAX Tech.</strong>
+            &copy; {{ "now"|date("Y") }} <strong>Todos los derechos reservados.</strong>
         </footer>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        {% for type, msgs in app.session.flashBag.all() %}
+            {% for msg in msgs %}
+                inputText = '{{ msg }}';
+                font = "0.875rem Nimrod MT";
+
+                canvas = document.createElement("canvas");
+                context = canvas.getContext("2d");
+                context.font = font;
+                width = context.measureText(inputText).width;
+                formattedWidth = Math.ceil(width) + 100;
+
+                Toast.fire({
+                    icon: '{{ type }}',
+                    title: '{{ msg }}',
+                    width: formattedWidth,
+                });
+            {% endfor %}
+        {% endfor %}
+    </script>
 {% endblock %}

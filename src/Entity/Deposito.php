@@ -6,10 +6,11 @@ use App\Repository\DepositoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass=DepositoRepository::class)
- * @ORM\Table(name="sac_deposito")
+ * @ORM\Table(name="sac_registro_depositos")
  */
 class Deposito
 {
@@ -21,14 +22,15 @@ class Deposito
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=2, unique=true)
+     * @ORM\Column(type="string", length=2)
      */
     private $numero;
 
     /**
-     * @ORM\Column(type="string", length=7)
+     * @ORM\Column(type="string", length=11, unique=true)
+     * @Gedmo\Slug(fields={"numero"}, prefix="deposito-", unique=false)
      */
-    private $identificador;
+    private $slug;
 
     /**
      * @ORM\ManyToMany(targetEntity=Fondo::class, mappedBy="depositos")
@@ -46,7 +48,7 @@ class Deposito
     private $libros;
 
     /**
-     * Init the array's collections for every new deposito
+     * Init the object properties
      */
     public function __construct()
     {
@@ -60,7 +62,7 @@ class Deposito
      */
     public function __toString()
     {
-        return $this->getIdentificador();
+        return 'DNAVE' . $this->getNumero();
     }
 
     /**
@@ -93,24 +95,24 @@ class Deposito
     /**
      * @return string|null
      */
-    public function getIdentificador(): ?string
+    public function getSlug(): ?string
     {
-        return $this->identificador;
+        return $this->slug;
     }
 
     /**
-     * @param string $identificador
+     * @param string $slug
      * @return $this
      */
-    public function setIdentificador(string $identificador): self
+    public function setSlug(string $slug): self
     {
-        $this->identificador = $identificador;
+        $this->slug = $slug;
 
         return $this;
     }
 
     /**
-     * @return Collection|Fondo[]
+     * @return Collection<int, Fondo>
      */
     public function getFondos(): Collection
     {
@@ -145,7 +147,7 @@ class Deposito
     }
 
     /**
-     * @return Collection|Expediente[]
+     * @return Collection<int, Expediente>
      */
     public function getExpedientes(): Collection
     {
@@ -183,7 +185,7 @@ class Deposito
     }
 
     /**
-     * @return Collection|Libro[]
+     * @return Collection<int, Libro>
      */
     public function getLibros(): Collection
     {

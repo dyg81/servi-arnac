@@ -2,11 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\Carta;
 use App\Entity\Cliente;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * @extends ServiceEntityRepository<Cliente>
+ *
  * @method Cliente|null find($id, $lockMode = null, $lockVersion = null)
  * @method Cliente|null findOneBy(array $criteria, array $orderBy = null)
  * @method Cliente[]    findAll()
@@ -19,32 +22,13 @@ class ClienteRepository extends ServiceEntityRepository
         parent::__construct($registry, Cliente::class);
     }
 
-    // /**
-    //  * @return Cliente[] Returns an array of Cliente objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function obtenerClientesAutorizados()
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
+            ->leftJoin('c.cartas', 'carta')
+            ->where('carta.estado = :carta_estado')
+            ->setParameter("carta_estado", Carta::CARTA_APROBADA)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Cliente
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

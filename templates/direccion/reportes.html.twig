@@ -1,0 +1,151 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    Dirección | Reportes
+{% endblock %}
+
+{% block menu %}
+    <div class="sidebar text-sm">
+        <nav class="mt-4">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item">
+                    <a href="{{ path('direccion_estadisticas') }}" class="nav-link">
+                        <i class="nav-icon far fa-chart-bar"></i>
+                        <p>Estadísticas</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon far fa-cogs"></i>
+                        <p>Reportes</p>
+                    </a>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon far fa-file-chart-line"></i>
+                        <p>
+                            Autorizos
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ path('direccion_listar_cartas_pendientes') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Pendientes</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('direccion_listar_cartas_respondidas') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Completados</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row px-3 pt-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title font-weight-bolder">Expedientes/Libros por Fondos Documentales</h5>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="table_wrapper" class="card-body" style="height: auto;">
+                            <table id="sac_table_report_0" class="table table-hover table-striped display nowrap" style="width: 100%;">
+                                <thead>
+                                <tr>
+                                    <th>Fondo</th>
+                                    <th>Depósito</th>
+                                    <th>Expedientes</th>
+                                    <th>Libros</th>
+                                </tr>
+                                </thead>
+                                <tbody class="text-muted">
+                                {% for fondo in fondos %}
+                                    <tr>
+                                        <td><span class="font-italic">{{ fondo.nombre }}</span></td>
+                                        <td>{{ fondo.deposito }}</td>
+                                        <td>{{ fondo.expedientes }}</td>
+                                        <td>{{ fondo.libros }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row px-3">
+                <div class="col-md-12">
+                    <div class="card collapsed-card">
+                        <div class="card-header">
+                            <h5 class="card-title font-weight-bolder">Servicios Especializados por Fecha</h5>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="servicios_info" class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group sac-form-group">
+                                        <span class="far fa-calendar-alt form-control-feedback text-md"></span>
+                                        <input type="text" id="fechas-servicios" class="form-control float-right">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row px-3">
+                <div class="col-md-12">
+                    <div class="card collapsed-card">
+                        <div class="card-header">
+                            <h5 class="card-title font-weight-bolder">Servicios Especializados por Cliente</h5>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="clientes_info" class="card-body">
+                            <div class="row">
+                                <div class="form-group col-6">
+                                    <select id="cliente-servicios" name="cliente-servicios">
+                                        <option value=""></option>
+                                        {% for cliente in clientes %}
+                                            <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ include('direccion/_reportes.html.twig') }}
+{% endblock %}
+
+{% block notificationes %}
+    {{ include('direccion/_direccion_notifications.html.twig') }}
+{% endblock %}

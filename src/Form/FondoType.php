@@ -4,55 +4,33 @@ namespace App\Form;
 
 use App\Entity\Deposito;
 use App\Entity\Fondo;
-use AppBundle\Library\Urlizer\Urlizer;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FondoType extends AbstractType
 {
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('nombre', null, [
-                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificador'],
-                //'required' => false,
+                'attr' => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Nombre'],
             ])
-            ->add('descripcion', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'rows' => '1', 'placeholder' => 'Contenido'],
-                //'required' => false,
+            ->add('contenido', null, [
+                'attr' => ['class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Contenido'],
             ])
             ->add('depositos', null, [
-                'class'         => Deposito::class,
-                'choice_label'  => 'identificador',
+                'class' => Deposito::class,
                 'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('d')
-                        ->orderBy('d.numero', 'ASC');
+                    return $er->createQueryBuilder('d')->orderBy('d.numero', 'ASC');
                 },
-                'attr'          => ['class' => 'form-control'],
-                'required'      => false
-            ])
-            ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-                /** @var $fondo */
-                $fondo =$event->getData();
-                if (null !== $fondoNombre = $fondo->getNombre()) {
-                    $fondo->setIdentificador(strtolower(Urlizer::urlize($fondoNombre)));
-                }
-            })
-        ;
+                'attr' => ['class' => 'form-control'],
+                'required' => false
+            ]);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Fondo::class,

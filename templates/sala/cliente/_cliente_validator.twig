@@ -1,0 +1,138 @@
+<script>
+    $(document).ready(function () {
+        $.fn.modal.Constructor.prototype._enforceFocus = function () {};
+
+        $('#cliente_centro_laboral').select2({
+            theme: 'bootstrap4',
+            width: 'style',
+            placeholder: '<i class=\"far fa-link\"></i>&nbsp;&nbsp;&nbsp; Centro Laboral',
+            allowClear: Boolean($(this).data('allow-clear')),
+            language: {
+                noResults: function () {
+                    return 'No hay resultados';
+                }
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            }
+        });
+
+        $('#cliente_pais').select2({
+            theme: 'bootstrap4',
+            width: 'style',
+            placeholder: '<i class=\"far fa-flag\"></i>&nbsp;&nbsp;&nbsp; País',
+            allowClear: Boolean($(this).data('allow-clear')),
+            language: {
+                noResults: function () {
+                    return 'No hay resultados';
+                }
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            }
+        });
+
+        $('input').on('input change', function(e) {
+            $(e.target).valid();
+        });
+
+        $('select').on('input change', function(e) {
+            $(e.target).valid();
+        });
+
+        $('.btn-save').click(function (e) {
+            if (!$('#sac-form').valid()) {
+                e.preventDefault()
+            }
+        });
+
+        $.validator.addMethod('containAlphaNumeric', function (value) {
+            return /^[0-9a-zA-Z]+$/.test(value);
+        });
+
+        $.validator.addMethod('containAlphabeticAndSpaces', function (value) {
+            return /^[a-zA-ZáÁéÉíÍóÓúÚñÑüÜ\s]+$/.test(value);
+        });
+
+        $.validator.addMethod('mail', function (value, element) {
+            return this.optional(element) || /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(value);
+        });
+
+        $('#sac-form').validate({
+            ignore: [],
+            rules: {
+                'cliente[nombre]': {
+                    required: true,
+                    containAlphabeticAndSpaces: true,
+                },
+                'cliente[identificacion]': {
+                    required: true,
+                    containAlphaNumeric: true,
+                },
+                'cliente[telefono]': {
+                    digits: true,
+                },
+                'cliente[direccion]': {
+                    required: true,
+                },
+                'cliente[centro_laboral]': {
+                    required: true,
+                },
+                'cliente[correo]': {
+                    mail: true,
+                },
+                'cliente[pais]': {
+                    required: true,
+                },
+            },
+            messages: {
+                'cliente[nombre]': {
+                    required: 'Esta campo es obligatorio.',
+                    containAlphabeticAndSpaces: 'Este campo solo puede contener caracteres alfabéticos y espacios.',
+                },
+                'cliente[identificacion]': {
+                    required: 'Esta campo es obligatorio.',
+                    containAlphaNumeric: 'Solo caracteres alfanuméricos.',
+                },
+                'cliente[telefono]': {
+                    digits: 'Solo se permiten digitos.'
+                },
+                'cliente[direccion]': {
+                    required: 'Esta campo es obligatorio.',
+                },
+                'cliente[centro_laboral]': {
+                    required: 'Esta campo es obligatorio.',
+                },
+                'cliente[correo]': {
+                    required: 'Esta campo es obligatorio.',
+                    mail: 'Formato de correo incorrecto.'
+                },
+                'cliente[pais]': {
+                    required: 'Esta campo es obligatorio.',
+                },
+            },
+            errorElement: 'em',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+
+                if (element.hasClass('select2-hidden-accessible')) {
+                    error.insertAfter(element.next('.select2-container'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            success: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                console.log('pase x el success')
+            },
+            highlight: function (element) {
+                $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+                console.log('pase x el highlight')
+            },
+            unhighlight: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+                console.log('pase x el unhighlight')
+            },
+        });
+    });
+</script>

@@ -1,0 +1,174 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    Sala | Fondos
+{% endblock %}
+
+{% block menu %}
+    <div class="sidebar text-sm">
+        <nav class="mt-4">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item has-treeview menu-open">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon far fa-atlas"></i>
+                        <p>
+                            Gestión Documental
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active">
+                                <i class="nav-icon far fa-clipboard" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Fondos Documentales</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('sala_listar_expedientes') }}" class="nav-link">
+                                <i class="far fa-book-alt nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Expedientes</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('sala_listar_libros') }}" class="nav-link">
+                                <i class="far fa-file-alt nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Libros</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon far fa-cog"></i>
+                        <p>
+                            Gestión de Sala
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ path('sala_listar_paises') }}" class="nav-link">
+                                <i class="far fa-flag nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Paises</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('sala_listar_centros_laborales') }}" class="nav-link">
+                                <i class="far fa-link nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Centros Laborales</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('sala_listar_clientes') }}" class="nav-link">
+                                <i class="far fa-user-friends nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Clientes</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('sala_listar_cartas') }}" class="nav-link">
+                                <i class="far fa-file-chart-line nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Cartas</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon far fa-sitemap"></i>
+                        <p>
+                            Servicios del Archivo
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ path('sala_listar_investigaciones') }}" class="nav-link">
+                                <i class="far fa-search nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Investigaciones</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('sala_listar_transcripciones') }}" class="nav-link">
+                                <i class="far fa-signature nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Transcripciones</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('sala_listar_reprografias') }}" class="nav-link">
+                                <i class="far fa-scanner-image nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Reprografias</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('sala_listar_certificaciones') }}" class="nav-link">
+                                <i class="far fa-file-certificate nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Certificaciones</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('sala_listar_documentos_en_vitrina') }}" class="nav-link">
+                                <i class="far fa-arrow-alt-square-right nav-icon text-md" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Documentos en Vitrina</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('sala_listar_estadisticas') }}" class="nav-link">
+                        <i class="nav-icon far fa-chart-bar"></i>
+                        <p>Estadísticas</p>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-primary card-outline card-tabs mt-2">
+                        <div class="card-header p-0 pt-1 border-bottom-0">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active font-italic font-weight-bolder">Gestión de fondos</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="table_wrapper" class="card-body">
+                            <table id="sac_fondos" class="table table-hover table-striped display nowrap" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Contenido</th>
+                                        <th>Depósito(s)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-muted">
+                                {% for fondo in fondos %}
+                                    <tr>
+                                        <td><span class="font-italic">{{ fondo.nombre }}</span></td>
+                                        <td>{{ fondo.contenido|length > 50 ? fondo.contenido|slice(0, 50) ~ '...' : fondo.contenido }}</td>
+                                        <td>{{ fondo.depositos|join(', ') }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ include('sala/_fondos_pdf_export.html.twig') }}
+{% endblock %}
+
+{% block notificationes %}
+    {{ include('sala/_sala_notifications.html.twig') }}
+{% endblock %}

@@ -1,62 +1,42 @@
 /*
-*   Tema Oscuro/Claro
+    Inicialización de la libreria Animsition para los efectos de cambio
+    entre páginas.
 */
-const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
-const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-
-if (currentTheme) {
-    if (currentTheme === 'light') {
-        let body = document.body;
-        let navbar = document.querySelector('.navbar-dark');
-
-        body.classList.remove("dark-mode");
-        navbar.classList.remove("navbar-dark");
-        navbar.classList.add('navbar-white');
-        navbar.classList.add('navbar-light');
-
-        toggleSwitch.checked = true;
+$(".animsition").animsition({
+    inClass: 'fade-in',
+    outClass: 'fade-out',
+    inDuration: 500,
+    outDuration: 500,
+    linkElement: 'a:not([target="_blank"]):not([href^="#"]):not([class^="chosen-single"])',
+    loading: true,
+    loadingParentElement: 'html',
+    loadingClass: 'page-loader',
+    loadingInner: '<div class="page-loader__spin"></div>',
+    timeout: false,
+    timeoutCountdown: 5000,
+    onLoadEvent: true,
+    browser: ['animation-duration', '-webkit-animation-duration'],
+    overlay: false,
+    overlayClass: 'animsition-overlay-slide',
+    overlayParentElement: 'html',
+    transition: function (url) {
+        window.location.href = url;
     }
-}
-
-toggleSwitch.addEventListener('change', switchTheme, false);
-
-function switchTheme(e) {
-    if (e.target.checked) {
-        let body = document.body;
-        let navbar = document.querySelector('.navbar-dark');
-
-        body.classList.remove("dark-mode");
-        navbar.classList.remove("navbar-dark");
-        navbar.classList.add('navbar-white');
-        navbar.classList.add('navbar-light');
-
-        localStorage.setItem('theme', 'light');
-    } else {
-        let body = document.body;
-        let navbar = document.querySelector('.navbar-white');
-
-        body.classList.add("dark-mode");
-        navbar.classList.remove('navbar-white');
-        navbar.classList.remove('navbar-light');
-        navbar.classList.add("navbar-dark");
-
-        localStorage.setItem('theme', 'dark');
-    }
-}
+});
 
 /*
-* Inicialización de la librería Sweetalert2
+    Inicialización de la librería Sweetalert2.
 */
 const Toast = Swal.mixin({
     toast: true,
     position: 'top',
     showConfirmButton: false,
-    timer: 3000,
+    timer: 5000,
     timerProgressBar: true,
 });
 
 /*
-* Inicialización de la librería DataTables
+    Inicialización de la librería dataTables.
 */
 $('#sac').DataTable({
     "ordering": false,
@@ -67,22 +47,31 @@ $('#sac').DataTable({
         "url": "/assets/plugins/datatables/spanish.json"
     },
     dom: `<'row'<'col-sm-6 text-left'><'col-sm-6 text-right'f>>
-              <'row'<'col-sm-12'tr>>
-              <'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>`,
+          <'row'<'col-sm-12'tr>>
+          <'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>`,
 });
 
 /*
-* Inicialización de los tooltips de BS4
+    Inicialización de los tooltips de Bootstrap4.
 */
 $('[data-toggle="tooltip"]').tooltip(
     {
         delay: {show: 300, hide: 0},
+        trigger: 'hover',
+        boundary: 'window'
     }
 );
 
 /*
-* Inicialización del autofocus en las ventanas modales
+    Inicialización del autofocus en las ventanas modales.
 */
-$(document).on('shown.bs.modal', function() {
+$(document).on('shown.bs.modal', function () {
     $(this).find('[autofocus]').focus();
+});
+
+/*
+    Función para cerrar el menú del usuario al dar clic en Cambiar Contraseña.
+*/
+$('#pwd-change').on('click', function () {
+    $('#pwd-change').closest('.dropdown-menu').removeClass('show');
 });

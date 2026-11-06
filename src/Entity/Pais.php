@@ -6,10 +6,11 @@ use App\Repository\PaisRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass=PaisRepository::class)
- * @ORM\Table(name="sac_pais")
+ * @ORM\Table(name="sac_sala_paises")
  */
 class Pais
 {
@@ -27,8 +28,9 @@ class Pais
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
+     * @Gedmo\Slug(fields={"nombre"}, unique=false)
      */
-    private $identificador;
+    private $slug;
 
     /**
      * @ORM\OneToMany(targetEntity=Cliente::class, mappedBy="pais")
@@ -36,7 +38,7 @@ class Pais
     private $clientes;
 
     /**
-     * Init the array's collections for every new pais
+     * Init the object properties
      */
     public function __construct()
     {
@@ -81,24 +83,24 @@ class Pais
     /**
      * @return string|null
      */
-    public function getIdentificador(): ?string
+    public function getSlug(): ?string
     {
-        return $this->identificador;
+        return $this->slug;
     }
 
     /**
-     * @param string $identificador
+     * @param string $slug
      * @return $this
      */
-    public function setIdentificador(string $identificador): self
+    public function setSlug(string $slug): self
     {
-        $this->identificador = $identificador;
+        $this->slug = $slug;
 
         return $this;
     }
 
     /**
-     * @return Collection|Cliente[]
+     * @return Collection<int, Cliente>
      */
     public function getClientes(): Collection
     {

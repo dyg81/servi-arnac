@@ -1,0 +1,184 @@
+{% extends '@Dyg81Modal/baseModal.html.twig' %}
+
+{% block modalSize %}modal-lg{% endblock %}
+
+{% block modalBackdrop %}
+    data-backdrop="static"
+{% endblock %}
+
+{% block modalContent %}
+    <div class="modal-header">
+        <h5 class="modal-title m-0 font-weight-bold text-secondary">
+            <i class="fas fa-fw fa-share-square"></i>
+            Detalles del Servicio
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="callout callout-info mt-3">
+            <h6 class="font-weight-bold">
+                Cliente:
+                <a class="font-weight-lighter text-decoration-none text-white-50">{{ investigacion.cliente }}</a>
+            </h6>
+            <a class="font-weight-bold text-decoration-none text-white">Fondo a investigar: </a>
+            <a class="font-weight-lighter text-decoration-none text-white-50">{{ investigacion.fondo }}</a>
+            <div class="pt-3">
+                <table class="table table-hover" id="investigaciones">
+                    <thead>
+                        <tr>
+                            <th>Documento(s)</th>
+                            <th>Estado</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for expediente in investigacion.expedientes %}
+                        <tr>
+                            <td class="text-sm">Expediente {{ expediente.numero }}</td>
+                            <td>
+                                <p class="badge badge-info text-white">{{ expediente.getEstadoExpediente }}</p>
+                            </td>
+                            {% if investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_SALA_CLIENTE') or investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_PAUSADO') %}
+                                {% if expediente.estado == constant('App\\Entity\\Expediente::EXP_ESTADO_EN_VITRINA') %}
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                {% else %}
+                                    <td class="text-sm">
+                                        <div class="float-right pr-2">
+                                            <a href="{{ path('sala_agregar_reprografia', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar reprografía">
+                                                <i class="far fa-scanner-image"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="text-sm">
+                                        <div class="float-right pr-2">
+                                            <a href="{{ path('sala_agregar_transcripcion', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar transcripción">
+                                                <i class="far fa-signature"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="text-sm">
+                                        <div class="float-right pr-2">
+                                            <a href="{{ path('sala_agregar_certificacion', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar certificación">
+                                                <i class="far fa-file-certificate"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                {% endif %}
+                                <td class="text-sm">
+                                    <div class="float-right pr-2">
+                                        {% if not(expediente.estado == constant('App\\Entity\\Expediente::EXP_ESTADO_EN_VITRINA')) %}
+                                            <a href="{{ path('sala_archivar_documento_en_vitrina', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Guardar en vitrina">
+                                                <i class="fas fa-arrow-alt-from-left"></i>
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('sala_regresar_documento_de_vitrina', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Retirar de vitrina">
+                                                <i class="fas fa-arrow-alt-from-right"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            {% else %}
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    {% for libro in investigacion.libros %}
+                        <tr>
+                            <td class="text-sm">Libro {{ libro }}</td>
+                            <td>
+                                <p class="badge badge-info text-white">{{ libro.getEstadolibro }}</p>
+                            </td>
+                            {% if investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_SALA_CLIENTE') or investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_PAUSADO') %}
+                                {% if libro.estado == constant('App\\Entity\\Libro::LIB_ESTADO_EN_VITRINA') %}
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                {% else %}
+                                    <td class="text-sm">
+                                        <div class="float-right pr-2">
+                                            <a href="{{ path('sala_agregar_reprografia', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}" class="text-muted mr-2"data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar reprografía">
+                                                <i class="far fa-scanner-image"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="text-sm">
+                                        <div class="float-right pr-2">
+                                            <a href="{{ path('sala_agregar_transcripcion', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar transcripción">
+                                                <i class="far fa-signature"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="text-sm">
+                                        <div class="float-right pr-2">
+                                            <a href="{{ path('sala_agregar_certificacion', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar certificación">
+                                                <i class="far fa-file-certificate"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                {% endif %}
+                                <td class="text-sm">
+                                    <div class="float-right pr-2">
+                                        {% if not(libro.estado == constant('App\\Entity\\Libro::LIB_ESTADO_EN_VITRINA')) %}
+                                            <a href="{{ path('sala_archivar_documento_en_vitrina', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Guardar en vitrina">
+                                                <i class="fas fa-arrow-alt-from-left"></i>
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('sala_regresar_documento_de_vitrina', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Retirar de vitrina">
+                                                <i class="fas fa-arrow-alt-from-right"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            {% else %}
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="col-3">
+            {% if investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_PROCESADO') %}
+                <a href="{{ path('sala_entregar_documentos_investigacion', {'id': investigacion.id}) }}" class="btn btn-sm btn-danger" style="margin-left: -10.5rem !important;">
+                    Entregar Documentos
+                </a>
+            {% elseif investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_SALA_CLIENTE') or investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_PAUSADO') %}
+                <a href="{{ path('sala_recoger_documentos_investigacion', {'id': investigacion.id}) }}" class="btn btn-sm btn-danger" style="margin-left: -10.5rem !important;">
+                    Recoger Documentos
+                </a>
+            {% endif %}
+        </div>
+        <div class="col-3">
+            {% if (investigacion.estado != constant('App\\Entity\\Investigacion::ESTADO_SALA_CLIENTE') and (investigacion.estado != constant('App\\Entity\\Investigacion::ESTADO_PAUSADO'))) %}
+                <a href="{{ path('sala_cancelar_investigacion', {'id': investigacion.id}) }}" class="btn btn-sm btn-primary" style="margin-left: -12rem !important;">Cancelar Servicio</a>
+            {% endif %}
+        </div>
+        <div class="col-3">
+            <button type="button" class="btn btn-sm btn-default float-right" data-dismiss="modal">Cerrar</button>
+        </div>
+    </div>
+    <script>
+        $('[data-toggle="tooltip"]').tooltip(
+            {
+                delay: {show: 300, hide: 0},
+            }
+        );
+    </script>
+{% endblock %}
+

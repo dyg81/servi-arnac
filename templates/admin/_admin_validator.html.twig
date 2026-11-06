@@ -1,0 +1,121 @@
+<script>
+    $(document).ready(function () {
+        $.fn.modal.Constructor.prototype._enforceFocus = function () {};
+
+        $('#usuario_roles').select2({
+            theme: 'bootstrap4',
+            width: 'style',
+            placeholder: '<i class=\"far fa-user-tag\"></i>&nbsp;&nbsp;&nbsp; Roles',
+            allowClear: Boolean($(this).data('allow-clear')),
+            language: {
+                noResults: function () {
+                    return 'No hay resultados';
+                }
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            }
+        });
+
+        $('input').on('input change', function(e) {
+            $(e.target).valid();
+        });
+
+        $('select').on('input change', function(e) {
+            $(e.target).valid();
+        });
+
+        $('.btn-save').click(function (e) {
+            if (!$('#sac-form').valid()) {
+                e.preventDefault()
+            }
+        });
+
+        $.validator.addMethod('pwd_strong', function (value) {
+            return /[A-Z]/.test(value) &&
+                /\d/.test(value) &&
+                /[=!\-@._*\$\#\%\^\&\(\)\~\`\<\>\/\?\\\|\{\}\[\]\;\:\'\"\,\+]/.test(value)
+        });
+
+        $.validator.addMethod('containAlphaNumeric', function (value) {
+            return /^[0-9a-zA-Z]+$/.test(value);
+        });
+
+        $.validator.addMethod('containAlphabeticAndSpaces', function (value) {
+            return /^[a-zA-ZáÁéÉíÍóÓúÚñÑüÜ\s]+$/.test(value);
+        });
+
+        $('#sac-form').validate({
+            ignore: [],
+            rules: {
+                'usuario[nombre]': {
+                    required: true,
+                    minlength: 10,
+                    containAlphabeticAndSpaces: true,
+                },
+                'usuario[usuario]': {
+                    required: true,
+                    containAlphaNumeric: true,
+                },
+                'usuario[roles]': {
+                    required: true,
+                },
+                'usuario[password][first]': {
+                    required: true,
+                    pwd_strong: true,
+                    minlength: 8,
+                },
+                'usuario[password][second]': {
+                    required: true,
+                    pwd_strong: true,
+                    minlength: 8,
+                    equalTo: '#usuario_password_first'
+                },
+            },
+            messages: {
+                'usuario[nombre]': {
+                    required: 'Esta campo es obligatorio',
+                    minlength: 'Debe tener mínimo 10 caracteres',
+                    containAlphabeticAndSpaces: 'Este campo solo puede contener caracteres alfabéticos y espacios',
+                },
+                'usuario[usuario]': {
+                    required: 'Esta campo es obligatorio',
+                    containAlphaNumeric: 'Solo caracteres alfanuméricos',
+                },
+                'usuario[roles]': {
+                    required: 'Esta campo es obligatorio',
+                },
+                'usuario[password][first]': {
+                    required: 'Esta campo es obligatorio',
+                    minlength: 'Debe tener mínimo 8 caracteres',
+                    pwd_strong: 'La contraseña no es segura',
+                },
+                'usuario[password][second]': {
+                    required: 'Esta campo es obligatorio',
+                    minlength: 'Debe tener mínimo 8 caracteres',
+                    pwd_strong: 'La contraseña no es segura',
+                    equalTo: 'Las contraseñas no coinciden'
+                },
+            },
+            errorElement: 'em',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+
+                if (element.hasClass('select2-hidden-accessible')) {
+                    error.insertAfter(element.next('.select2-container'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            success: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+            highlight: function (element) {
+                $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+            },
+            unhighlight: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+        });
+    });
+</script>

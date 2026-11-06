@@ -1,0 +1,35 @@
+<script>
+    $(document).ready(function () {
+        let donutChartCanvas = $('#donutChart').get(0).getContext('2d')
+
+        let donutData = {
+            labels: [
+                'Transcripciones',
+                'Reprografias',
+                'Investigaciones',
+                'Certificaciones',
+            ],
+            datasets: [
+                {
+                    data: [{{ transcripciones_totales|length }}, {{ reprografias_totales|length }}, {{ investigaciones_totales|length }}, {{ certificaciones_totales|length }}],
+                    backgroundColor: ['#634c3c', '#00bc8c', '#687e7e', '#f6e7d5'],
+                }
+            ]
+        }
+
+        let donutOptions = {
+            maintainAspectRatio: false,
+            responsive: true,
+            legend: {
+                display: false
+            },
+        }
+
+        new Chart(donutChartCanvas, {
+            type: 'pie',
+            //type: 'doughnut',
+            data: donutData,
+            options: donutOptions
+        })
+    })
+</script>

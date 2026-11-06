@@ -2,15 +2,16 @@
 
 namespace App\Controller\Registro;
 
+use App\Entity\Expediente;
 use App\Entity\Fondo;
+use App\Entity\Libro;
+use App\Entity\Traza;
 use App\Form\FondoType;
-use App\Repository\FondoRepository;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Dyg81\ModalBundle\Response\ModalRedirectResponse;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,124 +22,182 @@ use Symfony\Component\Routing\Annotation\Route;
 class FondoController extends AbstractController
 {
     /**
-     * @Route("/listar-fondos", name="listar_fondos", methods={"GET"})
-     * @param FondoRepository $fondoRepository
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @Route("/listar-fondos", name="registro_listar_fondos", methods={"GET"})
      * @return Response
      */
-    public function listar(FondoRepository $fondoRepository): Response
+    public function listarFondos(): Response
     {
-        return $this->render('registro/fondos/listar.html.twig', [
-            'fondos' => $fondoRepository->findAll(),
+        return $this->render('registro/fondo/listar.html.twig', [
+            'fondos' => $this->entityManager->getRepository(Fondo::class)->findAll(),
         ]);
     }
 
     /**
-     * @Route("/agregar-fondos", name="agregar_fondo", methods={"GET","POST"})
+     * @Route("/agregar/fondo", name="registro_agregar_fondo", methods={"GET", "POST"})
      * @param Request $request
-     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function agregar(Request $request, EntityManagerInterface $entityManager): Response
+    public function agregarFondo(Request $request): Response
     {
-        $fondo = new Fondo();
-        $form = $this->createForm(FondoType::class, $fondo);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($fondo);
-
-            try {
-                $entityManager->flush();
-                $this->addFlash('success', 'El fondo se ha agregado correctamente.');
-            } catch (Exception $e) {
-                if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Fondo no agregado, ya existe en el sistema.');
-                } else
-                {
-                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
-                }
-            }
-
-            return new ModalRedirectResponse($this->generateUrl('listar_fondos'));
-        }
-
-        return $this->render('registro/fondos/agregar.html.twig', [
-            'fondo' => $fondo,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/editar-fondos/{id}", name="editar_fondo", methods={"GET","POST"})
-     * @param Request $request
-     * @param Fondo $fondo
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     */
-    public function editar(Request $request, Fondo $fondo, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(FondoType::class, $fondo);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $entityManager->flush();
-                $this->addFlash('success', 'El fondo se ha sido editado correctamente.');
-            } catch (Exception $e) {
-                if ($e->getErrorCode() == 1062)  {
-                    $this->addFlash('error', 'Fondo no editado, ya existe en el sistema.');
-                } else
-                {
-                    $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
-                }
-            }
-
-            return new ModalRedirectResponse($this->generateUrl('listar_fondos'));
-        }
-
-        return $this->render('registro/fondos/editar.html.twig', [
-            'fondo' => $fondo,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/eliminar-fondos/{id}", name="eliminar_fondo", methods={"GET", "DELETE"})
-     * @param Request $request
-     * @param Fondo $fondo
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     */
-    public function eliminar(Request $request, Fondo $fondo, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createDeleteForm($fondo);
-
-        if ($request->getMethod() == "DELETE") {
+        if ($request->isXmlHttpRequest()) {
+            $fondo = new Fondo();
+            $form = $this->createForm(FondoType::class, $fondo);
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager->remove($fondo);
+                $traza = new Traza();
+                $traza->setTipo('warning');
+                $traza->setUsuario($this->getUser()->getNombre());
+                $traza->setContenido('Ha creado el fondo ' . $fondo->getNombre());
+
+                $this->entityManager->persist($traza);
+                $this->entityManager->persist($fondo);
 
                 try {
-                    $entityManager->flush();
-                    $this->addFlash('success', 'El fondo se ha eliminado correctamente.');
+                    $this->entityManager->flush();
+                    $this->addFlash('success', 'Fondo agregado correctamente.');
                 } catch (Exception $e) {
-                    if ($e->getErrorCode() == 1451)  {
-                        $this->addFlash('error', 'Fondo no eliminado, conserva expedientes y/o libros asociados.');
-                    } else
-                    {
-                        $this->addFlash('error', 'Error : '.$e->getErrorCode().'. Consulte al grupo de desarrollo.');
+                    if ($e->getErrorCode() == 1062) {
+                        $this->addFlash('error', 'Fondo no agregado, ya existe en el sistema.');
+                    } else {
+                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
                     }
                 }
 
-                return new ModalRedirectResponse($this->generateUrl('listar_fondos'));
+                return new ModalRedirectResponse($this->generateUrl('registro_listar_fondos'));
             }
-        }
 
-        return $this->render('registro/fondos/eliminar.html.twig', array(
-            'fondo' => $fondo,
-            'form' => $form->createView()
-        ));
+            return $this->render('registro/fondo/agregar.html.twig', [
+                'fondo' => $fondo,
+                'form' => $form->createView(),
+            ]);
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
+    }
+
+    /**
+     * @Route("/editar-fondo/{id}", name="registro_editar_fondo", methods={"GET", "POST"})
+     * @param Request $request
+     * @param Fondo $fondo
+     * @return Response
+     */
+    public function editarFondo(Request $request, Fondo $fondo): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $oldData = clone $fondo;
+            $form = $this->createForm(FondoType::class, $fondo);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $traza = new Traza();
+                $traza->setTipo('warning');
+                $traza->setUsuario($this->getUser()->getNombre());
+
+                if ($oldData->getNombre() != $fondo->getNombre()) {
+                    $traza->setContenido('Ha editado el nombre del fondo ' . $oldData->getNombre() . ' a ' . $fondo->getNombre());
+
+                    $expedientes = $this->entityManager->getRepository(Expediente::class)->findAll();
+
+                    foreach ($expedientes as $expediente) {
+                        $expediente->setSlug($expediente->getNumero());
+                        $this->entityManager->persist($expediente);
+                    }
+
+                    $libros = $this->entityManager->getRepository(Libro::class)->findAll();
+
+                    foreach ($libros as $libro) {
+                        $libro->setSlug($libro->getAnno() . '-' . $libro->getTomo());
+                        $this->entityManager->persist($libro);
+                    }
+                } else {
+                    $traza->setContenido('Ha editado los depósitos asociados al fondo ' . $fondo->getNombre());
+                }
+
+                $this->entityManager->persist($traza);
+                $this->entityManager->persist($fondo);
+
+                try {
+                    $this->entityManager->flush();
+                    $this->addFlash('success', 'Fondo editado correctamente.');
+                } catch (Exception $e) {
+                    if ($e->getErrorCode() == 1062) {
+                        $this->addFlash('error', 'Fondo no editado, ya existe en el sistema.');
+                    } else {
+                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    }
+                }
+
+                return new ModalRedirectResponse($this->generateUrl('registro_listar_fondos'));
+            }
+
+            return $this->render('registro/fondo/editar.html.twig', [
+                'fondo' => $fondo,
+                'form' => $form->createView(),
+            ]);
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
+    }
+
+    /**
+     * @Route("/eliminar-fondo/{id}", name="registro_eliminar_fondo", methods={"GET", "DELETE"})
+     * @param Request $request
+     * @param Fondo $fondo
+     * @return Response
+     */
+    public function delete(Request $request, Fondo $fondo): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $form = $this->createDeleteForm($fondo);
+
+            if ($request->getMethod() == "DELETE") {
+                $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $traza = new Traza();
+                    $traza->setTipo('danger');
+                    $traza->setUsuario($this->getUser()->getNombre());
+                    $traza->setContenido('Ha eliminado el fondo ' . $fondo->getNombre());
+
+                    $this->entityManager->persist($traza);
+                    $this->entityManager->remove($fondo);
+
+                    try {
+                        $this->entityManager->flush();
+                        $this->addFlash('success', 'Fondo eliminado correctamente.');
+                    } catch (Exception $e) {
+                        if ($e->getErrorCode() == 1451) {
+                            $this->addFlash('error', 'Fondo no eliminado, conserva expedientes o libros asociados.');
+                        } else {
+                            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        }
+                    }
+
+                    return new ModalRedirectResponse($this->generateUrl('registro_listar_fondos'));
+                }
+            }
+
+            return $this->render('registro/fondo/eliminar.html.twig', array(
+                'fondo' => $fondo,
+                'form' => $form->createView()
+            ));
+        } else {
+            return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
     }
 
     /**
@@ -148,7 +207,7 @@ class FondoController extends AbstractController
     private function createDeleteForm(Fondo $fondo): FormInterface
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('eliminar_fondo', array('id' => $fondo->getId())))
+            ->setAction($this->generateUrl('registro_eliminar_fondo', array('id' => $fondo->getId())))
             ->setMethod('DELETE')
             ->getForm();
     }

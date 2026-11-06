@@ -1,0 +1,95 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    Certificacón | Nuevas
+{% endblock %}
+
+{% block menu %}
+    <div class="sidebar text-sm">
+        <nav class="mt-4">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item has-treeview menu-open mt-2">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon far fa-sitemap"></i>
+                        <p>
+                            Servicios
+                            <i class="right fas fa-angle-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="" class="nav-link active">
+                                <i class="far fa-file-certificate nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Solicitudes Nuevas</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('servicio_listar_certificaciones_completadas') }}" class="nav-link">
+                                <i class="far fa-outdent nav-icon" style="font-size: 0.875em"></i>
+                                <p style="font-size: 0.875em">Solicitudes Completadas</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-primary card-outline card-tabs mt-2">
+                        <div class="card-header p-0 pt-1 border-bottom-0">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active font-italic font-weight-bolder">Certificaciones</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="table_wrapper" class="card-body">
+                            <table id="sac" class="table table-hover table-striped display nowrap" style="width: 100%;">
+                                <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Fecha de Solicitud</th>
+                                    <th>Fondo</th>
+                                    <th>Documento</th>
+                                    <th>Estado del Servicio</th>
+                                </tr>
+                                </thead>
+                                <tbody class="text-muted">
+                                {% for certificacion in certificaciones %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ path('servicio_detalles_certificacion', {'id': certificacion.id}) }}" class="font-italic text-white modal-open" data-toggle="tooltip" data-placement="top" data-container=".content-wrapper" title="Detalles">
+                                                {{ certificacion.cliente }}
+                                            </a>
+                                        </td>
+                                        <td>{{ certificacion.fechaSolicitud|date('d-m-Y / H:i') }}</td>
+                                        <td>{{ certificacion.documentoFondo }}</td>
+                                        <td>{{ certificacion.documentoNombre }}</td>
+                                        <td>
+                                            {% if certificacion.estado == constant('App\\Entity\\Certificacion::ESTADO_SOLICITADO') %}
+                                                <span class="badge badge-info text-white">{{ certificacion.estadocertificacion }} : {{ certificacion.fechaActualizacion|date('d-m-Y / H:i') }}</span>
+                                            {% elseif certificacion.estado == constant('App\\Entity\\Certificacion::ESTADO_EN_PROCESO') %}
+                                                <span class="badge badge-warning text-white">{{ certificacion.estadocertificacion }} : {{ certificacion.fechaActualizacion|date('d-m-Y / H:i') }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block notificationes %}
+    {{ include('certificacion/_certificacion_notifications.html.twig') }}
+{% endblock %}

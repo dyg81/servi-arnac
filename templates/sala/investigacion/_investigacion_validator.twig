@@ -1,0 +1,166 @@
+<script>
+    $(document).ready(function () {
+        $.fn.modal.Constructor.prototype._enforceFocus = function () {};
+
+        const select_cliente = $('#investigacion_cliente').select2({
+            theme: 'bootstrap4',
+            width: 'style',
+            placeholder: '<i class=\"far fa-user\"></i>&nbsp;&nbsp;&nbsp; Cliente',
+            allowClear: Boolean($(this).data('allow-clear')),
+            language: {
+                noResults: function () {
+                    return 'No hay resultados';
+                }
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            }
+        });
+
+        const select_fondo = $('#investigacion_fondo').select2({
+            theme: 'bootstrap4',
+            width: 'style',
+            placeholder: '<i class=\"far fa-clipboard\"></i>&nbsp;&nbsp;&nbsp; Fondos',
+            allowClear: Boolean($(this).data('allow-clear')),
+            language: {
+                noResults: function () {
+                    return 'No hay resultados';
+                }
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            }
+        });
+
+        const select_legajos = $('#investigacion_legajos').select2({
+            theme: 'bootstrap4',
+            width: 'style',
+        });
+
+        const select_expedientes = $('#investigacion_expedientes').select2({
+            theme: 'bootstrap4',
+            width: 'styled',
+        });
+
+        const select_libros = $('#investigacion_libros').select2({
+            theme: 'bootstrap4',
+            width: 'style',
+        });
+
+        select_fondo.on('change', function () {
+            select_legajos.select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: '<i class=\"far fa-folder-open\"></i>&nbsp;&nbsp;&nbsp; Legajos',
+                allowClear: Boolean($(this).data('allow-clear')),
+                language: {
+                    noResults: function () {
+                        return 'No hay resultados';
+                    }
+                },
+                escapeMarkup: function (markup) {
+                    return markup;
+                }
+            });
+
+            select_expedientes.select2({
+                theme: 'bootstrap4',
+                width: 'styled',
+                placeholder: 'Seleccione un legajo para acceder...',
+                allowClear: Boolean($(this).data('allow-clear')),
+            });
+
+            select_libros.select2({
+                theme: 'bootstrap4',
+                width: 'style',
+                placeholder: 'Seleccione los libros requeridos...',
+                allowClear: Boolean($(this).data('allow-clear')),
+                language: {
+                    noResults: function () {
+                        return 'No hay resultados';
+                    }
+                },
+            });
+        });
+
+        select_legajos.on('change', function () {
+            select_expedientes.select2({
+                theme: 'bootstrap4',
+                width: 'styled',
+                placeholder: 'Seleccione los expedientes requeridos...',
+                allowClear: Boolean($(this).data('allow-clear')),
+                language: {
+                    noResults: function () {
+                        return 'No hay resultados';
+                    }
+                },
+            });
+        });
+
+        $('select').on('input change', function(e) {
+            $(e.target).valid();
+        });
+
+        $('.btn-save').click(function (e) {
+            if (!$('#sac-form').valid()) {
+                e.preventDefault();
+
+                $('#sac-form').valid();
+            }
+        });
+
+        $('#sac-form').validate({
+            ignore: [],
+            rules: {
+                'investigacion[cliente]': {
+                    required: true,
+                },
+                'investigacion[fondo]': {
+                    required: true,
+                },
+                'investigacion[legajos][]': {
+                    required: false,
+                },
+                'investigacion[expedientes][]': {
+                    require_from_group: [1, '.require-from-group'],
+                },
+                'investigacion[libros][]': {
+                    require_from_group: [1, '.require-from-group'],
+                },
+            },
+            messages: {
+                'investigacion[cliente]': {
+                    required: 'Este campo es obligatorio.',
+                },
+                'investigacion[fondo]': {
+                    required: 'Este campo es obligatorio.',
+                },
+                'investigacion[expedientes][]': {
+                    require_from_group: 'Seleccione al menos un expediente o un libro.'
+                },
+                'investigacion[libros][]': {
+                    require_from_group: 'Seleccione al menos un expediente o un libro.'
+                },
+            },
+            errorElement: 'em',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+
+                if (element.hasClass('select2-hidden-accessible')) {
+                    error.insertAfter(element.next('.select2-container'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            success: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+            highlight: function (element) {
+                $(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
+            },
+            unhighlight: function (element) {
+                $(element).closest('.form-control').addClass('is-valid').removeClass('is-invalid');
+            },
+        });
+    });
+</script>

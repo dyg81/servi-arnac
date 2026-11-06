@@ -22,68 +22,49 @@ class ExpedienteType extends AbstractType
     /**
      * @var EntityManagerInterface
      */
-    private $em;
+    private $entityManager;
 
     /**
-     * @param EntityManagerInterface $em
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->em = $em;
+        $this->entityManager = $entityManager;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('numero', null, [
-                'attr'     => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Identificador']
+                'attr' => ['autofocus' => true, 'class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Número']
             ])
-            ->add('descripcion', null, [
-                'attr'     => ['class' => 'form-control form-control-border border-width-2', 'autocomplete' => 'off', 'placeholder' => 'Contenido']
+            ->add('contenido', null, [
+                'attr' => ['class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'autocomplete' => 'off', 'placeholder' => 'Contenido']
             ])
             ->add('estante', null, [
-                'class'         => Estante::class,
-                'choice_label'  => 'identificador',
+                'class' => Estante::class,
                 'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('e')
-                        ->orderBy('e.numero', 'ASC');
+                    return $er->createQueryBuilder('e')->orderBy('e.numero', 'ASC');
                 },
-                'attr'          => ['class' => 'form-control'],
-                'required'      => false
+                'attr' => ['class' => 'form-control'],
+                'required' => false
             ])
             ->add('anaquel', null, [
-                'class'         => Anaquel::class,
-                'choice_label'  => 'identificador',
+                'class' => Anaquel::class,
                 'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('a')
-                        ->orderBy('a.numero', 'ASC');
+                    return $er->createQueryBuilder('a')->orderBy('a.numero', 'ASC');
                 },
-                'attr'          => ['class' => 'form-control'],
-                'required'      => false
+                'attr' => ['class' => 'form-control'],
+                'required' => false
             ])
             ->add('legajo', null, [
-                'class'         => Legajo::class,
-                'choice_label'  => 'identificador',
+                'class' => Legajo::class,
                 'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('l')
-                        ->orderBy('l.legajo', 'ASC');
+                    return $er->createQueryBuilder('l')->orderBy('l.numero', 'ASC');
                 },
-                'attr'          => ['class' => 'form-control'],
-                'required'      => false
-            ])
-            ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-                /** @var $expediente */
-                $expediente = $event->getData();
-
-                if (null !== $expediente->getNumero()) {
-                    $expediente->setIdentificador($expediente->getNumero().'-'.$expediente->getFondo()->getIdentificador());
-                }
-            })
-        ;
+                'attr' => ['class' => 'form-control'],
+                'required' => false
+            ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
         $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
@@ -96,23 +77,23 @@ class ExpedienteType extends AbstractType
     protected function addElements(FormInterface $form, Fondo $fondo = null)
     {
         $form->add('fondo', null, [
-            'attr'     => ['class' => 'form-control'],
-            'class'    => Fondo::class,
+            'attr' => ['class' => 'form-control'],
+            'class' => Fondo::class,
             'required' => false,
-            'data'     => $fondo,
+            'data' => $fondo,
         ]);
 
         $depositosAsociados = array();
 
         if ($fondo) {
-            $depositos = $this->em->getRepository(Deposito::class);
-            $depositosAsociados = $depositos->findAllByFondo($fondo->getId());
+            $depositos = $this->entityManager->getRepository(Deposito::class);
+            $depositosAsociados = $depositos->obtenerDepositosPorFondo($fondo->getId());
         }
 
         $form->add('deposito', null, [
-            'attr'     => ['class' => 'form-control'],
-            'class'    => Deposito::class,
-            'choices'  => $depositosAsociados,
+            'attr' => ['class' => 'form-control'],
+            'class' => Deposito::class,
+            'choices' => $depositosAsociados,
         ]);
     }
 
@@ -124,7 +105,7 @@ class ExpedienteType extends AbstractType
         $form = $event->getForm();
         $data = $event->getData();
 
-        $fondo = $this->em->getRepository('App:Fondo')->find($data['fondo']);
+        $fondo = $this->entityManager->getRepository(Fondo::class)->find($data['fondo']);
 
         $this->addElements($form, $fondo);
     }
@@ -142,9 +123,6 @@ class ExpedienteType extends AbstractType
         $this->addElements($form, $fondo);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

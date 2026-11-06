@@ -6,10 +6,11 @@ use App\Repository\FondoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass=FondoRepository::class)
- * @ORM\Table(name="sac_fondo")
+ * @ORM\Table(name="sac_registro_fondos")
  */
 class Fondo
 {
@@ -26,19 +27,21 @@ class Fondo
     private $nombre;
 
     /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @Gedmo\Slug(fields={"nombre"}, prefix="fondo-", unique=false)
+     */
+    private $slug;
+
+    /**
      * @ORM\Column(type="text")
      */
-    private $descripcion;
+    private $contenido;
 
     /**
      * @ORM\ManyToMany(targetEntity=Deposito::class, inversedBy="fondos")
+     * @ORM\JoinTable(name="sac_registro_fondos_depositos")
      */
     private $depositos;
-
-    /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
-    private $identificador;
 
     /**
      * @ORM\OneToMany(targetEntity=Expediente::class, mappedBy="fondo")
@@ -56,22 +59,34 @@ class Fondo
     private $cartas;
 
     /**
-     * Init the array's collections for every new fondo
+     * @ORM\OneToMany(targetEntity=Investigacion::class, mappedBy="fondo")
+     */
+    private $investigaciones;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $contador;
+
+    /**
+     * Init the object properties
      */
     public function __construct()
     {
-        $this->depositos = new ArrayCollection();
-        $this->expedientes = new ArrayCollection();
+        $this->setContador(0);
         $this->libros = new ArrayCollection();
         $this->cartas = new ArrayCollection();
+        $this->depositos = new ArrayCollection();
+        $this->expedientes = new ArrayCollection();
+        $this->investigaciones = new ArrayCollection();
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function __toString()
     {
-        return $this->nombre;
+        return $this->getNombre();
     }
 
     /**
@@ -104,24 +119,43 @@ class Fondo
     /**
      * @return string|null
      */
-    public function getDescripcion(): ?string
+    public function getSlug(): ?string
     {
-        return $this->descripcion;
+        return $this->slug;
     }
 
     /**
-     * @param string $descripcion
+     * @param string $slug
      * @return $this
      */
-    public function setDescripcion(string $descripcion): self
+    public function setSlug(string $slug): self
     {
-        $this->descripcion = $descripcion;
+        $this->slug = $slug;
 
         return $this;
     }
 
     /**
-     * @return Collection|Deposito[]
+     * @return string|null
+     */
+    public function getContenido(): ?string
+    {
+        return $this->contenido;
+    }
+
+    /**
+     * @param string $contenido
+     * @return $this
+     */
+    public function setContenido(string $contenido): self
+    {
+        $this->contenido = $contenido;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Deposito>
      */
     public function getDepositos(): Collection
     {
@@ -153,26 +187,7 @@ class Fondo
     }
 
     /**
-     * @return string|null
-     */
-    public function getIdentificador(): ?string
-    {
-        return $this->identificador;
-    }
-
-    /**
-     * @param string $identificador
-     * @return $this
-     */
-    public function setIdentificador(string $identificador): self
-    {
-        $this->identificador = $identificador;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Expediente[]
+     * @return Collection<int, Expediente>
      */
     public function getExpedientes(): Collection
     {
@@ -210,7 +225,7 @@ class Fondo
     }
 
     /**
-     * @return Collection|Libro[]
+     * @return Collection<int, Libro>
      */
     public function getLibros(): Collection
     {
@@ -248,13 +263,17 @@ class Fondo
     }
 
     /**
-     * @return Collection|Carta[]
+     * @return Collection<int, Carta>
      */
     public function getCartas(): Collection
     {
         return $this->cartas;
     }
 
+    /**
+     * @param Carta $carta
+     * @return $this
+     */
     public function addCarta(Carta $carta): self
     {
         if (!$this->cartas->contains($carta)) {
@@ -265,11 +284,72 @@ class Fondo
         return $this;
     }
 
+    /**
+     * @param Carta $carta
+     * @return $this
+     */
     public function removeCarta(Carta $carta): self
     {
         if ($this->cartas->removeElement($carta)) {
             $carta->removeFondo($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Investigacion>
+     */
+    public function getInvestigaciones(): Collection
+    {
+        return $this->investigaciones;
+    }
+
+    /**
+     * @param Investigacion $investigacione
+     * @return $this
+     */
+    public function addInvestigacione(Investigacion $investigacione): self
+    {
+        if (!$this->investigaciones->contains($investigacione)) {
+            $this->investigaciones[] = $investigacione;
+            $investigacione->setFondo($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Investigacion $investigacione
+     * @return $this
+     */
+    public function removeInvestigacione(Investigacion $investigacione): self
+    {
+        if ($this->investigaciones->removeElement($investigacione)) {
+            // set the owning side to null (unless already changed)
+            if ($investigacione->getFondo() === $this) {
+                $investigacione->setFondo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getContador(): ?int
+    {
+        return $this->contador;
+    }
+
+    /**
+     * @param int $contador
+     * @return $this
+     */
+    public function setContador(int $contador): self
+    {
+        $this->contador = $contador;
 
         return $this;
     }

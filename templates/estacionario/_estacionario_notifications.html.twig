@@ -1,0 +1,59 @@
+<a id="notificacionesInvestigacion" hidden href="{{ path('estacionario_listar_investigaciones_nuevas') }}" class="dropdown-item">
+    <div class="media">
+        <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol" class="img-size-50 mr-3 mt-1 img-circle">
+        <div class="media-body">
+            <h3 class="dropdown-item-title text-sm">
+                Existen actualmente
+                <span class="float-right text-sm text-info"><i class="fas fa-star"></i></span>
+            </h3>
+            <p class="text-xs">sin procesar:</p>
+        </div>
+    </div>
+</a>
+
+<script>
+    let bellSelector = document.querySelector('#notificationBell');
+    let notificacionesSelector = document.querySelector('#notificationsBlock');
+    let investigacionesSelector = document.querySelector('#notificacionesInvestigacion');
+
+    function checkNewInfo() {
+        $.ajax({
+            url: '{{ path('estacionario_notificaciones') }}',
+            type: 'GET',
+            dataType: 'JSON',
+            success: function (data) {
+                const investigacionesSolicitadas = data[0];
+
+                investigacionesSelector.hidden = true;
+
+                if ((investigacionesSolicitadas) !== 0) {
+                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i><span class="badge badge-danger navbar-badge">' + investigacionesSolicitadas + '</span>';
+                    notificacionesSelector.hidden = false;
+                    investigacionesSelector.hidden = false;
+
+                    if (investigacionesSelector.querySelector('em:last-child')) {
+                        investigacionesSelector.querySelector('em:last-child').remove();
+                    }
+
+                    let child = document.createElement('em');
+                    child.classList.add('text-xs');
+                    child.classList.add('text-muted');
+                    child.innerHTML = investigacionesSolicitadas + ' nueva(s) investigacion(es)';
+
+                    parent = investigacionesSelector.querySelector('.media-body');
+                    parent.appendChild(child);
+                } else {
+                    notificacionesSelector.hidden = true;
+                    notificacionesSelector.classList.remove('show');
+                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i>';
+                }
+            },
+
+            complete: function () {
+                setTimeout(checkNewInfo, 300000);
+            }
+        });
+    }
+
+    setTimeout(checkNewInfo, 1000);
+</script>

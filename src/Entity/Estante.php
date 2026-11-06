@@ -6,10 +6,11 @@ use App\Repository\EstanteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass=EstanteRepository::class)
- * @ORM\Table(name="sac_estante")
+ * @ORM\Table(name="sac_registro_estantes")
  */
 class Estante
 {
@@ -21,14 +22,15 @@ class Estante
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=2, unique=true)
+     * @ORM\Column(type="string", length=2)
      */
     private $numero;
 
     /**
-     * @ORM\Column(type="string", length=5)
+     * @ORM\Column(type="string", length=10, unique=true)
+     * @Gedmo\Slug(fields={"numero"}, prefix="estante-", unique=false)
      */
-    private $identificador;
+    private $slug;
 
     /**
      * @ORM\OneToMany(targetEntity=Expediente::class, mappedBy="estante")
@@ -41,20 +43,20 @@ class Estante
     private $libros;
 
     /**
-     * Init the array's collections for every new estante
+     * Init the object properties
      */
     public function __construct()
     {
-        $this->expedientes = new ArrayCollection();
         $this->libros = new ArrayCollection();
+        $this->expedientes = new ArrayCollection();
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function __toString()
     {
-        return $this->identificador;
+        return 'EST' . $this->getNumero();
     }
 
     /**
@@ -87,24 +89,24 @@ class Estante
     /**
      * @return string|null
      */
-    public function getIdentificador(): ?string
+    public function getSlug(): ?string
     {
-        return $this->identificador;
+        return $this->slug;
     }
 
     /**
-     * @param string $identificador
+     * @param string $slug
      * @return $this
      */
-    public function setIdentificador(string $identificador): self
+    public function setSlug(string $slug): self
     {
-        $this->identificador = $identificador;
+        $this->slug = $slug;
 
         return $this;
     }
 
     /**
-     * @return Collection|Expediente[]
+     * @return Collection<int, Expediente>
      */
     public function getExpedientes(): Collection
     {
@@ -142,7 +144,7 @@ class Estante
     }
 
     /**
-     * @return Collection|Libro[]
+     * @return Collection<int, Libro>
      */
     public function getLibros(): Collection
     {

@@ -1,0 +1,72 @@
+<script>
+    $(document).ready(function () {
+        let data_anual = {{ data_anual|json_encode|raw }};
+        let labels = [];
+        let investigaciones = [];
+        let transcripciones = [];
+        let reprografias = [];
+        let certificaciones = [];
+
+        $.each(data_anual, function (key, data) {
+            if (data.investigaciones !== 0) {
+                labels.push(data.mes)
+                investigaciones.push(data.investigaciones)
+                transcripciones.push(data.transcripciones)
+                reprografias.push(data.reprografias)
+                certificaciones.push(data.certificaciones)
+            }
+
+        })
+
+        let chartData = {
+            labels  : labels,
+            datasets: [
+                {
+                    label               : 'Investigaciones',
+                    backgroundColor     : '#687e7e',
+                    pointRadius          : false,
+                    pointHighlightFill  : '#fff',
+                    data                : investigaciones
+                },
+                {
+                    label               : 'Transcripciones',
+                    backgroundColor     : '#634c3c',
+                    pointRadius         : false,
+                    pointHighlightFill  : '#fff',
+                    data                : transcripciones
+                },
+                {
+                    label               : 'Reprografias',
+                    backgroundColor     : '#00bc8c',
+                    pointRadius         : false,
+                    pointHighlightFill  : '#fff',
+                    data                : reprografias
+                },
+                {
+                    label               : 'Certificaciones',
+                    backgroundColor     : '#f6e7d5',
+                    pointRadius         : false,
+                    pointHighlightFill  : '#fff',
+                    data                : certificaciones
+                },
+            ]
+        }
+
+        let barChartCanvas = $('#barChart').get(0).getContext('2d')
+
+        let barChartOptions = {
+            responsive              : true,
+            maintainAspectRatio     : false,
+            datasetFill             : false,
+            legend: {
+                display: false
+            },
+        }
+
+        new Chart(barChartCanvas, {
+            type: 'bar',
+            data: chartData,
+            options: barChartOptions
+        })
+    })
+</script>
