@@ -68,10 +68,11 @@ class AnaquelController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Anaquel agregado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Anaquel no agregado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -114,10 +115,11 @@ class AnaquelController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Anaquel editado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Anaquel no editado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -134,7 +136,7 @@ class AnaquelController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar-anaquel/{id}", name="registro_eliminar_anaquel", methods={"GET", "DELETE"})
+     * @Route("/eliminar-anaquel/{id}", name="registro_eliminar_anaquel", methods={"GET", "POST"})
      * @param Request $request
      * @param Anaquel $anaquel
      * @return Response
@@ -144,7 +146,7 @@ class AnaquelController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $form = $this->createDeleteForm($anaquel);
 
-            if ($request->getMethod() == "DELETE") {
+            if ($request->getMethod() == "POST") {
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -160,10 +162,11 @@ class AnaquelController extends AbstractController
                         $this->entityManager->flush();
                         $this->addFlash('success', 'Anaquel eliminado correctamente.');
                     } catch (Exception $e) {
+                        error_log((string) $e);
                         if ($e->getErrorCode() == 1451) {
                             $this->addFlash('error', 'Anaquel no eliminado, conserva expedientes o libros asociados.');
                         } else {
-                            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                         }
                     }
 
@@ -188,7 +191,7 @@ class AnaquelController extends AbstractController
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('registro_eliminar_anaquel', array('id' => $anaquel->getId())))
-            ->setMethod('DELETE')
+            ->setMethod('POST')
             ->getForm();
     }
 }

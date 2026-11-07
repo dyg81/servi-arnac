@@ -79,10 +79,11 @@ class AdminController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Usuario agregado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Usuario no agregado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -124,10 +125,11 @@ class AdminController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Usuario editado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Usuario no editado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
                 return new ModalRedirectResponse($this->generateUrl('admin_listar_usuarios'));
@@ -177,7 +179,8 @@ class AdminController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Contraseña editada correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    error_log((string) $e);
+                    $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('admin_listar_usuarios'));
@@ -193,7 +196,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar-usuario/{id}", name="admin_eliminar_usuario", methods={"GET", "DELETE"})
+     * @Route("/eliminar-usuario/{id}", name="admin_eliminar_usuario", methods={"GET", "POST"})
      * @param Request $request
      * @param Usuario $usuario
      * @return Response
@@ -203,7 +206,7 @@ class AdminController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $form = $this->createDeleteForm($usuario);
 
-            if ($request->getMethod() == "DELETE") {
+            if ($request->getMethod() == "POST") {
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -219,7 +222,8 @@ class AdminController extends AbstractController
                         $this->entityManager->flush();
                         $this->addFlash('success', 'Usuario eliminado correctamente.');
                     } catch (Exception $e) {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        error_log((string) $e);
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
 
                     return new ModalRedirectResponse($this->generateUrl('admin_listar_usuarios'));
@@ -243,7 +247,7 @@ class AdminController extends AbstractController
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('admin_eliminar_usuario', array('id' => $usuario->getId())))
-            ->setMethod('DELETE')
+            ->setMethod('POST')
             ->getForm();
     }
 

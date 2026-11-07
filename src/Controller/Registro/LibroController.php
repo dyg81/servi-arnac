@@ -71,10 +71,11 @@ class LibroController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Libro agregado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Libro no agregado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -110,7 +111,7 @@ class LibroController extends AbstractController
                 $traza->setContenido('Ha editado el libro con identificador LIB' . $libro->getAnno() . ' Tomo:' . $libro->getTomo() . ' asociado al fondo ' . $libro->getFondo());
 
                 if (($oldData->getAnno() != $libro->getAnno()) or ($oldData->getTomo() != $libro->getTomo()) or ($oldData->getFondo() !== $libro->getFondo())) {
-                    $transcripciones = $this->entityManager->getRepository(Transcripcion::class)->findBy(['documento_id' => $libro->getId()]);
+                    $transcripciones = $this->entityManager->getRepository(Transcripcion::class)->findBy(['documento_id' => $libro->getId(), 'documento_tipo' => 'lib']);
 
                     foreach ($transcripciones as $transcripcion) {
                         $transcripcion->setDocumentoNombre('Libro ' . $libro->getAnno() . ' (Tomo: ' . $libro->getTomo() . ')');
@@ -119,7 +120,7 @@ class LibroController extends AbstractController
                         $this->entityManager->persist($transcripcion);
                     }
 
-                    $reprografias = $this->entityManager->getRepository(Reprografia::class)->findBy(['documento_id' => $libro->getId()]);
+                    $reprografias = $this->entityManager->getRepository(Reprografia::class)->findBy(['documento_id' => $libro->getId(), 'documento_tipo' => 'lib']);
 
                     foreach ($reprografias as $reprografia) {
                         $reprografia->setDocumentoNombre('Libro ' . $libro->getAnno() . ' (Tomo: ' . $libro->getTomo() . ')');
@@ -128,7 +129,7 @@ class LibroController extends AbstractController
                         $this->entityManager->persist($reprografia);
                     }
 
-                    $certificaciones = $this->entityManager->getRepository(Certificacion::class)->findBy(['documento_id' => $libro->getId()]);
+                    $certificaciones = $this->entityManager->getRepository(Certificacion::class)->findBy(['documento_id' => $libro->getId(), 'documento_tipo' => 'lib']);
 
                     foreach ($certificaciones as $certificacion) {
                         $certificacion->setDocumentoNombre('Libro ' . $libro->getAnno() . ' (Tomo: ' . $libro->getTomo() . ')');
@@ -145,10 +146,11 @@ class LibroController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Libro editado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Libro no editado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -165,7 +167,7 @@ class LibroController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar-libro/{id}", name="registro_eliminar_libro", methods={"GET", "DELETE"})
+     * @Route("/eliminar-libro/{id}", name="registro_eliminar_libro", methods={"GET", "POST"})
      * @param Request $request
      * @param Libro $libro
      * @return Response
@@ -175,10 +177,16 @@ class LibroController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $form = $this->createDeleteForm($libro);
 
-            if ($request->getMethod() == "DELETE") {
+            if ($request->getMethod() == "POST") {
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
+                    if ($this->tieneSolicitudesDeServicio($libro->getId())) {
+                        $this->addFlash('error', 'No se puede eliminar el libro porque tiene solicitudes de servicio asociadas.');
+
+                        return new ModalRedirectResponse($this->generateUrl('registro_listar_libros'));
+                    }
+
                     $traza = new Traza();
                     $traza->setTipo('danger');
                     $traza->setUsuario($this->getUser()->getNombre());
@@ -191,7 +199,8 @@ class LibroController extends AbstractController
                         $this->entityManager->flush();
                         $this->addFlash('success', 'Libro eliminado correctamente.');
                     } catch (Exception $e) {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        error_log((string) $e);
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
 
                     return new ModalRedirectResponse($this->generateUrl('registro_listar_libros'));
@@ -215,7 +224,21 @@ class LibroController extends AbstractController
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('registro_eliminar_libro', array('id' => $libro->getId())))
-            ->setMethod('DELETE')
+            ->setMethod('POST')
             ->getForm();
+    }
+
+    private function tieneSolicitudesDeServicio(int $documentoId): bool
+    {
+        foreach ([Transcripcion::class, Reprografia::class, Certificacion::class] as $serviceClass) {
+            if ($this->entityManager->getRepository($serviceClass)->findOneBy([
+                'documento_id' => $documentoId,
+                'documento_tipo' => 'lib',
+            ])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

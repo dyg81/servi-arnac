@@ -69,10 +69,11 @@ class DepositoController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Depósito agregado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Depósito no agregado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -115,10 +116,11 @@ class DepositoController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Depósito editado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Depósito no editado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -135,7 +137,7 @@ class DepositoController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar-deposito/{id}", name="registro_eliminar_deposito", methods={"GET", "DELETE"})
+     * @Route("/eliminar-deposito/{id}", name="registro_eliminar_deposito", methods={"GET", "POST"})
      * @param Request $request
      * @param Deposito $deposito
      * @return Response
@@ -145,7 +147,7 @@ class DepositoController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $form = $this->createDeleteForm($deposito);
 
-            if ($request->getMethod() == "DELETE") {
+            if ($request->getMethod() == "POST") {
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -161,10 +163,11 @@ class DepositoController extends AbstractController
                         $this->entityManager->flush();
                         $this->addFlash('success', 'Depósito eliminado correctamente.');
                     } catch (Exception $e) {
+                        error_log((string) $e);
                         if ($e->getErrorCode() == 1451) {
                             $this->addFlash('error', 'Depósito no eliminado, conserva expedientes o libros asociados.');
                         } else {
-                            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                         }
                     }
 
@@ -189,7 +192,7 @@ class DepositoController extends AbstractController
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('registro_eliminar_deposito', array('id' => $deposito->getId())))
-            ->setMethod('DELETE')
+            ->setMethod('POST')
             ->getForm();
     }
 

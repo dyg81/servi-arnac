@@ -43,13 +43,9 @@
     </div>
     <div class="modal-footer row">
         {% if transcripcion.estado == constant('App\\Entity\\Transcripcion::ESTADO_SOLICITADO') %}
-            <a href="{{ path('servicio_procesar_transcripcion', {'id': transcripcion.id}) }}" class="btn btn-sm btn-danger">
-                Procesar
-            </a>
+            <form method="post" action="{{ path('servicio_procesar_transcripcion', {'id': transcripcion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_procesar_transcripcion') }}"><button class="btn btn-sm btn-danger">Procesar</button></form>
         {% elseif transcripcion.estado == constant('App\\Entity\\Transcripcion::ESTADO_EN_PROCESO') %}
-            <a href="{{ path('servicio_terminar_transcripcion', {'id': transcripcion.id}) }}" class="btn btn-sm btn-danger">
-                Terminar
-            </a>
+            <form method="post" action="{{ path('servicio_terminar_transcripcion', {'id': transcripcion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_terminar_transcripcion') }}"><button class="btn btn-sm btn-danger">Terminar</button></form>
         {% endif %}
         <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cerrar</button>
     </div>

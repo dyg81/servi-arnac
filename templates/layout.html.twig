@@ -82,9 +82,12 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-4 offset-4">
-                                    <a href="{{ path('sac_cerrar') }}" class="btn btn-block btn-sm btn-default" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cerrar Sesión">
-                                        <i class="fas fa-share"></i>
-                                    </a>
+                                    <form method="post" action="{{ path('sac_cerrar') }}" class="m-0">
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                                        <button type="submit" class="btn btn-block btn-sm btn-default" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cerrar Sesión">
+                                            <i class="fas fa-share"></i>
+                                        </button>
+                                    </form>
                                 </div>
 
                             </div>

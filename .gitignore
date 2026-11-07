@@ -6,6 +6,8 @@ symfony.exe
 /.env.local
 /.env.local.php
 /.env.*.local
+/.env.prod
+/.env.*.prod
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/

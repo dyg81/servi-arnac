@@ -35,7 +35,7 @@ class Investigacion
     private $fondo;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Expediente::class, inversedBy="investigaciones", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity=Expediente::class, inversedBy="investigaciones", cascade={"persist"})
      * @ORM\JoinTable(name="sac_sala_investigaciones_expedientes",
      *     joinColumns={@ORM\JoinColumn(name="servicio_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="expediente_id", referencedColumnName="id")}
@@ -44,7 +44,7 @@ class Investigacion
     private $expedientes;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Libro::class, inversedBy="investigaciones", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity=Libro::class, inversedBy="investigaciones", cascade={"persist"})
      * @ORM\JoinTable(name="sac_sala_investigaciones_libros",
      *     joinColumns={@ORM\JoinColumn(name="servicio_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="libro_id", referencedColumnName="id")}
@@ -106,7 +106,7 @@ class Investigacion
     {
         $estados = self::getEstados();
 
-        return $estados[$this->estado];
+        return $estados[$this->estado] ?? sprintf('Estado desconocido (%s)', $this->estado);
     }
 
     /**

@@ -68,10 +68,11 @@ class LegajoController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Legajo agregado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Legajo no agregado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -114,10 +115,11 @@ class LegajoController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Legajo editado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Legajo no editado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -134,7 +136,7 @@ class LegajoController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar-legajo/{id}", name="registro_eliminar_legajo", methods={"GET", "DELETE"})
+     * @Route("/eliminar-legajo/{id}", name="registro_eliminar_legajo", methods={"GET", "POST"})
      * @param Request $request
      * @param Legajo $legajo
      * @return Response
@@ -144,7 +146,7 @@ class LegajoController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $form = $this->createDeleteForm($legajo);
 
-            if ($request->getMethod() == "DELETE") {
+            if ($request->getMethod() == "POST") {
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -160,10 +162,11 @@ class LegajoController extends AbstractController
                         $this->entityManager->flush();
                         $this->addFlash('success', 'Legajo eliminado correctamente.');
                     } catch (Exception $e) {
+                        error_log((string) $e);
                         if ($e->getErrorCode() == 1451) {
                             $this->addFlash('error', 'Legajo no eliminado, conserva expedientes o libros asociados.');
                         } else {
-                            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                         }
                     }
 
@@ -188,7 +191,7 @@ class LegajoController extends AbstractController
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('registro_eliminar_legajo', array('id' => $legajo->getId())))
-            ->setMethod('DELETE')
+            ->setMethod('POST')
             ->getForm();
     }
 }

@@ -70,10 +70,11 @@ class FondoController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Fondo agregado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Fondo no agregado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -134,10 +135,11 @@ class FondoController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Fondo editado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Fondo no editado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -154,7 +156,7 @@ class FondoController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar-fondo/{id}", name="registro_eliminar_fondo", methods={"GET", "DELETE"})
+     * @Route("/eliminar-fondo/{id}", name="registro_eliminar_fondo", methods={"GET", "POST"})
      * @param Request $request
      * @param Fondo $fondo
      * @return Response
@@ -164,7 +166,7 @@ class FondoController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $form = $this->createDeleteForm($fondo);
 
-            if ($request->getMethod() == "DELETE") {
+            if ($request->getMethod() == "POST") {
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -180,10 +182,11 @@ class FondoController extends AbstractController
                         $this->entityManager->flush();
                         $this->addFlash('success', 'Fondo eliminado correctamente.');
                     } catch (Exception $e) {
+                        error_log((string) $e);
                         if ($e->getErrorCode() == 1451) {
                             $this->addFlash('error', 'Fondo no eliminado, conserva expedientes o libros asociados.');
                         } else {
-                            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                         }
                     }
 
@@ -208,7 +211,7 @@ class FondoController extends AbstractController
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('registro_eliminar_fondo', array('id' => $fondo->getId())))
-            ->setMethod('DELETE')
+            ->setMethod('POST')
             ->getForm();
     }
 }

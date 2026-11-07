@@ -26,6 +26,9 @@ class Traza
     private $fecha;
 
     /**
+     * Historical username text; intentionally not a Doctrine relation because
+     * the database stores a name snapshot and has no user foreign key.
+     *
      * @ORM\Column(type="string")
      */
     private $usuario;

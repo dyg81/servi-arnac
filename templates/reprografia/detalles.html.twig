@@ -43,13 +43,9 @@
     </div>
     <div class="modal-footer row">
         {% if reprografia.estado == constant('App\\Entity\\Reprografia::ESTADO_SOLICITADO') %}
-            <a href="{{ path('servicio_procesar_reprografia', {'id': reprografia.id}) }}" class="btn btn-sm btn-danger">
-                Procesar
-            </a>
+            <form method="post" action="{{ path('servicio_procesar_reprografia', {'id': reprografia.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_procesar_reprografia') }}"><button class="btn btn-sm btn-danger">Procesar</button></form>
         {% elseif reprografia.estado == constant('App\\Entity\\Reprografia::ESTADO_EN_PROCESO') %}
-            <a href="{{ path('servicio_terminar_reprografia', {'id': reprografia.id}) }}" class="btn btn-sm btn-danger">
-                Terminar
-            </a>
+            <form method="post" action="{{ path('servicio_terminar_reprografia', {'id': reprografia.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_terminar_reprografia') }}"><button class="btn btn-sm btn-danger">Terminar</button></form>
         {% endif %}
         <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cerrar</button>
     </div>

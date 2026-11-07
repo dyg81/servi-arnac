@@ -100,12 +100,6 @@
     "laminas/laminas-code": {
         "version": "3.4.1"
     },
-    "laminas/laminas-eventmanager": {
-        "version": "3.2.1"
-    },
-    "laminas/laminas-zendframework-bridge": {
-        "version": "1.1.1"
-    },
     "monolog/monolog": {
         "version": "1.27.0"
     },
@@ -129,9 +123,6 @@
     },
     "phpdocumentor/type-resolver": {
         "version": "1.6.1"
-    },
-    "phpspec/prophecy": {
-        "version": "v1.15.0"
     },
     "phpunit/php-code-coverage": {
         "version": "7.0.15"

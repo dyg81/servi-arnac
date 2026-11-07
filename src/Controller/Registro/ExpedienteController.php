@@ -71,10 +71,11 @@ class ExpedienteController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Expediente agregado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Expediente no agregado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -110,7 +111,7 @@ class ExpedienteController extends AbstractController
                 $traza->setContenido('Ha editado el expediente con identificador EXP' . $expediente->getNumero() . ' asociado al fondo ' . $expediente->getFondo());
 
                 if (($oldData->getNumero() != $expediente->getNumero()) or ($oldData->getFondo() !== $expediente->getFondo())) {
-                    $transcripciones = $this->entityManager->getRepository(Transcripcion::class)->findBy(['documento_id' => $expediente->getId()]);
+                    $transcripciones = $this->entityManager->getRepository(Transcripcion::class)->findBy(['documento_id' => $expediente->getId(), 'documento_tipo' => 'exp']);
 
                     foreach ($transcripciones as $transcripcion) {
                         $transcripcion->setDocumentoNombre('Expediente ' . $expediente->getNumero());
@@ -119,7 +120,7 @@ class ExpedienteController extends AbstractController
                         $this->entityManager->persist($transcripcion);
                     }
 
-                    $reprografias = $this->entityManager->getRepository(Reprografia::class)->findBy(['documento_id' => $expediente->getId()]);
+                    $reprografias = $this->entityManager->getRepository(Reprografia::class)->findBy(['documento_id' => $expediente->getId(), 'documento_tipo' => 'exp']);
 
                     foreach ($reprografias as $reprografia) {
                         $reprografia->setDocumentoNombre('Expediente ' . $expediente->getNumero());
@@ -128,7 +129,7 @@ class ExpedienteController extends AbstractController
                         $this->entityManager->persist($reprografia);
                     }
 
-                    $certificaciones = $this->entityManager->getRepository(Certificacion::class)->findBy(['documento_id' => $expediente->getId()]);
+                    $certificaciones = $this->entityManager->getRepository(Certificacion::class)->findBy(['documento_id' => $expediente->getId(), 'documento_tipo' => 'exp']);
 
                     foreach ($certificaciones as $certificacion) {
                         $certificacion->setDocumentoNombre('Expediente ' . $expediente->getNumero());
@@ -145,10 +146,11 @@ class ExpedienteController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Expediente editado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'Expediente no editado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -165,7 +167,7 @@ class ExpedienteController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar-expediente/{id}", name="registro_eliminar_expediente", methods={"GET", "DELETE"})
+     * @Route("/eliminar-expediente/{id}", name="registro_eliminar_expediente", methods={"GET", "POST"})
      * @param Request $request
      * @param Expediente $expediente
      * @return Response
@@ -175,10 +177,16 @@ class ExpedienteController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $form = $this->createDeleteForm($expediente);
 
-            if ($request->getMethod() == "DELETE") {
+            if ($request->getMethod() == "POST") {
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
+                    if ($this->tieneSolicitudesDeServicio($expediente->getId())) {
+                        $this->addFlash('error', 'No se puede eliminar el expediente porque tiene solicitudes de servicio asociadas.');
+
+                        return new ModalRedirectResponse($this->generateUrl('registro_listar_expedientes'));
+                    }
+
                     $traza = new Traza();
                     $traza->setTipo('danger');
                     $traza->setUsuario($this->getUser()->getNombre());
@@ -191,7 +199,8 @@ class ExpedienteController extends AbstractController
                         $this->entityManager->flush();
                         $this->addFlash('success', 'Expediente eliminado correctamente.');
                     } catch (Exception $e) {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        error_log((string) $e);
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
 
                     return new ModalRedirectResponse($this->generateUrl('registro_listar_expedientes'));
@@ -215,7 +224,21 @@ class ExpedienteController extends AbstractController
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('registro_eliminar_expediente', array('id' => $expediente->getId())))
-            ->setMethod('DELETE')
+            ->setMethod('POST')
             ->getForm();
+    }
+
+    private function tieneSolicitudesDeServicio(int $documentoId): bool
+    {
+        foreach ([Transcripcion::class, Reprografia::class, Certificacion::class] as $serviceClass) {
+            if ($this->entityManager->getRepository($serviceClass)->findOneBy([
+                'documento_id' => $documentoId,
+                'documento_tipo' => 'exp',
+            ])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

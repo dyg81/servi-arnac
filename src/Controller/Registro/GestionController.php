@@ -42,6 +42,9 @@ class GestionController extends AbstractController
      */
     public function editarContrasena(Request $request, Usuario $usuario, string $ruta, UserPasswordEncoderInterface $userPasswordEncoder): Response
     {
+        if (!$this->isGranted("ROLE_ADMIN") && $usuario->getId() !== $this->getUser()->getId()) {
+            throw new \Symfony\Component\Security\Core\Exception\AccessDeniedException();
+        }
         if ($request->isXmlHttpRequest()) {
             $form = $this->createForm(UsuarioType::class, $usuario);
             $form->remove('nombre');
@@ -68,7 +71,8 @@ class GestionController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Contraseña editada correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    error_log((string) $e);
+                    $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl($ruta));

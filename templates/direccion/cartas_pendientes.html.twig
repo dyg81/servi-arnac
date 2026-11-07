@@ -76,7 +76,7 @@
                                 {% for carta in cartas %}
                                     <tr>
                                         <td>
-                                            <a href="{{ asset('uploads/cartas/' ~ carta.documento) }}" class="font-italic text-white" target="_blank" data-toggle="tooltip" data-placement="top" data-container=".content-wrapper" title="Ver carta">{{ carta.cliente }}</a>
+                                            <a href="{{ path('direccion_descargar_carta', {'id': carta.id}) }}" class="font-italic text-white" target="_blank" data-toggle="tooltip" data-placement="top" data-container=".content-wrapper" title="Ver carta">{{ carta.cliente }}</a>
                                         </td>
                                         <td>{{ carta.cliente.centroLaboral }}</td>
                                         <td>{{ carta.fechaSolicitud | date("d-m-Y") }}</td>

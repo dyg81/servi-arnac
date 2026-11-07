@@ -1,0 +1,75 @@
+services:
+  app:
+    image: sac-arnac:${RELEASE_TAG:?Define RELEASE_TAG en .env.prod}
+    build:
+      context: .
+      args:
+        INSTALL_DEV: "0"
+    restart: unless-stopped
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: "0"
+      APP_SECRET: "${APP_SECRET:?Inject APP_SECRET en .env.prod}"
+      DATABASE_URL: "${DATABASE_URL:?Inject DATABASE_URL en .env.prod}"
+      HASHER_ENTROPY: "${HASHER_ENTROPY:?Inject HASHER_ENTROPY en .env.prod}"
+      HASHER_PADDING: "${HASHER_PADDING:?Define HASHER_PADDING en .env.prod}"
+      HASHER_CUSTOM_ALPHABET: "${HASHER_CUSTOM_ALPHABET:?Define HASHER_CUSTOM_ALPHABET en .env.prod}"
+    expose:
+      - "80"
+    volumes:
+      - private_uploads:/var/www/html/var/private_uploads
+      - legacy_uploads:/var/www/html/public/uploads
+    networks:
+      - backend
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:10.4.34
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE:?Inject MYSQL_DATABASE en .env.prod}"
+      MYSQL_USER: "${MYSQL_USER:?Inject MYSQL_USER en .env.prod}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:?Inject MYSQL_PASSWORD en .env.prod}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?Inject MYSQL_ROOT_PASSWORD en .env.prod}"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h 127.0.0.1 -u\"$$MYSQL_USER\" -p\"$$MYSQL_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  proxy:
+    image: caddy:2.10.2
+    restart: unless-stopped
+    environment:
+      APP_DOMAIN: "${APP_DOMAIN:?Define APP_DOMAIN en .env.prod}"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - backend
+      - edge
+    depends_on:
+      - app
+
+volumes:
+  db_data:
+  private_uploads:
+  legacy_uploads:
+  caddy_data:
+  caddy_config:
+
+networks:
+  backend:
+    internal: true
+  edge:

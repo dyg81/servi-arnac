@@ -4,7 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    documentos_directory: '%kernel.project_dir%/public/uploads/cartas'
+    documentos_directory: '%kernel.project_dir%/var/private_uploads/cartas'
 
 services:
     # default configuration for services in *this* file

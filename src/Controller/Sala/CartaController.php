@@ -79,7 +79,8 @@ class CartaController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Carta agregada correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    error_log((string) $e);
+                    $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('sala_listar_cartas'));
@@ -134,7 +135,8 @@ class CartaController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Carta editada correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    error_log((string) $e);
+                    $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('sala_listar_cartas'));
@@ -151,7 +153,7 @@ class CartaController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar-carta/{id}", name="sala_eliminar_carta", methods={"GET", "DELETE"})
+     * @Route("/eliminar-carta/{id}", name="sala_eliminar_carta", methods={"GET", "POST"})
      * @param Request $request
      * @param Carta $carta
      * @return Response
@@ -161,7 +163,7 @@ class CartaController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $form = $this->createDeleteForm($carta);
 
-            if ($request->getMethod() == "DELETE") {
+            if ($request->getMethod() == "POST") {
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -177,7 +179,8 @@ class CartaController extends AbstractController
                         $this->entityManager->flush();
                         $this->addFlash('success', 'Carta eliminada correctamente.');
                     } catch (Exception $e) {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        error_log((string) $e);
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
 
                     return new ModalRedirectResponse($this->generateUrl('sala_listar_cartas'));
@@ -201,7 +204,7 @@ class CartaController extends AbstractController
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('sala_eliminar_carta', array('id' => $carta->getId())))
-            ->setMethod('DELETE')
+            ->setMethod('POST')
             ->getForm();
     }
 

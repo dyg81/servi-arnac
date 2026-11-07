@@ -8,11 +8,13 @@ use App\Entity\Libro;
 use App\Entity\Transcripcion;
 use App\Entity\Traza;
 use App\Entity\Vitrina;
+use App\Service\DocumentoInvestigacionValidator;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -45,23 +47,26 @@ class TranscripcionController extends AbstractController
     }
 
     /**
-     * @Route("/agregar-transcripcion/{investigacion}/{documento}/{tipo}", name="sala_agregar_transcripcion", methods={"GET", "POST"})
+     * @Route("/agregar-transcripcion/{investigacion}/{documento}/{tipo}", name="sala_agregar_transcripcion", methods={"POST"})
      * @param Investigacion $investigacion
      * @param int $documento
      * @param string $tipo
      * @return Response
      */
-    public function agregarTranscripcion(Investigacion $investigacion, int $documento, string $tipo): Response
+    public function agregarTranscripcion(Request $request, Investigacion $investigacion, int $documento, string $tipo, DocumentoInvestigacionValidator $documentoValidator): Response
     {
+        if (!$this->isCsrfTokenValid('sala_agregar_transcripcion', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
         $transcripcion = new Transcripcion();
         $transcripcion->setCliente($investigacion->getCliente());
 
         if ($tipo === 'libro') {
-            $libro = $this->entityManager->getRepository(Libro::class)->find($documento);
+            $libro = $documentoValidator->libro($documento, $investigacion);
 
             if ($libro->getVitrina()) {
                 $vitrina = $this->entityManager->getRepository(Vitrina::class)->findOneBy(['documento_id' => $libro->getId(), 'documento_tipo' => 'lib']);
-                $this->entityManager->remove($vitrina);
+                if ($vitrina) {
+                    $this->entityManager->remove($vitrina);
+                }
             }
 
             $libro->setVitrina(false);
@@ -74,11 +79,13 @@ class TranscripcionController extends AbstractController
             $transcripcion->setDocumentoNombre('Libro ' . $libro->getAnno() . ' (Tomo: ' . $libro->getTomo() . ')');
             $transcripcion->setDocumentoFondo($libro->getFondo());
         } elseif ($tipo === 'expediente') {
-            $expediente = $this->entityManager->getRepository(Expediente::class)->find($documento);
+            $expediente = $documentoValidator->expediente($documento, $investigacion);
 
             if ($expediente->getVitrina()) {
                 $vitrina = $this->entityManager->getRepository(Vitrina::class)->findOneBy(['documento_id' => $expediente->getId(), 'documento_tipo' => 'exp']);
-                $this->entityManager->remove($vitrina);
+                if ($vitrina) {
+                    $this->entityManager->remove($vitrina);
+                }
             }
 
             $expediente->setVitrina(false);
@@ -90,7 +97,7 @@ class TranscripcionController extends AbstractController
             $transcripcion->setDocumentoTipo('exp');
             $transcripcion->setDocumentoNombre('Expediente ' . $expediente->getNumero());
             $transcripcion->setDocumentoFondo($expediente->getFondo());
-        }
+        } else { throw $this->createNotFoundException(); }
 
         $investigacionLibros = $investigacion->getLibros();
         $investigacionExpedientes = $investigacion->getExpedientes();
@@ -122,7 +129,8 @@ class TranscripcionController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Transcripción creada correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('sala_listar_investigaciones');

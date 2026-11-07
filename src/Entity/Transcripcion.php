@@ -89,7 +89,7 @@ class Transcripcion
     {
         $estados = self::getEstados();
 
-        return $estados[$this->estado];
+        return $estados[$this->estado] ?? sprintf('Estado desconocido (%s)', $this->estado);
     }
 
     /**

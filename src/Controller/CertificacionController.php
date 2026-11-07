@@ -77,12 +77,17 @@ class CertificacionController extends AbstractController
     }
 
     /**
-     * @Route("/procesar-certificacion/{id}", name="servicio_procesar_certificacion", methods={"GET"})
+     * @Route("/procesar-certificacion/{id}", name="servicio_procesar_certificacion", methods={"POST"})
      * @param Certificacion $certificacion
      * @return Response
      */
-    public function procesarCertificacion(Certificacion $certificacion): Response
+    public function procesarCertificacion(Request $request, Certificacion $certificacion): Response
     {
+        if (!$this->isCsrfTokenValid('servicio_procesar_certificacion', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
+        if ($certificacion->getEstado() !== Certificacion::ESTADO_SOLICITADO) {
+            throw $this->createAccessDeniedException('La solicitud ya no está en el estado esperado para esta acción.');
+        }
+        $this->assertServiceDocumentExists($certificacion->getDocumentoTipo(), $certificacion->getDocumentoId());
         $certificacion->setEstado(Certificacion::ESTADO_EN_PROCESO);
         $certificacion->setFechaActualizacion(new DateTime());
 
@@ -109,19 +114,25 @@ class CertificacionController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Certificación actualizada correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('servicio_listar_certificaciones');
     }
 
     /**
-     * @Route("terminar-certificacion/{id}", name="servicio_terminar_certificacion", methods={"GET"})
+     * @Route("/terminar-certificacion/{id}", name="servicio_terminar_certificacion", methods={"POST"})
      * @param Certificacion $certificacion
      * @return Response
      */
-    public function terminarCertificacion(Certificacion $certificacion): Response
+    public function terminarCertificacion(Request $request, Certificacion $certificacion): Response
     {
+        if (!$this->isCsrfTokenValid('servicio_terminar_certificacion', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
+        if ($certificacion->getEstado() !== Certificacion::ESTADO_EN_PROCESO) {
+            throw $this->createAccessDeniedException('La solicitud ya no está en el estado esperado para esta acción.');
+        }
+        $this->assertServiceDocumentExists($certificacion->getDocumentoTipo(), $certificacion->getDocumentoId());
         $certificacion->setEstado(Certificacion::ESTADO_TERMINADO);
         $certificacion->setFechaActualizacion(new DateTime());
 
@@ -148,7 +159,8 @@ class CertificacionController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Certificación concluida correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('servicio_listar_certificaciones');
@@ -164,6 +176,9 @@ class CertificacionController extends AbstractController
      */
     public function editarContrasena(Request $request, Usuario $usuario, string $ruta, UserPasswordEncoderInterface $userPasswordEncoder): Response
     {
+        if (!$this->isGranted("ROLE_ADMIN") && $usuario->getId() !== $this->getUser()->getId()) {
+            throw new \Symfony\Component\Security\Core\Exception\AccessDeniedException();
+        }
         if ($request->isXmlHttpRequest()) {
             $form = $this->createForm(UsuarioType::class, $usuario);
             $form->remove('nombre');
@@ -190,7 +205,8 @@ class CertificacionController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Contraseña editada correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    error_log((string) $e);
+                    $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl($ruta));
@@ -203,6 +219,14 @@ class CertificacionController extends AbstractController
             ]);
         } else {
             return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
+    }
+
+    private function assertServiceDocumentExists(string $type, int $id): void
+    {
+        $class = $type === 'lib' ? Libro::class : ($type === 'exp' ? Expediente::class : null);
+        if (!$class || !$this->entityManager->getRepository($class)->find($id)) {
+            throw $this->createNotFoundException('Documento de servicio no encontrado.');
         }
     }
 }

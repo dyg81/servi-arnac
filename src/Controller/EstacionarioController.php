@@ -81,12 +81,16 @@ class EstacionarioController extends AbstractController
     }
 
     /**
-     * @Route("/procesar-investigacion/{id}", name="estacionario_procesar_investigacion", methods={"GET"})
+     * @Route("/procesar-investigacion/{id}", name="estacionario_procesar_investigacion", methods={"POST"})
      * @param Investigacion $investigacion
      * @return Response
      */
-    public function procesarSolicitudInvestigacion(Investigacion $investigacion): Response
+    public function procesarSolicitudInvestigacion(Request $request, Investigacion $investigacion): Response
     {
+        if (!$this->isCsrfTokenValid('estacionario_procesar_investigacion', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
+        if ($investigacion->getEstado() !== Investigacion::ESTADO_SOLICITADO) {
+            throw $this->createAccessDeniedException('La investigación ya no está pendiente de procesamiento.');
+        }
         $investigacion->setEstado(Investigacion::ESTADO_PROCESADO);
         $investigacion->setFechaActualizacion(new DateTime());
 
@@ -122,19 +126,24 @@ class EstacionarioController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Investigación procesada correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('estacionario_listar_investigaciones_nuevas');
     }
 
     /**
-     * @Route("/cancelar-investigacion/{id}", name="estacionario_cancelar_investigacion", methods={"GET"})
+     * @Route("/cancelar-investigacion/{id}", name="estacionario_cancelar_investigacion", methods={"POST"})
      * @param Investigacion $investigacion
      * @return Response
      */
-    public function cancelarSolicitudInvestigacion(Investigacion $investigacion): Response
+    public function cancelarSolicitudInvestigacion(Request $request, Investigacion $investigacion): Response
     {
+        if (!$this->isCsrfTokenValid('estacionario_cancelar_investigacion', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
+        if (!in_array($investigacion->getEstado(), [Investigacion::ESTADO_SOLICITADO, Investigacion::ESTADO_PROCESADO], true)) {
+            throw $this->createAccessDeniedException('La investigación ya no se puede cancelar desde este flujo.');
+        }
         $investigacion->setEstado(Investigacion::ESTADO_CANCELADO);
         $investigacion->setFechaActualizacion(new DateTime());
 
@@ -153,7 +162,8 @@ class EstacionarioController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Investigación cancelada correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('estacionario_listar_investigaciones_nuevas');
@@ -174,13 +184,14 @@ class EstacionarioController extends AbstractController
     }
 
     /**
-     * @Route("/archivar-documentos", name="estacionario_archivar_documentos", methods={"GET"})
+     * @Route("/archivar-documentos", name="estacionario_archivar_documentos", methods={"POST"})
      * @param ExpedienteRepository $expedienteRepository
      * @param LibroRepository $libroRepository
      * @return Response
      */
-    public function archivarDocumentos(ExpedienteRepository $expedienteRepository, LibroRepository $libroRepository): Response
+    public function archivarDocumentos(Request $request, ExpedienteRepository $expedienteRepository, LibroRepository $libroRepository): Response
     {
+        if (!$this->isCsrfTokenValid('estacionario_archivar_documentos', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
         $expedientes = $expedienteRepository->obtenerExpedientesPorArchivar();
         $libros = $libroRepository->obtenerLibrosPorArchivar();
 
@@ -217,39 +228,43 @@ class EstacionarioController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Documentos archivados correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('estacionario_listar_documentos_por_archivar');
     }
 
     /**
-     * @Route("/archivar-documento/{documento}/{tipo}", name="estacionario_archivar_documento", methods={"GET"})
+     * @Route("/archivar-documento/{documento}/{tipo}", name="estacionario_archivar_documento", methods={"POST"})
      * @param ExpedienteRepository $expedienteRepository
      * @param LibroRepository $libroRepository
      * @param int $documento
      * @param string $tipo
      * @return Response
      */
-    public function archivarDocumento(ExpedienteRepository $expedienteRepository, LibroRepository $libroRepository, int $documento, string $tipo): Response
+    public function archivarDocumento(Request $request, ExpedienteRepository $expedienteRepository, LibroRepository $libroRepository, int $documento, string $tipo): Response
     {
+        if (!$this->isCsrfTokenValid('estacionario_archivar_documento', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
         $traza = new Traza();
         $traza->setTipo('warning');
         $traza->setUsuario($this->getUser()->getNombre());
 
         if ($tipo == 'exp') {
             $expediente = $expedienteRepository->find($documento);
+            if (!$expediente || !in_array($expediente->getEstado(), [Expediente::EXP_ESTADO_EN_SALA_RECEPCION, Expediente::EXP_ESTADO_TRANS_TERMINADA, Expediente::EXP_ESTADO_DIG_TERMINADA, Expediente::EXP_ESTADO_CERT_TERMINADA], true)) { throw $this->createNotFoundException('Expediente no disponible para archivar.'); }
             $expediente->setEstado(Expediente::EXP_ESTADO_ARCHIVADO_EN_DEPOSITO);
             $this->entityManager->persist($expediente);
 
             $traza->setContenido('Ha archivado el documento ' . $expediente);
         } elseif ($tipo == 'lib') {
             $libro = $libroRepository->find($documento);
+            if (!$libro || !in_array($libro->getEstado(), [Libro::LIB_ESTADO_EN_SALA_RECEPCION, Libro::LIB_ESTADO_TRANS_TERMINADA, Libro::LIB_ESTADO_DIG_TERMINADA, Libro::LIB_ESTADO_CERT_TERMINADA], true)) { throw $this->createNotFoundException('Libro no disponible para archivar.'); }
             $libro->setEstado(Libro::LIB_ESTADO_ARCHIVADO_EN_DEPOSITO);
             $this->entityManager->persist($libro);
 
             $traza->setContenido('Ha archivado el documento ' . $libro);
-        }
+        } else { throw $this->createNotFoundException(); }
 
         $this->entityManager->persist($traza);
 
@@ -257,7 +272,8 @@ class EstacionarioController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Documento archivado correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('estacionario_listar_documentos_por_archivar');
@@ -273,6 +289,9 @@ class EstacionarioController extends AbstractController
      */
     public function editarContrasena(Request $request, Usuario $usuario, string $ruta, UserPasswordEncoderInterface $userPasswordEncoder): Response
     {
+        if (!$this->isGranted("ROLE_ADMIN") && $usuario->getId() !== $this->getUser()->getId()) {
+            throw new \Symfony\Component\Security\Core\Exception\AccessDeniedException();
+        }
         if ($request->isXmlHttpRequest()) {
             $form = $this->createForm(UsuarioType::class, $usuario);
             $form->remove('nombre');
@@ -299,7 +318,8 @@ class EstacionarioController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Contraseña editada correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    error_log((string) $e);
+                    $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl($ruta));

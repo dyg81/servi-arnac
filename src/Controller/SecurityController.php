@@ -8,6 +8,7 @@ use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -25,7 +26,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/logout", name="sac_logout")
+     * @Route("/logout", name="sac_logout", methods={"POST"})
      */
     public function logout(): void
     {
@@ -33,12 +34,13 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/cerrar", name="sac_cerrar")
-     * @param EntityManagerInterface $entityManager
-     * @return RedirectResponse
+     * @Route("/cerrar", name="sac_cerrar", methods={"POST"})
      */
-    public function cerrar(EntityManagerInterface $entityManager): RedirectResponse
+    public function cerrar(Request $request, EntityManagerInterface $entityManager): RedirectResponse
     {
+        if (!$this->isCsrfTokenValid('logout', $request->request->get('_csrf_token'))) {
+            throw $this->createAccessDeniedException('Token CSRF inválido.');
+        }
         $traza = new Traza();
 
         $user = $this->getUser();
@@ -49,6 +51,8 @@ class SecurityController extends AbstractController
         $entityManager->persist($traza);
         $entityManager->flush();
 
-        return $this->redirectToRoute('sac_logout');
+        $request->getSession()->invalidate();
+
+        return $this->redirectToRoute('sac_login');
     }
 }

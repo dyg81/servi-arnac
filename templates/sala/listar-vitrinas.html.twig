@@ -157,9 +157,7 @@
                                         <td>{{ vitrina.fechaVencimiento|date('d-m-Y') }}</td>
                                         <td>
                                             {% if date(vitrina.fechaVencimiento) < date('now') %}
-                                                <a href="{{ path('sala_eliminar_documento_de_vitrina', {'vitrina': vitrina.id}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".content-wrapper" title="Eliminar Vitrina">
-                                                    <i class="fas fa-file-upload text-md"></i>
-                                                </a>
+                                                <form method="post" action="{{ path('sala_eliminar_documento_de_vitrina', {'vitrina': vitrina.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_eliminar_documento_de_vitrina') }}"><button class="text-muted mr-2" title="Eliminar Vitrina"><i class="fas fa-file-upload text-md"></i></button></form>
                                             {% endif %}
                                         </td>
                                     </tr>

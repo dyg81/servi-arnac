@@ -75,7 +75,8 @@ class InvestigacionController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Investigación agregada correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    error_log((string) $e);
+                    $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('sala_listar_investigaciones'));
@@ -108,12 +109,13 @@ class InvestigacionController extends AbstractController
     }
 
     /**
-     * @Route("/entregar-documentos-investigacion/{id}", name="sala_entregar_documentos_investigacion", methods={"GET"})
+     * @Route("/entregar-documentos-investigacion/{id}", name="sala_entregar_documentos_investigacion", methods={"POST"})
      * @param Investigacion $investigacion
      * @return Response
      */
-    public function entregarDocumentosInvestigacion(Investigacion $investigacion): Response
+    public function entregarDocumentosInvestigacion(Request $request, Investigacion $investigacion): Response
     {
+        if (!$this->isCsrfTokenValid('sala_entregar_documentos_investigacion', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
         $investigacion->setEstado(Investigacion::ESTADO_SALA_CLIENTE);
         $investigacion->setFechaActualizacion(new DateTime());
 
@@ -149,19 +151,21 @@ class InvestigacionController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Documentos entregados correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('sala_listar_investigaciones');
     }
 
     /**
-     * @Route("/recoger-documentos-investigacion/{id}", name="sala_recoger_documentos_investigacion", methods={"GET"})
+     * @Route("/recoger-documentos-investigacion/{id}", name="sala_recoger_documentos_investigacion", methods={"POST"})
      * @param Investigacion $investigacion
      * @return Response
      */
-    public function recogerDocumentosInvestigacion(Investigacion $investigacion): Response
+    public function recogerDocumentosInvestigacion(Request $request, Investigacion $investigacion): Response
     {
+        if (!$this->isCsrfTokenValid('sala_recoger_documentos_investigacion', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
         $investigacion->setFechaActualizacion(new DateTime());
 
         if ($investigacion->getEstado() == Investigacion::ESTADO_PAUSADO) {
@@ -202,7 +206,9 @@ class InvestigacionController extends AbstractController
                 if ($expediente->getEstado() == Expediente::EXP_ESTADO_RESERVADO_EN_SALA) {
                     if ($expediente->getVitrina()) {
                         $vitrina = $this->entityManager->getRepository(Vitrina::class)->findOneBy(['documento_id' => $expediente->getId(), 'documento_tipo' => 'exp']);
-                        $this->entityManager->remove($vitrina);
+                        if ($vitrina) {
+                            $this->entityManager->remove($vitrina);
+                        }
                     }
 
                     $expediente->setVitrina(false);
@@ -224,7 +230,9 @@ class InvestigacionController extends AbstractController
                 if ($libro->getEstado() == Libro::LIB_ESTADO_RESERVADO_EN_SALA) {
                     if ($libro->getVitrina()) {
                         $vitrina = $this->entityManager->getRepository(Vitrina::class)->findOneBy(['documento_id' => $libro->getId(), 'documento_tipo' => 'lib']);
-                        $this->entityManager->remove($vitrina);
+                        if ($vitrina) {
+                            $this->entityManager->remove($vitrina);
+                        }
                     }
 
                     $libro->setVitrina(false);
@@ -259,19 +267,21 @@ class InvestigacionController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Documentos recogidos correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('sala_listar_investigaciones');
     }
 
     /**
-     * @Route("/cancelar-investigacion/{id}", name="sala_cancelar_investigacion", methods={"GET"})
+     * @Route("/cancelar-investigacion/{id}", name="sala_cancelar_investigacion", methods={"POST"})
      * @param Investigacion $investigacion
      * @return Response
      */
-    public function cancelarSolicitudInvestigacion(Investigacion $investigacion): Response
+    public function cancelarSolicitudInvestigacion(Request $request, Investigacion $investigacion): Response
     {
+        if (!$this->isCsrfTokenValid('sala_cancelar_investigacion', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
         $investigacion->setEstado(Investigacion::ESTADO_CANCELADO);
         $investigacion->setFechaActualizacion(new DateTime());
 
@@ -306,7 +316,8 @@ class InvestigacionController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Investigación cancelada correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('sala_listar_investigaciones');

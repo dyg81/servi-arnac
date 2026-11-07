@@ -51,36 +51,26 @@
                                 {% else %}
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <a href="{{ path('sala_agregar_reprografia', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar reprografía">
-                                                <i class="far fa-scanner-image"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('sala_agregar_reprografia', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_reprografia') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar reprografía"><i class="far fa-scanner-image"></i></button></form>
                                         </div>
                                     </td>
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <a href="{{ path('sala_agregar_transcripcion', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar transcripción">
-                                                <i class="far fa-signature"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('sala_agregar_transcripcion', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_transcripcion') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar transcripción"><i class="far fa-signature"></i></button></form>
                                         </div>
                                     </td>
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <a href="{{ path('sala_agregar_certificacion', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar certificación">
-                                                <i class="far fa-file-certificate"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('sala_agregar_certificacion', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_certificacion') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar certificación"><i class="far fa-file-certificate"></i></button></form>
                                         </div>
                                     </td>
                                 {% endif %}
                                 <td class="text-sm">
                                     <div class="float-right pr-2">
                                         {% if not(expediente.estado == constant('App\\Entity\\Expediente::EXP_ESTADO_EN_VITRINA')) %}
-                                            <a href="{{ path('sala_archivar_documento_en_vitrina', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Guardar en vitrina">
-                                                <i class="fas fa-arrow-alt-from-left"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('sala_archivar_documento_en_vitrina', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_archivar_documento_en_vitrina') }}"><button class="text-muted mr-2" title="Guardar en vitrina"><i class="fas fa-arrow-alt-from-left"></i></button></form>
                                         {% else %}
-                                            <a href="{{ path('sala_regresar_documento_de_vitrina', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Retirar de vitrina">
-                                                <i class="fas fa-arrow-alt-from-right"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('sala_regresar_documento_de_vitrina', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_regresar_documento_de_vitrina') }}"><button class="text-muted mr-2" title="Retirar de vitrina"><i class="fas fa-arrow-alt-from-right"></i></button></form>
                                         {% endif %}
                                     </div>
                                 </td>
@@ -106,36 +96,26 @@
                                 {% else %}
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <a href="{{ path('sala_agregar_reprografia', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}" class="text-muted mr-2"data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar reprografía">
-                                                <i class="far fa-scanner-image"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('sala_agregar_reprografia', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_reprografia') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar reprografía"><i class="far fa-scanner-image"></i></button></form>
                                         </div>
                                     </td>
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <a href="{{ path('sala_agregar_transcripcion', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar transcripción">
-                                                <i class="far fa-signature"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('sala_agregar_transcripcion', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_transcripcion') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar transcripción"><i class="far fa-signature"></i></button></form>
                                         </div>
                                     </td>
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <a href="{{ path('sala_agregar_certificacion', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Solicitar certificación">
-                                                <i class="far fa-file-certificate"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('sala_agregar_certificacion', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_certificacion') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar certificación"><i class="far fa-file-certificate"></i></button></form>
                                         </div>
                                     </td>
                                 {% endif %}
                                 <td class="text-sm">
                                     <div class="float-right pr-2">
                                         {% if not(libro.estado == constant('App\\Entity\\Libro::LIB_ESTADO_EN_VITRINA')) %}
-                                            <a href="{{ path('sala_archivar_documento_en_vitrina', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Guardar en vitrina">
-                                                <i class="fas fa-arrow-alt-from-left"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('sala_archivar_documento_en_vitrina', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_archivar_documento_en_vitrina') }}"><button class="text-muted mr-2" title="Guardar en vitrina"><i class="fas fa-arrow-alt-from-left"></i></button></form>
                                         {% else %}
-                                            <a href="{{ path('sala_regresar_documento_de_vitrina', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".modal-body" title="Retirar de vitrina">
-                                                <i class="fas fa-arrow-alt-from-right"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('sala_regresar_documento_de_vitrina', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_regresar_documento_de_vitrina') }}"><button class="text-muted mr-2" title="Retirar de vitrina"><i class="fas fa-arrow-alt-from-right"></i></button></form>
                                         {% endif %}
                                     </div>
                                 </td>
@@ -155,18 +135,14 @@
     <div class="modal-footer">
         <div class="col-3">
             {% if investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_PROCESADO') %}
-                <a href="{{ path('sala_entregar_documentos_investigacion', {'id': investigacion.id}) }}" class="btn btn-sm btn-danger" style="margin-left: -10.5rem !important;">
-                    Entregar Documentos
-                </a>
+                <form method="post" action="{{ path('sala_entregar_documentos_investigacion', {'id': investigacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_entregar_documentos_investigacion') }}"><button class="btn btn-sm btn-danger" style="margin-left: -10.5rem !important;">Entregar Documentos</button></form>
             {% elseif investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_SALA_CLIENTE') or investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_PAUSADO') %}
-                <a href="{{ path('sala_recoger_documentos_investigacion', {'id': investigacion.id}) }}" class="btn btn-sm btn-danger" style="margin-left: -10.5rem !important;">
-                    Recoger Documentos
-                </a>
+                <form method="post" action="{{ path('sala_recoger_documentos_investigacion', {'id': investigacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_recoger_documentos_investigacion') }}"><button class="btn btn-sm btn-danger" style="margin-left: -10.5rem !important;">Recoger Documentos</button></form>
             {% endif %}
         </div>
         <div class="col-3">
             {% if (investigacion.estado != constant('App\\Entity\\Investigacion::ESTADO_SALA_CLIENTE') and (investigacion.estado != constant('App\\Entity\\Investigacion::ESTADO_PAUSADO'))) %}
-                <a href="{{ path('sala_cancelar_investigacion', {'id': investigacion.id}) }}" class="btn btn-sm btn-primary" style="margin-left: -12rem !important;">Cancelar Servicio</a>
+                <form method="post" action="{{ path('sala_cancelar_investigacion', {'id': investigacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_cancelar_investigacion') }}"><button class="btn btn-sm btn-primary" style="margin-left: -12rem !important;">Cancelar Servicio</button></form>
             {% endif %}
         </div>
         <div class="col-3">

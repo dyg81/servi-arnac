@@ -1,0 +1,38 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        INSTALL_DEV: "1"
+    image: sac-arnac-test:local
+    command: ["tail", "-f", "/dev/null"]
+    environment:
+      APP_ENV: test
+      APP_DEBUG: "1"
+      APP_SECRET: local-only-test-secret
+      DATABASE_URL: mysql://sac_test:sac_test_only@db:3306/main_test?serverVersion=mariadb-10.4.34
+      HASHER_ENTROPY: local-only-test-hasher-entropy
+      HASHER_PADDING: "8"
+      HASHER_CUSTOM_ALPHABET: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:10.4.34
+    environment:
+      MYSQL_DATABASE: main_test
+      MYSQL_USER: sac_test
+      MYSQL_PASSWORD: sac_test_only
+      MYSQL_ROOT_PASSWORD: sac_test_root_only
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h 127.0.0.1 -usac_test -psac_test_only --silent"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+
+networks:
+  default:
+    internal: true

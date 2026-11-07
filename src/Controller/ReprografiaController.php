@@ -79,12 +79,17 @@ class ReprografiaController extends AbstractController
     }
 
     /**
-     * @Route("/procesar-reprografia/{id}", name="servicio_procesar_reprografia", methods={"GET"})
+     * @Route("/procesar-reprografia/{id}", name="servicio_procesar_reprografia", methods={"POST"})
      * @param Reprografia $reprografia
      * @return Response
      */
-    public function procesarReprografia(Reprografia $reprografia): Response
+    public function procesarReprografia(Request $request, Reprografia $reprografia): Response
     {
+        if (!$this->isCsrfTokenValid('servicio_procesar_reprografia', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
+        if ($reprografia->getEstado() !== Reprografia::ESTADO_SOLICITADO) {
+            throw $this->createAccessDeniedException('La solicitud ya no está en el estado esperado para esta acción.');
+        }
+        $this->assertServiceDocumentExists($reprografia->getDocumentoTipo(), $reprografia->getDocumentoId());
         $reprografia->setEstado(Reprografia::ESTADO_EN_PROCESO);
         $reprografia->setFechaActualizacion(new DateTime());
 
@@ -111,19 +116,25 @@ class ReprografiaController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Reprografía actualizada correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('servicio_listar_reprografias');
     }
 
     /**
-     * @Route("terminar-reprografia/{id}", name="servicio_terminar_reprografia", methods={"GET"})
+     * @Route("/terminar-reprografia/{id}", name="servicio_terminar_reprografia", methods={"POST"})
      * @param Reprografia $reprografia
      * @return Response
      */
-    public function terminarReprografia(Reprografia $reprografia): Response
+    public function terminarReprografia(Request $request, Reprografia $reprografia): Response
     {
+        if (!$this->isCsrfTokenValid('servicio_terminar_reprografia', $request->request->get('_token'))) { throw $this->createAccessDeniedException('Token CSRF inválido.'); }
+        if ($reprografia->getEstado() !== Reprografia::ESTADO_EN_PROCESO) {
+            throw $this->createAccessDeniedException('La solicitud ya no está en el estado esperado para esta acción.');
+        }
+        $this->assertServiceDocumentExists($reprografia->getDocumentoTipo(), $reprografia->getDocumentoId());
         $reprografia->setEstado(Reprografia::ESTADO_TERMINADO);
         $reprografia->setFechaActualizacion(new DateTime());
 
@@ -150,7 +161,8 @@ class ReprografiaController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Reprografía concluida correctamente.');
         } catch (Exception $e) {
-            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+            error_log((string) $e);
+            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
         }
 
         return $this->redirectToRoute('servicio_listar_reprografias');
@@ -166,6 +178,9 @@ class ReprografiaController extends AbstractController
      */
     public function editarContrasena(Request $request, Usuario $usuario, string $ruta, UserPasswordEncoderInterface $userPasswordEncoder): Response
     {
+        if (!$this->isGranted("ROLE_ADMIN") && $usuario->getId() !== $this->getUser()->getId()) {
+            throw new \Symfony\Component\Security\Core\Exception\AccessDeniedException();
+        }
         if ($request->isXmlHttpRequest()) {
             $form = $this->createForm(UsuarioType::class, $usuario);
             $form->remove('nombre');
@@ -192,7 +207,8 @@ class ReprografiaController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Contraseña editada correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    error_log((string) $e);
+                    $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl($ruta));
@@ -205,6 +221,14 @@ class ReprografiaController extends AbstractController
             ]);
         } else {
             return $this->render('bundles/TwigBundle/Exception/error403.html.twig');
+        }
+    }
+
+    private function assertServiceDocumentExists(string $type, int $id): void
+    {
+        $class = $type === 'lib' ? Libro::class : ($type === 'exp' ? Expediente::class : null);
+        if (!$class || !$this->entityManager->getRepository($class)->find($id)) {
+            throw $this->createNotFoundException('Documento de servicio no encontrado.');
         }
     }
 }

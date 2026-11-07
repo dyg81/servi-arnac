@@ -68,10 +68,11 @@ class PaisController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'País agregado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'País no agregado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -113,10 +114,11 @@ class PaisController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'País editado correctamente.');
                 } catch (Exception $e) {
+                    error_log((string) $e);
                     if ($e->getErrorCode() == 1062) {
                         $this->addFlash('error', 'País no editado, ya existe en el sistema.');
                     } else {
-                        $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                        $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                     }
                 }
 
@@ -133,7 +135,7 @@ class PaisController extends AbstractController
     }
 
     /**
-     * @Route("/eliminar-pais/{id}", name="sala_eliminar_pais", methods={"GET", "DELETE"})
+     * @Route("/eliminar-pais/{id}", name="sala_eliminar_pais", methods={"GET", "POST"})
      * @param Request $request
      * @param Pais $pais
      * @return Response
@@ -143,7 +145,7 @@ class PaisController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $form = $this->createDeleteForm($pais);
 
-            if ($request->getMethod() == "DELETE") {
+            if ($request->getMethod() == "POST") {
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
@@ -159,10 +161,11 @@ class PaisController extends AbstractController
                         $this->entityManager->flush();
                         $this->addFlash('success', 'País eliminado correctamente.');
                     } catch (Exception $e) {
+                        error_log((string) $e);
                         if ($e->getErrorCode() == 1451) {
                             $this->addFlash('error', 'País no eliminado, conserva clientes asociados.');
                         } else {
-                            $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                            $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                         }
                     }
 
@@ -187,7 +190,7 @@ class PaisController extends AbstractController
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('sala_eliminar_pais', array('id' => $pais->getId())))
-            ->setMethod('DELETE')
+            ->setMethod('POST')
             ->getForm();
     }
 }

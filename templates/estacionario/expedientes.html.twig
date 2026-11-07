@@ -57,10 +57,7 @@
                         </div>
                         <div id="table_wrapper" class="card-body">
                             <div class="float-right pr-2">
-                                <a href="{{ path('estacionario_archivar_documentos') }}" class="btn btn-primary btn-sm">
-                                    <span class="icon"><i class="fas fa-cloud-upload-alt"></i></span>
-                                    <span class=""> Archivar Todos</span>
-                                </a>
+                                <form method="post" action="{{ path('estacionario_archivar_documentos') }}"><input type="hidden" name="_token" value="{{ csrf_token('estacionario_archivar_documentos') }}"><button class="btn btn-primary btn-sm"><i class="fas fa-cloud-upload-alt"></i> Archivar Todos</button></form>
                             </div>
                             <table id="sac" class="table table-hover table-striped display nowrap" style="width: 100%;">
                                 <thead>
@@ -80,9 +77,7 @@
                                         <td>{{ expediente.deposito }} / {{ expediente.estante }} / {{ expediente.anaquel }} / {{ expediente.legajo }}</td>
                                         <td><span class="badge badge-secondary text-white">{{ expediente.estadoExpediente }}</span></td>
                                         <td>
-                                            <a href="{{ path('estacionario_archivar_documento', {'documento': expediente.id, 'tipo': 'exp'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".content-wrapper" title="Archivar">
-                                                <i class="fas fa-file-upload text-sm"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('estacionario_archivar_documento', {'documento': expediente.id, 'tipo': 'exp'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('estacionario_archivar_documento') }}"><button class="text-muted mr-2" title="Archivar"><i class="fas fa-file-upload text-sm"></i></button></form>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -93,9 +88,7 @@
                                         <td>{{ libro.deposito }} / {{ libro.estante }} / {{ libro.anaquel }}</td>
                                         <td><span class="badge badge-secondary text-white">{{ libro.estadoLibro }}</span></td>
                                         <td>
-                                            <a href="{{ path('estacionario_archivar_documento', {'documento': libro.id, 'tipo': 'lib'}) }}" class="text-muted mr-2" data-toggle="tooltip" data-placement="top" data-container=".content-wrapper" title="Archivar">
-                                                <i class="fas fa-file-upload text-md"></i>
-                                            </a>
+                                            <form method="post" action="{{ path('estacionario_archivar_documento', {'documento': libro.id, 'tipo': 'lib'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('estacionario_archivar_documento') }}"><button class="text-muted mr-2" title="Archivar"><i class="fas fa-file-upload text-md"></i></button></form>
                                         </td>
                                     </tr>
                                 {% endfor %}

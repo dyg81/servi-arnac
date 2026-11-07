@@ -14,6 +14,7 @@ use App\Entity\Transcripcion;
 use App\Entity\Traza;
 use App\Entity\Usuario;
 use App\Form\CartaType;
+use App\Service\FileUploader;
 use App\Form\UsuarioType;
 use App\Repository\CartaRepository;
 use DateInterval;
@@ -25,6 +26,8 @@ use Dyg81\ModalBundle\Response\ModalRedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -301,7 +304,8 @@ class DireccionController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'La carta ha sido aprobada satisfactoriamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    error_log((string) $e);
+                    $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('direccion_listar_cartas_pendientes'));
@@ -333,7 +337,7 @@ class DireccionController extends AbstractController
 
             if ($form->isSubmitted() && $form->isValid()) {
                 $carta->setFechaRespuesta(new DateTime('now'));
-                $carta->setEstado(2);
+                $carta->setEstado(Carta::CARTA_DENEGADA);
 
                 $traza = new Traza();
 
@@ -345,7 +349,8 @@ class DireccionController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'La carta ha sido denegada satisfactoriamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    error_log((string) $e);
+                    $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl('direccion_listar_cartas_pendientes'));
@@ -378,6 +383,39 @@ class DireccionController extends AbstractController
     }
 
     /**
+     * @Route("/carta/{id}/documento", name="direccion_descargar_carta", methods={"GET"})
+     */
+    public function descargarCarta(Carta $carta, FileUploader $fileUploader): Response
+    {
+        $storedFilename = basename($carta->getDocumento());
+        if ($storedFilename === '' || strtolower(pathinfo($storedFilename, PATHINFO_EXTENSION)) !== 'pdf') {
+            throw $this->createNotFoundException('Documento no encontrado.');
+        }
+
+        $downloadName = preg_replace('/[^A-Za-z0-9._-]/', '_', $storedFilename);
+        $downloadName = trim($downloadName, '._-');
+        if ($downloadName === '' || strtolower(pathinfo($downloadName, PATHINFO_EXTENSION)) !== 'pdf') {
+            throw $this->createNotFoundException('Documento no encontrado.');
+        }
+
+        $path = $fileUploader->getTargetDirectory() . DIRECTORY_SEPARATOR . $storedFilename;
+        // Retain fallback access for legacy files while the database is unavailable for verification.
+        if (!is_file($path)) {
+            $path = $this->getParameter('kernel.project_dir') . '/public/uploads/cartas/' . $storedFilename;
+        }
+        if (!is_file($path)) {
+            throw $this->createNotFoundException('Documento no encontrado.');
+        }
+
+        $response = new BinaryFileResponse($path);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $downloadName);
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+
+        return $response;
+    }
+
+    /**
      * @Route("/editar-contrasena/{id}/{ruta}", name="direccion_editar_contrasena", methods={"GET", "POST"})
      * @param Request $request
      * @param Usuario $usuario
@@ -387,6 +425,9 @@ class DireccionController extends AbstractController
      */
     public function editarContrasena(Request $request, Usuario $usuario, string $ruta, UserPasswordEncoderInterface $userPasswordEncoder): Response
     {
+        if (!$this->isGranted("ROLE_ADMIN") && $usuario->getId() !== $this->getUser()->getId()) {
+            throw new \Symfony\Component\Security\Core\Exception\AccessDeniedException();
+        }
         if ($request->isXmlHttpRequest()) {
             $form = $this->createForm(UsuarioType::class, $usuario);
             $form->remove('nombre');
@@ -413,7 +454,8 @@ class DireccionController extends AbstractController
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Contraseña editada correctamente.');
                 } catch (Exception $e) {
-                    $this->addFlash('error', 'Error : ' . $e->getErrorCode() . '. Consulte al grupo de desarrollo.');
+                    error_log((string) $e);
+                    $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
                 }
 
                 return new ModalRedirectResponse($this->generateUrl($ruta));

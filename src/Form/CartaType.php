@@ -5,10 +5,12 @@ namespace App\Form;
 use App\Entity\Carta;
 use App\Entity\Cliente;
 use App\Entity\Fondo;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -33,7 +35,12 @@ class CartaType extends AbstractType
                 'required' => false
             ])
             ->add('documento_file', FileType::class, [
-                'attr' => ['class' => 'form-control form-control-border border-width-2 text-sm text-muted'],
+                'attr' => ['class' => 'form-control form-control-border border-width-2 text-sm text-muted', 'accept' => 'application/pdf,.pdf'],
+                'constraints' => [new File([
+                    'maxSize' => FileUploader::MAX_FILE_SIZE,
+                    'mimeTypes' => ['application/pdf'],
+                    'mimeTypesMessage' => 'El documento debe estar en formato PDF.',
+                ])],
                 'mapped' => false,
                 'required' => false
             ])
