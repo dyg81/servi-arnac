@@ -35,7 +35,7 @@
 
     function checkNewInfo() {
         $.ajax({
-            url: '{{ path('estacionario_notificaciones') }}',
+            url: {{ path('estacionario_notificaciones')|json_encode|raw }},
             type: 'GET',
             dataType: 'JSON',
             success: function (data) {

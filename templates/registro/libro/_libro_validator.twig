@@ -8,76 +8,61 @@
         $('#libro_anno').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-calendar-check\"></i>&nbsp;&nbsp;&nbsp; Años',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Años',
+            allowClear: Boolean($('#libro_anno').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('#libro_fondo').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-clipboard\"></i>&nbsp;&nbsp;&nbsp; Fondos',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Fondos',
+            allowClear: Boolean($('#libro_fondo').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('#libro_deposito').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-building\"></i>&nbsp;&nbsp;&nbsp; Depósitos',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Depósitos',
+            allowClear: Boolean($('#libro_deposito').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('#libro_estante').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-line-columns\"></i>&nbsp;&nbsp;&nbsp; Estantes',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Estantes',
+            allowClear: Boolean($('#libro_estante').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('#libro_anaquel').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-bars\"></i>&nbsp;&nbsp;&nbsp; Anaqueles',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Anaqueles',
+            allowClear: Boolean($('#libro_anaquel').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('input').on('input change', function(e) {

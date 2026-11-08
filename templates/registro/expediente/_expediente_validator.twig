@@ -8,76 +8,61 @@
         $('#expediente_fondo').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-clipboard\"></i>&nbsp;&nbsp;&nbsp; Fondos',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Fondos',
+            allowClear: Boolean($('#expediente_fondo').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('#expediente_deposito').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-building\"></i>&nbsp;&nbsp;&nbsp; Depósitos',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Depósitos',
+            allowClear: Boolean($('#expediente_deposito').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('#expediente_estante').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-line-columns\"></i>&nbsp;&nbsp;&nbsp; Estantes',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Estantes',
+            allowClear: Boolean($('#expediente_estante').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('#expediente_anaquel').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-bars\"></i>&nbsp;&nbsp;&nbsp; Anaqueles',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Anaqueles',
+            allowClear: Boolean($('#expediente_anaquel').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('#expediente_legajo').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-folder-open\"></i>&nbsp;&nbsp;&nbsp; Legajos',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Legajos',
+            allowClear: Boolean($('#expediente_legajo').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('input').on('input change', function(e) {

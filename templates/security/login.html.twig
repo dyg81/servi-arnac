@@ -58,7 +58,7 @@
                     timerProgressBar: true,
                 });
 
-                const inputText = '{{ error.messageKey|trans(error.messageData, 'security') }}';
+                const inputText = {{ error.messageKey|trans(error.messageData, 'security')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_QUOT'))|raw }};
                 const font = "0.875rem Nimrod MT";
 
                 const canvas = document.createElement("canvas");

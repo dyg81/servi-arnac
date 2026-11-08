@@ -38,7 +38,7 @@
 
     $(document).ready(function () {
             $.ajax({
-                url: '{{ path('obtener_clientes_investigacion') }}',
+                url: {{ path('obtener_clientes_investigacion')|json_encode|raw }},
                 type: 'GET',
                 dataType: 'JSON',
                 success: function (clientes) {
@@ -57,14 +57,20 @@
     )
 
     clienteSelect.change(function () {
+        const clienteId = clienteSelect.val();
+
         $.ajax({
-            url: '{{ path('obtener_fondos_investigacion') }}',
+            url: {{ path('obtener_fondos_investigacion')|json_encode|raw }},
             type: 'GET',
             dataType: 'JSON',
             data: {
-                clienteid: clienteSelect.val()
+                clienteid: clienteId
             },
             success: function (fondos) {
+                if (clienteSelect.val() !== clienteId) {
+                    return;
+                }
+
                 if (primera_vez) {
                     fondoSelect.prop('disabled', false).html('');
                     primera_vez = false;
@@ -89,14 +95,20 @@
     });
 
     fondoSelect.change(function () {
+        const fondoId = fondoSelect.val();
+
         $.ajax({
-            url: '{{ path('obtener_legajos_investigacion') }}',
+            url: {{ path('obtener_legajos_investigacion')|json_encode|raw }},
             type: 'GET',
             dataType: 'JSON',
             data: {
-                fondoid: fondoSelect.val()
+                fondoid: fondoId
             },
             success: function (legajos) {
+                if (fondoSelect.val() !== fondoId) {
+                    return;
+                }
+
                 legajoSelect.prop('disabled', false).html('');
                 expedienteSelect.prop('disabled', true).html('');
 
@@ -112,13 +124,17 @@
         });
 
         $.ajax({
-            url: '{{ path('obtener_libros_investigacion') }}',
+            url: {{ path('obtener_libros_investigacion')|json_encode|raw }},
             type: 'GET',
             dataType: 'JSON',
             data: {
-                fondoid: fondoSelect.val()
+                fondoid: fondoId
             },
             success: function (libros) {
+                if (fondoSelect.val() !== fondoId) {
+                    return;
+                }
+
                 libroSelect.prop('disabled', false).html('');
 
                 $.each(libros, function (key, libro) {
@@ -132,15 +148,22 @@
     });
 
     legajoSelect.change(function () {
+        const legajoId = legajoSelect.val();
+        const fondoId = fondoSelect.val();
+
         $.ajax({
-            url: '{{ path('obtener_expedientes_investigacion') }}',
+            url: {{ path('obtener_expedientes_investigacion')|json_encode|raw }},
             type: 'GET',
             dataType: 'JSON',
             data: {
-                legajoid: legajoSelect.val(),
-                fondoid: fondoSelect.val()
+                legajoid: legajoId,
+                fondoid: fondoId
             },
             success: function (expedientes) {
+                if (legajoSelect.val() !== legajoId || fondoSelect.val() !== fondoId) {
+                    return;
+                }
+
                 expedienteSelect.prop('disabled', false).html('');
 
                 $.each(expedientes, function (key, expediente) {

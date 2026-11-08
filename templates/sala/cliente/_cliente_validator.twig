@@ -5,31 +5,25 @@
         $('#cliente_centro_laboral').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-link\"></i>&nbsp;&nbsp;&nbsp; Centro Laboral',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Centro Laboral',
+            allowClear: Boolean($('#cliente_centro_laboral').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('#cliente_pais').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-flag\"></i>&nbsp;&nbsp;&nbsp; País',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'País',
+            allowClear: Boolean($('#cliente_pais').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('input').on('input change', function(e) {

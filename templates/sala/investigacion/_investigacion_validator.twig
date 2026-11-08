@@ -5,31 +5,25 @@
         const select_cliente = $('#investigacion_cliente').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-user\"></i>&nbsp;&nbsp;&nbsp; Cliente',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Cliente',
+            allowClear: Boolean($('#investigacion_cliente').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         const select_fondo = $('#investigacion_fondo').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-clipboard\"></i>&nbsp;&nbsp;&nbsp; Fondos',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Fondos',
+            allowClear: Boolean($('#investigacion_fondo').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         const select_legajos = $('#investigacion_legajos').select2({
@@ -51,30 +45,27 @@
             select_legajos.select2({
                 theme: 'bootstrap4',
                 width: 'style',
-                placeholder: '<i class=\"far fa-folder-open\"></i>&nbsp;&nbsp;&nbsp; Legajos',
-                allowClear: Boolean($(this).data('allow-clear')),
+                placeholder: 'Legajos',
+                allowClear: Boolean(select_legajos.data('allow-clear')),
                 language: {
                     noResults: function () {
                         return 'No hay resultados';
                     }
                 },
-                escapeMarkup: function (markup) {
-                    return markup;
-                }
             });
 
             select_expedientes.select2({
                 theme: 'bootstrap4',
                 width: 'styled',
                 placeholder: 'Seleccione un legajo para acceder...',
-                allowClear: Boolean($(this).data('allow-clear')),
+                allowClear: Boolean(select_expedientes.data('allow-clear')),
             });
 
             select_libros.select2({
                 theme: 'bootstrap4',
                 width: 'style',
                 placeholder: 'Seleccione los libros requeridos...',
-                allowClear: Boolean($(this).data('allow-clear')),
+                allowClear: Boolean(select_libros.data('allow-clear')),
                 language: {
                     noResults: function () {
                         return 'No hay resultados';
@@ -88,7 +79,7 @@
                 theme: 'bootstrap4',
                 width: 'styled',
                 placeholder: 'Seleccione los expedientes requeridos...',
-                allowClear: Boolean($(this).data('allow-clear')),
+                allowClear: Boolean(select_expedientes.data('allow-clear')),
                 language: {
                     noResults: function () {
                         return 'No hay resultados';

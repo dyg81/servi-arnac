@@ -5,16 +5,13 @@
         $('#carta_cliente').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-user-friends\"></i>&nbsp;&nbsp;&nbsp; Clientes',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Clientes',
+            allowClear: Boolean($('#carta_cliente').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('input').on('input change', function(e) {

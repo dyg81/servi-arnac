@@ -5,15 +5,20 @@
         $('#libro_deposito').val(null).trigger('change');
         $('#libro_estante').val(null).trigger('change');
         $('#libro_anaquel').val(null).trigger('change');
+        const fondoId = expedienteSelector.val();
 
         $.ajax({
-            url: '{{ path('obtener_depositos_por_fondo') }}',
+            url: {{ path('obtener_depositos_por_fondo')|json_encode|raw }},
             type: 'GET',
             dataType: 'JSON',
             data: {
-                fondoid: expedienteSelector.val()
+                fondoid: fondoId
             },
             success: function (depositos) {
+                if ($('#libro_fondo').val() !== fondoId) {
+                    return;
+                }
+
                 let depositosSelect = $('#libro_deposito');
 
                 depositosSelect.html('');

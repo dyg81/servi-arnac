@@ -124,20 +124,20 @@
     <script>
         {% for type, msgs in app.session.flashBag.all() %}
             {% for msg in msgs %}
-                inputText = '{{ msg }}';
-                font = "0.875rem Nimrod MT";
+                (function () {
+                    const inputText = {{ msg|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_QUOT'))|raw }};
+                    const font = "0.875rem Nimrod MT";
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d");
+                    context.font = font;
+                    const formattedWidth = Math.ceil(context.measureText(inputText).width) + 100;
 
-                canvas = document.createElement("canvas");
-                context = canvas.getContext("2d");
-                context.font = font;
-                width = context.measureText(inputText).width;
-                formattedWidth = Math.ceil(width) + 100;
-
-                Toast.fire({
-                    icon: '{{ type }}',
-                    title: '{{ msg }}',
-                    width: formattedWidth,
-                });
+                    Toast.fire({
+                        icon: {{ type|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_QUOT'))|raw }},
+                        title: inputText,
+                        width: formattedWidth,
+                    });
+                })();
             {% endfor %}
         {% endfor %}
     </script>

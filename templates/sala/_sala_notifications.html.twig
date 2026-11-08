@@ -65,7 +65,7 @@
 
     function checkNewInfo() {
         $.ajax({
-            url: '{{ path('sala_notificaciones') }}',
+            url: {{ path('sala_notificaciones')|json_encode|raw }},
             type: 'GET',
             dataType: 'JSON',
             success: function (data) {

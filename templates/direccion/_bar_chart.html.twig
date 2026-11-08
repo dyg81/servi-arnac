@@ -1,6 +1,6 @@
 <script>
     $(document).ready(function () {
-        let data_anual = {{ data_anual|json_encode|raw }};
+        let data_anual = {{ data_anual|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_QUOT'))|raw }};
         let labels = [];
         let investigaciones = [];
         let transcripciones = [];

@@ -11,7 +11,7 @@
             ],
             datasets: [
                 {
-                    data: [{{ transcripciones_totales|length }}, {{ reprografias_totales|length }}, {{ investigaciones_totales|length }}, {{ certificaciones_totales|length }}],
+                    data: {{ [transcripciones_totales|length, reprografias_totales|length, investigaciones_totales|length, certificaciones_totales|length]|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_QUOT'))|raw }},
                     backgroundColor: ['#634c3c', '#00bc8c', '#687e7e', '#f6e7d5'],
                 }
             ]

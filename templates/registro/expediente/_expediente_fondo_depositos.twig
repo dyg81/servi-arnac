@@ -6,15 +6,20 @@
         $('#expediente_estante').val(null).trigger('change');
         $('#expediente_anaquel').val(null).trigger('change');
         $('#expediente_legajo').val(null).trigger('change');
+        const fondoId = expedienteSelector.val();
 
         $.ajax({
-            url: '{{ path('obtener_depositos_por_fondo') }}',
+            url: {{ path('obtener_depositos_por_fondo')|json_encode|raw }},
             type: 'GET',
             dataType: 'JSON',
             data: {
-                fondoid: expedienteSelector.val()
+                fondoid: fondoId
             },
             success: function (depositos) {
+                if ($('#expediente_fondo').val() !== fondoId) {
+                    return;
+                }
+
                 let depositosSelect = $('#expediente_deposito');
 
                 depositosSelect.html('');

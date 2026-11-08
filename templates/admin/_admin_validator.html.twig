@@ -5,16 +5,13 @@
         $('#usuario_roles').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-user-tag\"></i>&nbsp;&nbsp;&nbsp; Roles',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Roles',
+            allowClear: Boolean($('#usuario_roles').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('input').on('input change', function(e) {

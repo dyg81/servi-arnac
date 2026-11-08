@@ -72,7 +72,7 @@
                                 height: 30,
                                 columns: [{
                                     alignment: "left",
-                                    text: 'Generado por : '  + `{{ app.user.nombre }}` + ' el ' + new Date().toLocaleDateString('es-CL'),
+                                    text: 'Generado por : '  + {{ app.user.nombre|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_QUOT'))|raw }} + ' el ' + new Date().toLocaleDateString('es-CL'),
                                 }, {
                                     alignment: "right",
                                     text: [
@@ -157,7 +157,7 @@
 
         $('#fechas-servicios').on('apply.daterangepicker', function(ev, picker) {
             $.ajax({
-                url: '{{ path('direccion_servicios_por_fecha') }}',
+                url: {{ path('direccion_servicios_por_fecha')|json_encode|raw }},
                 type: 'GET',
                 dataType: 'JSON',
                 data: {
@@ -274,7 +274,7 @@
                                             height: 30,
                                             columns: [{
                                                 alignment: "left",
-                                                text: 'Generado por: ' + `{{ app.user.nombre }}` + ' el ' + new Date().toLocaleDateString('es-CL'),
+                                                text: 'Generado por: ' + {{ app.user.nombre|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_QUOT'))|raw }} + ' el ' + new Date().toLocaleDateString('es-CL'),
                                             }, {
                                                 alignment: "right",
                                                 text: [
@@ -326,21 +326,18 @@
         $('#cliente-servicios').select2({
             theme: 'bootstrap4',
             width: 'style',
-            placeholder: '<i class=\"far fa-user\"></i>&nbsp;&nbsp;&nbsp; Clientes',
-            allowClear: Boolean($(this).data('allow-clear')),
+            placeholder: 'Clientes',
+            allowClear: Boolean($('#cliente-servicios').data('allow-clear')),
             language: {
                 noResults: function () {
                     return 'No hay resultados';
                 }
             },
-            escapeMarkup: function (markup) {
-                return markup;
-            }
         });
 
         $('#cliente-servicios').on('change', function (e) {
             $.ajax({
-                url: '{{ path('direccion_servicios_por_cliente') }}',
+                url: {{ path('direccion_servicios_por_cliente')|json_encode|raw }},
                 type: 'GET',
                 dataType: 'JSON',
                 data: {
@@ -447,7 +444,7 @@
                                             height: 30,
                                             columns: [{
                                                 alignment: "left",
-                                                text: 'Generado por: ' + `{{ app.user.nombre }}` + ' el ' + new Date().toLocaleDateString('es-CL'),
+                                    text: 'Generado por: ' + {{ app.user.nombre|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_QUOT'))|raw }} + ' el ' + new Date().toLocaleDateString('es-CL'),
                                             }, {
                                                 alignment: "right",
                                                 text: [
