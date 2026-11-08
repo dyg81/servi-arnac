@@ -193,3 +193,9 @@ Fase 12 se completó en alcance local. `custom.js` inicializa plugins opcionales
 ### Cierre de Fase 12 — 2026-11-08
 
 Fase 12 completada en alcance local. En navegador con fixture temporal y assets/plugins locales se verificaron DataTables, Select2 válido (borde e icono verdes), autofocus de modal y cierre del menú de usuario. Se revisó responsive a 390×844 y 1280×800 sin desbordamiento horizontal y no hubo errores/avisos en consola. Login real cargó sin tabla; no se accedió a páginas autenticadas por falta de credenciales. El fixture se eliminó y no se tocaron datos. `node --check` y diff-check con CRLF tolerado pasan. La regresión integrada y cierre global quedan para Fase 13, que requiere instrucción nueva.
+
+### Fase 13 — regresión y cierre técnico — 2026-11-08
+
+Fase 13 completada en alcance local. En PHP 7.4.33 pasaron unidad (10 pruebas/17 aserciones), integración (8/36), lint Twig (126/126), ciclo up/down/up de tres migraciones y validación de mapping/esquema; también `node --check` de `custom.js` y `notifications.js` y diff-check. Con las ocho cuentas se comprobaron 64 accesos GET entre los ocho roles: acceso propio 200 y denegación ajena 403, sin desvíos. Los seis endpoints de notificación devolvieron JSON de conteos para el rol correspondiente y 403 para otros; los endpoints de cascada JSON se ejercitaron como AJAX.
+
+La regresión detectó que la cascada de legajos lanzaba 500 cuando faltaba el parámetro `fondoid`; ahora devuelve `200 []` ante parámetro ausente, no numérico o fondo inexistente. Se añadió prueba de integración para los tres casos y se confirmaron también en la app local. La interfaz de login real cargó en Firefox; no se completó inspección visual autenticada/assistiva. Quedan para la revisión global la validación en servidor real y los advisories ya documentados de PHP/Symfony fuera de soporte. Cinco deprecaciones indirectas de Doctrine/Twig siguen presentes. El stack de prueba se detuvo sin `-v`; no se creó commit.

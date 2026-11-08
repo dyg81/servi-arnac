@@ -386,7 +386,15 @@ class InvestigacionController extends AbstractController
      */
     public function obtenerLegajosInvestigacion(Request $request): JsonResponse
     {
-        $fondo = $this->entityManager->getRepository(Fondo::class)->find($request->query->get('fondoid'));
+        $fondoId = $request->query->get('fondoid');
+        if (!is_scalar($fondoId) || !ctype_digit((string) $fondoId) || (int) $fondoId < 1) {
+            return new JsonResponse(array());
+        }
+
+        $fondo = $this->entityManager->getRepository(Fondo::class)->find($fondoId);
+        if (!$fondo) {
+            return new JsonResponse(array());
+        }
 
         $legajosArray = array();
 
