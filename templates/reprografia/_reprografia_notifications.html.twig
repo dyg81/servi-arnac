@@ -1,4 +1,4 @@
-<a id="notificacionesReprografia" hidden href="{{ path('servicio_listar_reprografias') }}" class="dropdown-item">
+<a id="notificacionesReprografia" hidden href="{{ path('servicio_listar_reprografias') }}" class="dropdown-item" data-notifications-url="{{ path('reprografia_notificaciones') }}" data-notifications-type="single" data-notifications-message="nuevo(s) servicio(s)">
     <div class="media">
         <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol"
              class="img-size-50 mr-3 mt-1 img-circle">
@@ -11,67 +11,3 @@
         </div>
     </div>
 </a>
-
-<script>
-    let bellSelector = document.querySelector('#notificationBell');
-    let notificacionesSelector = document.querySelector('#notificationsBlock');
-    let reprografiasSelector = document.querySelector('#notificacionesReprografia');
-
-    function renderBell(count) {
-        while (bellSelector.firstChild) {
-            bellSelector.removeChild(bellSelector.firstChild);
-        }
-
-        let icon = document.createElement('i');
-        icon.className = 'fas fa-bell mt-1';
-        bellSelector.appendChild(icon);
-
-        if (count !== 0) {
-            let badge = document.createElement('span');
-            badge.className = 'badge badge-danger navbar-badge';
-            badge.textContent = String(count);
-            bellSelector.appendChild(badge);
-        }
-    }
-
-    function checkNewInfo() {
-        $.ajax({
-            url: {{ path('reprografia_notificaciones')|json_encode|raw }},
-            type: 'GET',
-            dataType: 'JSON',
-            success: function (data) {
-                const reprografiasNuevas = data[0];
-
-                reprografiasSelector.hidden = true;
-
-                if ((reprografiasNuevas) !== 0) {
-                    renderBell(reprografiasNuevas);
-                    notificacionesSelector.hidden = false;
-                    reprografiasSelector.hidden = false;
-
-                    if (reprografiasSelector.querySelector('em:last-child')) {
-                        reprografiasSelector.querySelector('em:last-child').remove();
-                    }
-
-                    let child = document.createElement('em');
-                    child.classList.add('text-xs');
-                    child.classList.add('text-muted');
-                    child.textContent = reprografiasNuevas + ' nuevo(s) servicio(s)';
-
-                    let parent = reprografiasSelector.querySelector('.media-body');
-                    parent.appendChild(child);
-                } else {
-                    notificacionesSelector.hidden = true;
-                    notificacionesSelector.classList.remove('show');
-                    renderBell(0);
-                }
-            },
-
-            complete: function () {
-                setTimeout(checkNewInfo, 300000);
-            }
-        });
-    }
-
-    setTimeout(checkNewInfo, 1000);
-</script>

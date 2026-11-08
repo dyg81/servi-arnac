@@ -11,7 +11,7 @@
             <ul class="navbar-nav ml-auto mr-3">
                 {% if not(app.user.roles[0] == 'ROLE_ADMIN') and not(app.user.roles[0] == 'ROLE_REGISTRO') %}
                     <li class="nav-item dropdown">
-                        <a id="notificationBell" class="nav-link" data-toggle="dropdown" href="#">
+                        <a id="notificationBell" class="nav-link" data-toggle="dropdown" href="#" aria-label="Notificaciones">
                             <i class="fas fa-bell mt-1"></i>
                         </a>
                         <div id="notificationsBlock" hidden class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
@@ -122,6 +122,8 @@
 
 {% block javascripts %}
     {{ parent() }}
+
+    <script src="{{ asset('assets/dist/js/notifications.js') }}"></script>
 
     <script>
         {% for type, msgs in app.session.flashBag.all() %}

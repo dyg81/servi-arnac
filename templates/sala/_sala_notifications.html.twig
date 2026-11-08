@@ -1,4 +1,4 @@
-<a id="notificacionesVitrina" hidden href="{{ path('sala_listar_documentos_en_vitrina') }}" class="dropdown-item">
+<a id="notificacionesVitrina" hidden href="{{ path('sala_listar_documentos_en_vitrina') }}" class="dropdown-item" data-notifications-url="{{ path('sala_notificaciones') }}" data-notifications-type="sala" data-notification-index="1" data-notification-message="documento(s) vencido(s)">
     <div class="media">
         <img src="{{ asset('assets/dist/img/warning-red.png') }}" alt="Alert Symbol" class="img-size-50 mr-3 mt-1 img-circle">
         <div class="media-body">
@@ -11,7 +11,7 @@
     </div>
 </a>
 <div id="notificacionesDivisor1" hidden class="dropdown-divider"></div>
-<a id="notificacionesInvestigacion" hidden href="{{ path('sala_listar_investigaciones') }}" class="dropdown-item">
+<a id="notificacionesInvestigacion" hidden href="{{ path('sala_listar_investigaciones') }}" class="dropdown-item" data-notification-index="0" data-notification-message="nueva(s) investigacion(es)">
     <div class="media">
         <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol" class="img-size-50 mr-3 mt-1 img-circle">
         <div class="media-body">
@@ -24,7 +24,7 @@
     </div>
 </a>
 <div id="notificacionesDivisor2" hidden class="dropdown-divider"></div>
-<a id="notificacionesCarta" hidden href="{{ path('sala_listar_cartas') }}" class="dropdown-item">
+<a id="notificacionesCarta" hidden href="{{ path('sala_listar_cartas') }}" class="dropdown-item" data-notification-index="2" data-notification-message="nueva(s) solicitud(es)">
     <div class="media">
         <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol" class="img-size-50 mr-3 mt-1 img-circle">
         <div class="media-body">
@@ -36,130 +36,3 @@
         </div>
     </div>
 </a>
-
-<script>
-    let bellSelector = document.querySelector('#notificationBell');
-    let cartasSelector = document.querySelector('#notificacionesCarta');
-    let vitrinasSelector = document.querySelector('#notificacionesVitrina');
-    let divisor1Selector = document.querySelector('#notificacionesDivisor1');
-    let divisor2Selector = document.querySelector('#notificacionesDivisor2');
-    let notificacionesSelector = document.querySelector('#notificationsBlock');
-    let investigacionesSelector = document.querySelector('#notificacionesInvestigacion');
-
-    function renderBell(count) {
-        while (bellSelector.firstChild) {
-            bellSelector.removeChild(bellSelector.firstChild);
-        }
-
-        let icon = document.createElement('i');
-        icon.className = 'fas fa-bell mt-1';
-        bellSelector.appendChild(icon);
-
-        if (count !== 0) {
-            let badge = document.createElement('span');
-            badge.className = 'badge badge-danger navbar-badge';
-            badge.textContent = String(count);
-            bellSelector.appendChild(badge);
-        }
-    }
-
-    function checkNewInfo() {
-        $.ajax({
-            url: {{ path('sala_notificaciones')|json_encode|raw }},
-            type: 'GET',
-            dataType: 'JSON',
-            success: function (data) {
-                const vitrinasVencidas = data[1];
-                const cartasProcesadas = data[2];
-                const investigacionesProcesadas = data[0];
-                const notificacionesTotal = investigacionesProcesadas + vitrinasVencidas + cartasProcesadas;
-
-                divisor1Selector.hidden = true;
-                divisor2Selector.hidden = true;
-                vitrinasSelector.hidden = true;
-                investigacionesSelector.hidden = true;
-
-                if ((notificacionesTotal) !== 0) {
-                    renderBell(notificacionesTotal);
-                    notificacionesSelector.hidden = false;
-
-                    if ((vitrinasVencidas !== 0) && (investigacionesProcesadas !== 0) && (cartasProcesadas !== 0)) {
-                        divisor1Selector.hidden = false;
-                        divisor2Selector.hidden = false;
-                    }
-
-                    if ((vitrinasVencidas !== 0) && (investigacionesProcesadas !== 0) && (cartasProcesadas === 0)) {
-                        divisor1Selector.hidden = false;
-                    }
-
-                    if ((vitrinasVencidas === 0) && (investigacionesProcesadas !== 0) && (cartasProcesadas !== 0)) {
-                        divisor2Selector.hidden = false;
-                    }
-
-                    if ((vitrinasVencidas !== 0) && (investigacionesProcesadas === 0) && (cartasProcesadas !== 0)) {
-                        divisor1Selector.hidden = false;
-                    }
-
-                    if (investigacionesProcesadas !== 0) {
-                        investigacionesSelector.hidden = false;
-
-                        if (investigacionesSelector.querySelector('em:last-child')) {
-                            investigacionesSelector.querySelector('em:last-child').remove();
-                        }
-
-                        let child = document.createElement('em');
-                        child.classList.add('text-xs');
-                        child.classList.add('text-muted');
-                        child.textContent = investigacionesProcesadas + ' nueva(s) investigacion(es)';
-
-                        let parent = investigacionesSelector.querySelector('.media-body');
-                        parent.appendChild(child);
-                    }
-
-                    if (vitrinasVencidas !== 0) {
-                        vitrinasSelector.hidden = false;
-
-                        if (vitrinasSelector.querySelector('em:last-child')) {
-                            vitrinasSelector.querySelector('em:last-child').remove();
-                        }
-
-                        let child = document.createElement('em');
-                        child.classList.add('text-xs');
-                        child.classList.add('text-muted');
-                        child.textContent = vitrinasVencidas + ' documento(s) vencido(s)';
-
-                        let parent = vitrinasSelector.querySelector('.media-body');
-                        parent.appendChild(child);
-                    }
-
-                    if (cartasProcesadas !== 0) {
-                        cartasSelector.hidden = false;
-
-                        if (cartasSelector.querySelector('em:last-child')) {
-                            cartasSelector.querySelector('em:last-child').remove();
-                        }
-
-                        let child = document.createElement('em');
-                        child.classList.add('text-xs');
-                        child.classList.add('text-muted');
-                        child.textContent = cartasProcesadas + ' nueva(s) solicitud(es)';
-
-                        let parent = cartasSelector.querySelector('.media-body');
-                        parent.appendChild(child);
-                    }
-
-                } else {
-                    notificacionesSelector.hidden = true;
-                    notificacionesSelector.classList.remove('show');
-                    renderBell(0);
-                }
-            },
-
-            complete: function () {
-                setTimeout(checkNewInfo, 300000);
-            }
-        });
-    }
-
-    setTimeout(checkNewInfo, 1000);
-</script>

@@ -1,4 +1,4 @@
-<a id="notificacionesCarta" hidden href="{{ path('direccion_listar_cartas_pendientes') }}" class="dropdown-item">
+<a id="notificacionesCarta" hidden href="{{ path('direccion_listar_cartas_pendientes') }}" class="dropdown-item" data-notifications-url="{{ path('direccion_notificaciones') }}" data-notifications-type="single" data-notifications-message="nuevo(s) autorizo(s)">
     <div class="media">
         <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol" class="img-size-50 mr-3 mt-1 img-circle">
         <div class="media-body">
@@ -10,67 +10,3 @@
         </div>
     </div>
 </a>
-
-<script>
-    let bellSelector = document.querySelector('#notificationBell');
-    let notificacionesSelector = document.querySelector('#notificationsBlock');
-    let cartasSelector = document.querySelector('#notificacionesCarta');
-
-    function renderBell(count) {
-        while (bellSelector.firstChild) {
-            bellSelector.removeChild(bellSelector.firstChild);
-        }
-
-        let icon = document.createElement('i');
-        icon.className = 'fas fa-bell mt-1';
-        bellSelector.appendChild(icon);
-
-        if (count !== 0) {
-            let badge = document.createElement('span');
-            badge.className = 'badge badge-danger navbar-badge';
-            badge.textContent = String(count);
-            bellSelector.appendChild(badge);
-        }
-    }
-
-    function checkNewInfo() {
-        $.ajax({
-            url: {{ path('direccion_notificaciones')|json_encode|raw }},
-            type: 'GET',
-            dataType: 'JSON',
-            success: function (data) {
-                const cartasPendientes = data[0];
-
-                cartasSelector.hidden = true;
-
-                if ((cartasPendientes) !== 0) {
-                    renderBell(cartasPendientes);
-                    notificacionesSelector.hidden = false;
-                    cartasSelector.hidden = false;
-
-                    if (cartasSelector.querySelector('em:last-child')) {
-                        cartasSelector.querySelector('em:last-child').remove();
-                    }
-
-                    let child = document.createElement('em');
-                    child.classList.add('text-xs');
-                    child.classList.add('text-muted');
-                    child.textContent = cartasPendientes + ' nuevo(s) autorizo(s)';
-
-                    let parent = cartasSelector.querySelector('.media-body');
-                    parent.appendChild(child);
-                } else {
-                    notificacionesSelector.hidden = true;
-                    notificacionesSelector.classList.remove('show');
-                    renderBell(0);
-                }
-            },
-
-            complete: function () {
-                setTimeout(checkNewInfo, 300000);
-            }
-        });
-    }
-
-    setTimeout(checkNewInfo, 1000);
-</script>

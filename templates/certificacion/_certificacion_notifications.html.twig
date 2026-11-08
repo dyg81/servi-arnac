@@ -1,4 +1,4 @@
-<a id="notificacionesCertificacion" hidden href="{{ path('servicio_listar_certificaciones') }}" class="dropdown-item">
+<a id="notificacionesCertificacion" hidden href="{{ path('servicio_listar_certificaciones') }}" class="dropdown-item" data-notifications-url="{{ path('certificacion_notificaciones') }}" data-notifications-type="single" data-notifications-message="nuevo(s) servicio(s)">
     <div class="media">
         <img src="{{ asset('assets/dist/img/warning-gray.png') }}" alt="Warning Symbol"
              class="img-size-50 mr-3 mt-1 img-circle">
@@ -11,66 +11,3 @@
         </div>
     </div>
 </a>
-
-<script>
-    let bellSelector = document.querySelector('#notificationBell');
-    let notificacionesSelector = document.querySelector('#notificationsBlock');
-    let certificacionesSelector = document.querySelector('#notificacionesCertificacion');
-
-    function renderBell(count) {
-        while (bellSelector.firstChild) {
-            bellSelector.removeChild(bellSelector.firstChild);
-        }
-
-        let icon = document.createElement('i');
-        icon.className = 'fas fa-bell mt-1';
-        bellSelector.appendChild(icon);
-
-        if (count !== 0) {
-            let badge = document.createElement('span');
-            badge.className = 'badge badge-danger navbar-badge';
-            badge.textContent = String(count);
-            bellSelector.appendChild(badge);
-        }
-    }
-
-    function checkNewInfo() {
-        $.ajax({
-            url: {{ path('certificacion_notificaciones')|json_encode|raw }},
-            type: 'GET',
-            dataType: 'JSON',
-            success: function (data) {
-                const certificacionesNuevas = data[0];
-
-                certificacionesSelector.hidden = true;
-
-                if ((certificacionesNuevas) !== 0) {
-                    renderBell(certificacionesNuevas);
-                    notificacionesSelector.hidden = false;
-                    certificacionesSelector.hidden = false;
-
-                    if (certificacionesSelector.querySelector('em:last-child')) {
-                        certificacionesSelector.querySelector('em:last-child').remove();
-                    }
-
-                    let child = document.createElement('em');
-                    child.classList.add('text-xs');
-                    child.classList.add('text-muted');
-                    child.textContent = certificacionesNuevas + ' nuevo(s) servicio(s)';
-
-                    let parent = certificacionesSelector.querySelector('.media-body');
-                    parent.appendChild(child);
-                } else {
-                    notificacionesSelector.hidden = true;
-                    notificacionesSelector.classList.remove('show');
-                    renderBell(0);
-                }
-            },
-            complete: function () {
-                setTimeout(checkNewInfo, 300000);
-            }
-        });
-    }
-
-    setTimeout(checkNewInfo, 1000);
-</script>
