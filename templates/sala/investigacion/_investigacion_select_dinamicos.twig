@@ -7,6 +7,16 @@
 
     let primera_vez = true;
 
+    function appendOption(select, value, label, attributes) {
+        let option = $('<option>').val(String(value)).text(String(label));
+
+        if (attributes) {
+            option.prop(attributes);
+        }
+
+        select.append(option);
+    }
+
     function errorMessage() {
         let inputText = 'Ha ocurrido un error desconocido mientras se cargaban los datos.';
         let font = '0.875rem Nimrod MT';
@@ -33,10 +43,10 @@
                 dataType: 'JSON',
                 success: function (clientes) {
                     clienteSelect.html('');
-                    clienteSelect.append('<option hidden disabled selected value></option>');
+                    appendOption(clienteSelect, '', '', {hidden: true, disabled: true, selected: true});
 
                     $.each(clientes, function (key, cliente) {
-                        clienteSelect.append('<option value="' + cliente.id + '">' + cliente.nombre + '</option>');
+                        appendOption(clienteSelect, cliente.id, cliente.nombre);
                     });
                 },
                 error: function () {
@@ -66,10 +76,10 @@
                 expedienteSelect.prop('disabled', true).html('');
                 libroSelect.prop('disabled', true).html('');
 
-                fondoSelect.append('<option hidden disabled selected value></option>');
+                appendOption(fondoSelect, '', '', {hidden: true, disabled: true, selected: true});
 
                 $.each(fondos, function (key, fondo) {
-                    fondoSelect.append('<option value="' + fondo.id + '">' + fondo.numero + '</option>');
+                    appendOption(fondoSelect, fondo.id, fondo.numero);
                 });
             },
             error: function () {
@@ -90,10 +100,10 @@
                 legajoSelect.prop('disabled', false).html('');
                 expedienteSelect.prop('disabled', true).html('');
 
-                legajoSelect.append('<option hidden disabled selected value></option>');
+                appendOption(legajoSelect, '', '', {hidden: true, disabled: true, selected: true});
 
                 $.each(legajos, function (key, legajo) {
-                    legajoSelect.append('<option value="' + legajo.id + '">' + legajo.numero + '</option>');
+                    appendOption(legajoSelect, legajo.id, legajo.numero);
                 });
             },
             error: function () {
@@ -112,7 +122,7 @@
                 libroSelect.prop('disabled', false).html('');
 
                 $.each(libros, function (key, libro) {
-                    libroSelect.append('<option value="' + libro.id + '">' + libro.numero + '</option>');
+                    appendOption(libroSelect, libro.id, libro.numero);
                 });
             },
             error: function () {
@@ -134,7 +144,7 @@
                 expedienteSelect.prop('disabled', false).html('');
 
                 $.each(expedientes, function (key, expediente) {
-                    expedienteSelect.append('<option value="' + expediente.id + '">' + expediente.numero + '</option>');
+                    appendOption(expedienteSelect, expediente.id, expediente.numero);
                 });
             },
             error: function () {

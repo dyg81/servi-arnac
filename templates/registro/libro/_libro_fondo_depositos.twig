@@ -18,10 +18,10 @@
 
                 depositosSelect.html('');
                 depositosSelect.prop('disabled', false);
-                depositosSelect.append('<option value="" selected="selected"></option>');
+                depositosSelect.append($('<option>').val('').prop('selected', true));
 
                 $.each(depositos, function (key, deposito) {
-                    depositosSelect.append('<option value="' + deposito.id + '">' + deposito.identificador + '</option>');
+                    depositosSelect.append($('<option>').val(String(deposito.id)).text(String(deposito.identificador)));
                 });
             },
             error: function () {
