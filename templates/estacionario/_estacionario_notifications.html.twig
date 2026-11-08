@@ -16,6 +16,23 @@
     let notificacionesSelector = document.querySelector('#notificationsBlock');
     let investigacionesSelector = document.querySelector('#notificacionesInvestigacion');
 
+    function renderBell(count) {
+        while (bellSelector.firstChild) {
+            bellSelector.removeChild(bellSelector.firstChild);
+        }
+
+        let icon = document.createElement('i');
+        icon.className = 'fas fa-bell mt-1';
+        bellSelector.appendChild(icon);
+
+        if (count !== 0) {
+            let badge = document.createElement('span');
+            badge.className = 'badge badge-danger navbar-badge';
+            badge.textContent = String(count);
+            bellSelector.appendChild(badge);
+        }
+    }
+
     function checkNewInfo() {
         $.ajax({
             url: '{{ path('estacionario_notificaciones') }}',
@@ -27,7 +44,7 @@
                 investigacionesSelector.hidden = true;
 
                 if ((investigacionesSolicitadas) !== 0) {
-                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i><span class="badge badge-danger navbar-badge">' + investigacionesSolicitadas + '</span>';
+                    renderBell(investigacionesSolicitadas);
                     notificacionesSelector.hidden = false;
                     investigacionesSelector.hidden = false;
 
@@ -38,14 +55,14 @@
                     let child = document.createElement('em');
                     child.classList.add('text-xs');
                     child.classList.add('text-muted');
-                    child.innerHTML = investigacionesSolicitadas + ' nueva(s) investigacion(es)';
+                    child.textContent = investigacionesSolicitadas + ' nueva(s) investigacion(es)';
 
-                    parent = investigacionesSelector.querySelector('.media-body');
+                    let parent = investigacionesSelector.querySelector('.media-body');
                     parent.appendChild(child);
                 } else {
                     notificacionesSelector.hidden = true;
                     notificacionesSelector.classList.remove('show');
-                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i>';
+                    renderBell(0);
                 }
             },
 

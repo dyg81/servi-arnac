@@ -17,6 +17,23 @@
     let notificacionesSelector = document.querySelector('#notificationsBlock');
     let transcripcionesSelector = document.querySelector('#notificacionesTranscripcion');
 
+    function renderBell(count) {
+        while (bellSelector.firstChild) {
+            bellSelector.removeChild(bellSelector.firstChild);
+        }
+
+        let icon = document.createElement('i');
+        icon.className = 'fas fa-bell mt-1';
+        bellSelector.appendChild(icon);
+
+        if (count !== 0) {
+            let badge = document.createElement('span');
+            badge.className = 'badge badge-danger navbar-badge';
+            badge.textContent = String(count);
+            bellSelector.appendChild(badge);
+        }
+    }
+
     function checkNewInfo() {
         $.ajax({
             url: '{{ path('transcripcion_notificaciones') }}',
@@ -28,7 +45,7 @@
                 transcripcionesSelector.hidden = true;
 
                 if ((transcripcionesNuevas) !== 0) {
-                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i><span class="badge badge-danger navbar-badge">' + transcripcionesNuevas + '</span>';
+                    renderBell(transcripcionesNuevas);
                     notificacionesSelector.hidden = false;
                     transcripcionesSelector.hidden = false;
 
@@ -39,14 +56,14 @@
                     let child = document.createElement('em');
                     child.classList.add('text-xs');
                     child.classList.add('text-muted');
-                    child.innerHTML = transcripcionesNuevas + ' nuevo(s) servicio(s)';
+                    child.textContent = transcripcionesNuevas + ' nuevo(s) servicio(s)';
 
-                    parent = transcripcionesSelector.querySelector('.media-body');
+                    let parent = transcripcionesSelector.querySelector('.media-body');
                     parent.appendChild(child);
                 } else {
                     notificacionesSelector.hidden = true;
                     notificacionesSelector.classList.remove('show');
-                    bellSelector.innerHTML = '<i class="fas fa-bell mt-1"></i>';
+                    renderBell(0);
                 }
             },
 
