@@ -21,10 +21,12 @@
         </div>
         <div class="modal-body text-xs">
             <div class="form-group">
+                {{ form_label(form.fondos, null, {'label_attr': {'class': 'sr-only'}}) }}
                 {{ form_widget(form.fondos) }}
             </div>
             <div class="form-group sac-form-group">
                 <span class="far fa-comment-alt-lines form-control-feedback"></span>
+                {{ form_label(form.observaciones, null, {'label_attr': {'class': 'sr-only'}}) }}
                 {{ form_widget(form.observaciones) }}
             </div>
         </div>

@@ -22,31 +22,38 @@
             <div class="row">
                 <div class="form-group sac-form-group col-6">
                     <span class="far fa-file-alt form-control-feedback text-md"></span>
+                    {{ form_label(form.tomo, null, {'label_attr': {'class': 'sr-only'}}) }}
                     {{ form_widget(form.tomo) }}
                 </div>
                 <div class="form-group sac-form-group col-6">
+                    {{ form_label(form.anno, null, {'label_attr': {'class': 'sr-only'}}) }}
                     {{ form_widget(form.anno) }}
                 </div>
             </div>
             <div class="row">
                 <div class="form-group sac-form-group col-12">
                     <span class="far fa-comment-alt-lines form-control-feedback text-md"></span>
+                    {{ form_label(form.contenido, null, {'label_attr': {'class': 'sr-only'}}) }}
                     {{ form_widget(form.contenido) }}
                 </div>
             </div>
             <div class="row">
                 <div class="form-group col-12">
+                    {{ form_label(form.fondo, null, {'label_attr': {'class': 'sr-only'}}) }}
                     {{ form_widget(form.fondo) }}
                 </div>
             </div>
             <div class="row">
                 <div class="form-group col-4">
+                    {{ form_label(form.deposito, null, {'label_attr': {'class': 'sr-only'}}) }}
                     {{ form_widget(form.deposito, {'attr': {'disabled': 'false'}}) }}
                 </div>
                 <div class="form-group col-4">
+                    {{ form_label(form.estante, null, {'label_attr': {'class': 'sr-only'}}) }}
                     {{ form_widget(form.estante) }}
                 </div>
                 <div class="form-group col-4">
+                    {{ form_label(form.anaquel, null, {'label_attr': {'class': 'sr-only'}}) }}
                     {{ form_widget(form.anaquel) }}
                 </div>
             </div>

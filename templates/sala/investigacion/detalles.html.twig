@@ -28,12 +28,12 @@
                 <table class="table table-hover" id="investigaciones">
                     <thead>
                         <tr>
-                            <th>Documento(s)</th>
-                            <th>Estado</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <th scope="col">Documento(s)</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col"><span class="sr-only">Acciones</span></th>
+                            <th scope="col"><span class="sr-only">Acciones</span></th>
+                            <th scope="col"><span class="sr-only">Acciones</span></th>
+                            <th scope="col"><span class="sr-only">Acciones</span></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,26 +51,26 @@
                                 {% else %}
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <form method="post" action="{{ path('sala_agregar_reprografia', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_reprografia') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar reprografía"><i class="far fa-scanner-image"></i></button></form>
+                                            <form method="post" action="{{ path('sala_agregar_reprografia', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_reprografia') }}"><button type="submit" class="text-muted mr-2 border-0 bg-transparent" title="Solicitar reprografía" aria-label="Solicitar reprografía"><i class="far fa-scanner-image"></i></button></form>
                                         </div>
                                     </td>
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <form method="post" action="{{ path('sala_agregar_transcripcion', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_transcripcion') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar transcripción"><i class="far fa-signature"></i></button></form>
+                                            <form method="post" action="{{ path('sala_agregar_transcripcion', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_transcripcion') }}"><button type="submit" class="text-muted mr-2 border-0 bg-transparent" title="Solicitar transcripción" aria-label="Solicitar transcripción"><i class="far fa-signature"></i></button></form>
                                         </div>
                                     </td>
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <form method="post" action="{{ path('sala_agregar_certificacion', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_certificacion') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar certificación"><i class="far fa-file-certificate"></i></button></form>
+                                            <form method="post" action="{{ path('sala_agregar_certificacion', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_certificacion') }}"><button type="submit" class="text-muted mr-2 border-0 bg-transparent" title="Solicitar certificación" aria-label="Solicitar certificación"><i class="far fa-file-certificate"></i></button></form>
                                         </div>
                                     </td>
                                 {% endif %}
                                 <td class="text-sm">
                                     <div class="float-right pr-2">
                                         {% if not(expediente.estado == constant('App\\Entity\\Expediente::EXP_ESTADO_EN_VITRINA')) %}
-                                            <form method="post" action="{{ path('sala_archivar_documento_en_vitrina', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_archivar_documento_en_vitrina') }}"><button class="text-muted mr-2" title="Guardar en vitrina"><i class="fas fa-arrow-alt-from-left"></i></button></form>
+                                            <form method="post" action="{{ path('sala_archivar_documento_en_vitrina', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_archivar_documento_en_vitrina') }}"><button type="submit" class="text-muted mr-2" title="Guardar en vitrina" aria-label="Guardar en vitrina"><i class="fas fa-arrow-alt-from-left"></i></button></form>
                                         {% else %}
-                                            <form method="post" action="{{ path('sala_regresar_documento_de_vitrina', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_regresar_documento_de_vitrina') }}"><button class="text-muted mr-2" title="Retirar de vitrina"><i class="fas fa-arrow-alt-from-right"></i></button></form>
+                                            <form method="post" action="{{ path('sala_regresar_documento_de_vitrina', {'documento': expediente.id, 'investigacion': investigacion.id, 'tipo': 'expediente'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_regresar_documento_de_vitrina') }}"><button type="submit" class="text-muted mr-2" title="Retirar de vitrina" aria-label="Retirar de vitrina"><i class="fas fa-arrow-alt-from-right"></i></button></form>
                                         {% endif %}
                                     </div>
                                 </td>
@@ -96,26 +96,26 @@
                                 {% else %}
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <form method="post" action="{{ path('sala_agregar_reprografia', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_reprografia') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar reprografía"><i class="far fa-scanner-image"></i></button></form>
+                                            <form method="post" action="{{ path('sala_agregar_reprografia', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_reprografia') }}"><button type="submit" class="text-muted mr-2 border-0 bg-transparent" title="Solicitar reprografía" aria-label="Solicitar reprografía"><i class="far fa-scanner-image"></i></button></form>
                                         </div>
                                     </td>
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <form method="post" action="{{ path('sala_agregar_transcripcion', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_transcripcion') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar transcripción"><i class="far fa-signature"></i></button></form>
+                                            <form method="post" action="{{ path('sala_agregar_transcripcion', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_transcripcion') }}"><button type="submit" class="text-muted mr-2 border-0 bg-transparent" title="Solicitar transcripción" aria-label="Solicitar transcripción"><i class="far fa-signature"></i></button></form>
                                         </div>
                                     </td>
                                     <td class="text-sm">
                                         <div class="float-right pr-2">
-                                            <form method="post" action="{{ path('sala_agregar_certificacion', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_certificacion') }}"><button class="text-muted mr-2 border-0 bg-transparent" title="Solicitar certificación"><i class="far fa-file-certificate"></i></button></form>
+                                            <form method="post" action="{{ path('sala_agregar_certificacion', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_agregar_certificacion') }}"><button type="submit" class="text-muted mr-2 border-0 bg-transparent" title="Solicitar certificación" aria-label="Solicitar certificación"><i class="far fa-file-certificate"></i></button></form>
                                         </div>
                                     </td>
                                 {% endif %}
                                 <td class="text-sm">
                                     <div class="float-right pr-2">
                                         {% if not(libro.estado == constant('App\\Entity\\Libro::LIB_ESTADO_EN_VITRINA')) %}
-                                            <form method="post" action="{{ path('sala_archivar_documento_en_vitrina', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_archivar_documento_en_vitrina') }}"><button class="text-muted mr-2" title="Guardar en vitrina"><i class="fas fa-arrow-alt-from-left"></i></button></form>
+                                            <form method="post" action="{{ path('sala_archivar_documento_en_vitrina', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_archivar_documento_en_vitrina') }}"><button type="submit" class="text-muted mr-2" title="Guardar en vitrina" aria-label="Guardar en vitrina"><i class="fas fa-arrow-alt-from-left"></i></button></form>
                                         {% else %}
-                                            <form method="post" action="{{ path('sala_regresar_documento_de_vitrina', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_regresar_documento_de_vitrina') }}"><button class="text-muted mr-2" title="Retirar de vitrina"><i class="fas fa-arrow-alt-from-right"></i></button></form>
+                                            <form method="post" action="{{ path('sala_regresar_documento_de_vitrina', {'documento': libro.id, 'investigacion': investigacion.id, 'tipo': 'libro'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_regresar_documento_de_vitrina') }}"><button type="submit" class="text-muted mr-2" title="Retirar de vitrina" aria-label="Retirar de vitrina"><i class="fas fa-arrow-alt-from-right"></i></button></form>
                                         {% endif %}
                                     </div>
                                 </td>
@@ -135,14 +135,14 @@
     <div class="modal-footer">
         <div class="col-3">
             {% if investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_PROCESADO') %}
-                <form method="post" action="{{ path('sala_entregar_documentos_investigacion', {'id': investigacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_entregar_documentos_investigacion') }}"><button class="btn btn-sm btn-danger" style="margin-left: -10.5rem !important;">Entregar Documentos</button></form>
+                <form method="post" action="{{ path('sala_entregar_documentos_investigacion', {'id': investigacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_entregar_documentos_investigacion') }}"><button type="submit" class="btn btn-sm btn-danger" style="margin-left: -10.5rem !important;">Entregar Documentos</button></form>
             {% elseif investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_SALA_CLIENTE') or investigacion.estado == constant('App\\Entity\\Investigacion::ESTADO_PAUSADO') %}
-                <form method="post" action="{{ path('sala_recoger_documentos_investigacion', {'id': investigacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_recoger_documentos_investigacion') }}"><button class="btn btn-sm btn-danger" style="margin-left: -10.5rem !important;">Recoger Documentos</button></form>
+                <form method="post" action="{{ path('sala_recoger_documentos_investigacion', {'id': investigacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_recoger_documentos_investigacion') }}"><button type="submit" class="btn btn-sm btn-danger" style="margin-left: -10.5rem !important;">Recoger Documentos</button></form>
             {% endif %}
         </div>
         <div class="col-3">
             {% if (investigacion.estado != constant('App\\Entity\\Investigacion::ESTADO_SALA_CLIENTE') and (investigacion.estado != constant('App\\Entity\\Investigacion::ESTADO_PAUSADO'))) %}
-                <form method="post" action="{{ path('sala_cancelar_investigacion', {'id': investigacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_cancelar_investigacion') }}"><button class="btn btn-sm btn-primary" style="margin-left: -12rem !important;">Cancelar Servicio</button></form>
+                <form method="post" action="{{ path('sala_cancelar_investigacion', {'id': investigacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('sala_cancelar_investigacion') }}"><button type="submit" class="btn btn-sm btn-primary" style="margin-left: -12rem !important;">Cancelar Servicio</button></form>
             {% endif %}
         </div>
         <div class="col-3">

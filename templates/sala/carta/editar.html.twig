@@ -19,10 +19,12 @@
             <div class="row">
                 <div class="form-group sac-form-group col-12">
                     <span class="far fa-user form-control-feedback"></span>
-                    <input type="text" class="form-control form-control-border border-width-2 text-sm text-muted" value="{{ cliente.nombre }}" disabled>
+                    <label class="sr-only" for="carta-cliente">Cliente</label>
+                    <input type="text" id="carta-cliente" class="form-control form-control-border border-width-2 text-sm text-muted" value="{{ cliente.nombre }}" disabled>
                 </div>
             </div>
             <div class="form-group">
+                {{ form_label(form.documento_file, null, {'label_attr': {'class': 'sr-only'}}) }}
                 {{ form_widget(form.documento_file) }}
             </div>
         </div>

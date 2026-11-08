@@ -15,6 +15,7 @@
                 <p class="login-box-msg">Inicia sesión para acceder</p>
                 <form action="{{ path('sac_login') }}" method="post">
                     <div class="input-group mb-3">
+                        <label class="sr-only" for="username">Usuario</label>
                         <input type="text" class="form-control" autocomplete="off" autofocus placeholder="Usuario" id="username" name="_username" value="{{ last_username }}">
                         <div class="input-group-append">
                             <div class="input-group-text">
@@ -23,6 +24,7 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
+                        <label class="sr-only" for="password">Contraseña</label>
                         <input type="password" class="form-control" placeholder="Contraseña" id="password" name="_password">
                         <div class="input-group-append">
                             <div class="input-group-text">

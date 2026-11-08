@@ -6,6 +6,7 @@
 
 {% block body %}
     <div class="wrapper">
+        <a class="sr-only sr-only-focusable" href="#main-content">Saltar al contenido principal</a>
         <nav class="main-header navbar navbar-expand navbar-dark">
             <ul class="navbar-nav ml-auto mr-3">
                 {% if not(app.user.roles[0] == 'ROLE_ADMIN') and not(app.user.roles[0] == 'ROLE_REGISTRO') %}
@@ -25,7 +26,7 @@
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li class="user-header bg-secondary">
                             <img src="{{ asset('assets/dist/img/user.png') }}" class="img-circle elevation-2" alt="User Image">
-                            <p>
+                            <div>
                                 <small class="font-italic">{{ app.user.nombre }}</small>
                                 <div class="mt-n2 font-weight-bold">
                                     {% if app.user.roles[0] == 'ROLE_ADMIN' %}
@@ -46,7 +47,7 @@
                                         Especialista en Certificación
                                     {% endif %}
                                 </div>
-                            </p>
+                            </div>
                         </li>
                         <li class="user-footer">
                             <div class="row">
@@ -84,7 +85,7 @@
                                 <div class="col-4 offset-4">
                                     <form method="post" action="{{ path('sac_cerrar') }}" class="m-0">
                                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
-                                        <button type="submit" class="btn btn-block btn-sm btn-default" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cerrar Sesión">
+                                        <button type="submit" class="btn btn-block btn-sm btn-default" data-toggle="tooltip" data-placement="bottom" data-container=".user-footer" title="Cerrar Sesión" aria-label="Cerrar Sesión">
                                             <i class="fas fa-share"></i>
                                         </button>
                                     </form>
@@ -105,9 +106,10 @@
             {% block menu %}{% endblock %}
         </aside>
 
-        <div class="content-wrapper text-xs">
+        <main id="main-content" class="content-wrapper text-xs">
+            <h1 class="sr-only">{{ block('title')|striptags|trim }}</h1>
             {% block content %}{% endblock %}
-        </div>
+        </main>
 
         <footer class="main-footer text-xs">
             <div class="float-right d-none d-sm-inline">

@@ -22,6 +22,7 @@
         <div class="modal-body text-xs">
             <div class="form-group sac-form-group">
                 <span class="far fa-folder-open form-control-feedback text-md"></span>
+                {{ form_label(form.numero, null, {'label_attr': {'class': 'sr-only'}}) }}
                 {{ form_widget(form.numero) }}
             </div>
         </div>

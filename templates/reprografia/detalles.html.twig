@@ -25,9 +25,9 @@
                 <table class="table table-hover" id="investigaciones">
                     <thead>
                     <tr>
-                        <th style="">Documento</th>
-                        <th style="">Fondo</th>
-                        <th style="">Estado</th>
+                        <th scope="col" style="">Documento</th>
+                        <th scope="col" style="">Fondo</th>
+                        <th scope="col" style="">Estado</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -43,9 +43,9 @@
     </div>
     <div class="modal-footer row">
         {% if reprografia.estado == constant('App\\Entity\\Reprografia::ESTADO_SOLICITADO') %}
-            <form method="post" action="{{ path('servicio_procesar_reprografia', {'id': reprografia.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_procesar_reprografia') }}"><button class="btn btn-sm btn-danger">Procesar</button></form>
+            <form method="post" action="{{ path('servicio_procesar_reprografia', {'id': reprografia.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_procesar_reprografia') }}"><button type="submit" class="btn btn-sm btn-danger">Procesar</button></form>
         {% elseif reprografia.estado == constant('App\\Entity\\Reprografia::ESTADO_EN_PROCESO') %}
-            <form method="post" action="{{ path('servicio_terminar_reprografia', {'id': reprografia.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_terminar_reprografia') }}"><button class="btn btn-sm btn-danger">Terminar</button></form>
+            <form method="post" action="{{ path('servicio_terminar_reprografia', {'id': reprografia.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_terminar_reprografia') }}"><button type="submit" class="btn btn-sm btn-danger">Terminar</button></form>
         {% endif %}
         <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cerrar</button>
     </div>

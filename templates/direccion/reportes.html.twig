@@ -57,7 +57,7 @@
                         <div class="card-header">
                             <h5 class="card-title font-weight-bolder">Expedientes/Libros por Fondos Documentales</h5>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" aria-label="Mostrar u ocultar Expedientes y libros por fondos documentales">
                                     <i class="fas fa-minus"></i>
                                 </button>
                             </div>
@@ -66,10 +66,10 @@
                             <table id="sac_table_report_0" class="table table-hover table-striped display nowrap" style="width: 100%;">
                                 <thead>
                                 <tr>
-                                    <th>Fondo</th>
-                                    <th>Depósito</th>
-                                    <th>Expedientes</th>
-                                    <th>Libros</th>
+                                    <th scope="col">Fondo</th>
+                                    <th scope="col">Depósito</th>
+                                    <th scope="col">Expedientes</th>
+                                    <th scope="col">Libros</th>
                                 </tr>
                                 </thead>
                                 <tbody class="text-muted">
@@ -93,7 +93,7 @@
                         <div class="card-header">
                             <h5 class="card-title font-weight-bolder">Servicios Especializados por Fecha</h5>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" aria-label="Mostrar u ocultar servicios especializados por fecha">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
@@ -103,6 +103,7 @@
                                 <div class="col-6">
                                     <div class="form-group sac-form-group">
                                         <span class="far fa-calendar-alt form-control-feedback text-md"></span>
+                                        <label class="sr-only" for="fechas-servicios">Rango de fechas</label>
                                         <input type="text" id="fechas-servicios" class="form-control float-right">
                                     </div>
                                 </div>
@@ -117,7 +118,7 @@
                         <div class="card-header">
                             <h5 class="card-title font-weight-bolder">Servicios Especializados por Cliente</h5>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" aria-label="Mostrar u ocultar servicios especializados por cliente">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
@@ -125,6 +126,7 @@
                         <div id="clientes_info" class="card-body">
                             <div class="row">
                                 <div class="form-group col-6">
+                                    <label class="sr-only" for="cliente-servicios">Cliente</label>
                                     <select id="cliente-servicios" name="cliente-servicios">
                                         <option value=""></option>
                                         {% for cliente in clientes %}

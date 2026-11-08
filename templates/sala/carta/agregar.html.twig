@@ -17,9 +17,11 @@
         </div>
         <div class="modal-body text-xs">
             <div class="form-group">
+                {{ form_label(form.cliente, null, {'label_attr': {'class': 'sr-only'}}) }}
                 {{ form_widget(form.cliente) }}
             </div>
             <div class="form-group">
+                {{ form_label(form.documento_file, null, {'label_attr': {'class': 'sr-only'}}) }}
                 {{ form_widget(form.documento_file) }}
             </div>
         </div>

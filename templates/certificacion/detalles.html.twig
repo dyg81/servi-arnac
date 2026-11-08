@@ -26,9 +26,9 @@
                 <table class="table table-hover" id="investigaciones">
                     <thead>
                     <tr>
-                        <th style="">Documento</th>
-                        <th style="">Fondo</th>
-                        <th style="">Estado</th>
+                        <th scope="col" style="">Documento</th>
+                        <th scope="col" style="">Fondo</th>
+                        <th scope="col" style="">Estado</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -44,9 +44,9 @@
     </div>
     <div class="modal-footer row">
         {% if certificacion.estado == constant('App\\Entity\\Certificacion::ESTADO_SOLICITADO') %}
-            <form method="post" action="{{ path('servicio_procesar_certificacion', {'id': certificacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_procesar_certificacion') }}"><button class="btn btn-sm btn-danger">Procesar</button></form>
+            <form method="post" action="{{ path('servicio_procesar_certificacion', {'id': certificacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_procesar_certificacion') }}"><button type="submit" class="btn btn-sm btn-danger">Procesar</button></form>
         {% elseif certificacion.estado == constant('App\\Entity\\Certificacion::ESTADO_EN_PROCESO') %}
-            <form method="post" action="{{ path('servicio_terminar_certificacion', {'id': certificacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_terminar_certificacion') }}"><button class="btn btn-sm btn-danger">Terminar</button></form>
+            <form method="post" action="{{ path('servicio_terminar_certificacion', {'id': certificacion.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('servicio_terminar_certificacion') }}"><button type="submit" class="btn btn-sm btn-danger">Terminar</button></form>
         {% endif %}
         <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cerrar</button>
     </div>

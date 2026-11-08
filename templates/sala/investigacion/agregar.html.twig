@@ -18,11 +18,13 @@
         <div class="modal-body text-xs">
             <div class="row">
                 <div class="form-group col-12">
+                    {{ form_label(form.cliente, null, {'label_attr': {'class': 'sr-only'}}) }}
                     {{ form_widget(form.cliente) }}
                 </div>
             </div>
             <div class="row">
                 <div class="form-group col-12">
+                    {{ form_label(form.fondo, null, {'label_attr': {'class': 'sr-only'}}) }}
                     {{ form_widget(form.fondo, {'attr': {'disabled': 'false'}}) }}
                 </div>
             </div>
@@ -38,11 +40,13 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="form-group col-12">
+                            <label class="sr-only" for="investigacion_legajos">Legajos</label>
                             <select id="investigacion_legajos" name="investigacion[legajos][]" disabled></select>
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-12">
+                            {{ form_label(form.expedientes, 'Expedientes', {'label_attr': {'class': 'sr-only'}}) }}
                             {{ form_widget(form.expedientes, {'attr': {'disabled': 'false', 'class': 'require-from-group'}}) }}
                         </div>
                     </div>
@@ -60,6 +64,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="form-group col-12">
+                            {{ form_label(form.libros, null, {'label_attr': {'class': 'sr-only'}}) }}
                             {{ form_widget(form.libros, {'attr': {'disabled': 'false', 'class': 'require-from-group'}}) }}
                         </div>
                     </div>
