@@ -69,7 +69,7 @@ class ClienteController extends AbstractController
                     $this->addFlash('success', 'Cliente agregado correctamente.');
                 } catch (Exception $e) {
                     error_log((string) $e);
-                    if ($e->getErrorCode() == 1062) {
+                    if (\App\Service\PersistenceExceptionClassifier::isUniqueConstraintViolation($e)) {
                         $this->addFlash('error', 'Cliente no agregado, ya existe en el sistema.');
                     } else {
                         $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
@@ -114,7 +114,7 @@ class ClienteController extends AbstractController
                     $this->addFlash('success', 'Cliente editado correctamente.');
                 } catch (Exception $e) {
                     error_log((string) $e);
-                    if ($e->getErrorCode() == 1062) {
+                    if (\App\Service\PersistenceExceptionClassifier::isUniqueConstraintViolation($e)) {
                         $this->addFlash('error', 'Cliente no editado, ya existe en el sistema.');
                     } else {
                         $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');

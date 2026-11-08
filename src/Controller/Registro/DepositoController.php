@@ -70,7 +70,7 @@ class DepositoController extends AbstractController
                     $this->addFlash('success', 'Depósito agregado correctamente.');
                 } catch (Exception $e) {
                     error_log((string) $e);
-                    if ($e->getErrorCode() == 1062) {
+                    if (\App\Service\PersistenceExceptionClassifier::isUniqueConstraintViolation($e)) {
                         $this->addFlash('error', 'Depósito no agregado, ya existe en el sistema.');
                     } else {
                         $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
@@ -117,7 +117,7 @@ class DepositoController extends AbstractController
                     $this->addFlash('success', 'Depósito editado correctamente.');
                 } catch (Exception $e) {
                     error_log((string) $e);
-                    if ($e->getErrorCode() == 1062) {
+                    if (\App\Service\PersistenceExceptionClassifier::isUniqueConstraintViolation($e)) {
                         $this->addFlash('error', 'Depósito no editado, ya existe en el sistema.');
                     } else {
                         $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
@@ -164,7 +164,7 @@ class DepositoController extends AbstractController
                         $this->addFlash('success', 'Depósito eliminado correctamente.');
                     } catch (Exception $e) {
                         error_log((string) $e);
-                        if ($e->getErrorCode() == 1451) {
+                        if (\App\Service\PersistenceExceptionClassifier::isForeignKeyConstraintViolation($e)) {
                             $this->addFlash('error', 'Depósito no eliminado, conserva expedientes o libros asociados.');
                         } else {
                             $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');

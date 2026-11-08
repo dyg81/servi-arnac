@@ -54,6 +54,18 @@ class ExpedienteRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, array{fondo_id: string, deposito_id: string, cantidad: string}>
+     */
+    public function contarPorFondoYDeposito(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('IDENTITY(e.fondo) AS fondo_id, IDENTITY(e.deposito) AS deposito_id, COUNT(e.id) AS cantidad')
+            ->groupBy('e.fondo, e.deposito')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    /**
      * @return Expediente[] Returns an array of Expediente objects
      */
     public function obtenerExpedientesPorArchivar(): array

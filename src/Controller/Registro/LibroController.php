@@ -72,7 +72,7 @@ class LibroController extends AbstractController
                     $this->addFlash('success', 'Libro agregado correctamente.');
                 } catch (Exception $e) {
                     error_log((string) $e);
-                    if ($e->getErrorCode() == 1062) {
+                    if (\App\Service\PersistenceExceptionClassifier::isUniqueConstraintViolation($e)) {
                         $this->addFlash('error', 'Libro no agregado, ya existe en el sistema.');
                     } else {
                         $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
@@ -147,7 +147,7 @@ class LibroController extends AbstractController
                     $this->addFlash('success', 'Libro editado correctamente.');
                 } catch (Exception $e) {
                     error_log((string) $e);
-                    if ($e->getErrorCode() == 1062) {
+                    if (\App\Service\PersistenceExceptionClassifier::isUniqueConstraintViolation($e)) {
                         $this->addFlash('error', 'Libro no editado, ya existe en el sistema.');
                     } else {
                         $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');

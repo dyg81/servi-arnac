@@ -80,7 +80,7 @@ class AdminController extends AbstractController
                     $this->addFlash('success', 'Usuario agregado correctamente.');
                 } catch (Exception $e) {
                     error_log((string) $e);
-                    if ($e->getErrorCode() == 1062) {
+                    if (\App\Service\PersistenceExceptionClassifier::isUniqueConstraintViolation($e)) {
                         $this->addFlash('error', 'Usuario no agregado, ya existe en el sistema.');
                     } else {
                         $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');
@@ -126,7 +126,7 @@ class AdminController extends AbstractController
                     $this->addFlash('success', 'Usuario editado correctamente.');
                 } catch (Exception $e) {
                     error_log((string) $e);
-                    if ($e->getErrorCode() == 1062) {
+                    if (\App\Service\PersistenceExceptionClassifier::isUniqueConstraintViolation($e)) {
                         $this->addFlash('error', 'Usuario no editado, ya existe en el sistema.');
                     } else {
                         $this->addFlash('error', 'No se pudo completar la operación. Intente nuevamente o contacte al equipo de soporte.');

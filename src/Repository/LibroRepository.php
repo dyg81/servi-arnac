@@ -51,6 +51,18 @@ class LibroRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, array{fondo_id: string, deposito_id: string, cantidad: string}>
+     */
+    public function contarPorFondoYDeposito(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->select('IDENTITY(l.fondo) AS fondo_id, IDENTITY(l.deposito) AS deposito_id, COUNT(l.id) AS cantidad')
+            ->groupBy('l.fondo, l.deposito')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    /**
      * @return Libro[] Returns an array of Libro objects
      */
     public function obtenerLibrosPorArchivar(): array

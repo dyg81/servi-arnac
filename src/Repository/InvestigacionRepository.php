@@ -154,4 +154,18 @@ class InvestigacionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function contarPorMes($mes_inicial): int
+    {
+        $mes_posterior = clone $mes_inicial;
+
+        return (int) $this->createQueryBuilder('i')
+            ->select('COUNT(i.id)')
+            ->where('i.fecha_solicitud >= :mes_inicial')
+            ->andWhere('i.fecha_solicitud < :mes_posterior')
+            ->setParameter('mes_inicial', $mes_inicial)
+            ->setParameter('mes_posterior', DATE_ADD($mes_posterior, DateInterval::createFromDateString('1 month')))
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

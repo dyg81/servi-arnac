@@ -152,3 +152,19 @@ Antes de migrar, respalda `db_data`, `private_uploads` y `legacy_uploads` con el
 Fase 5 está cerrada. El acceso compartido por rol de área es el diseño vigente. La posible asignación por equipo/usuario queda como mejora futura, sujeta a una necesidad de negocio. La validación del servidor real se hará en la revisión final posterior a todas las fases.
 
 Fases 6–8 se completaron en alcance local el 2026-11-07. Fase 8 cubre reglas de pertenencia, cargas, login, autorización por rol, CSRF, formulario y ciclo de migraciones en PHP 7.4.33. El límite de carga se fija en 10.000.000 bytes en formulario y servicio. Quedan advisories de seguridad porque se conserva Symfony 4.4/PHP 7.4; el despliegue real queda fuera de la validación local. Ver el registro en `docs/ESTADO_TRABAJO.md`.
+
+## Próxima etapa de mantenimiento del código
+
+El 2026-11-07 se creó el commit `8080c53` (`chore: cerrar estabilización de componentes y pruebas`), que cierra el estado acumulado de estabilización, configuración, contenedores y pruebas. No incluye los documentos de `docs/` (locales/ignorados) ni documentos históricos de `public/uploads/cartas/`; sí incluye la regla `public/uploads/.htaccess`. Fases 0–8 quedan cerradas en alcance local.
+
+La Fase 9 se completó en alcance estático sobre ese commit. El inventario priorizado está en `docs/INVENTARIO_TECNICO.md`. Entre los hallazgos destaca el uso de valores persistidos en strings HTML para opciones de la cascada de investigación, además de consultas completas/repetidas en estadísticas y reportes y manejo de excepciones duplicado en controladores. Se revisaron los 126 Twig (34 contienen `<script>`) y los assets personalizados.
+
+- **Fase 9 — Inventario y priorización de calidad:** completada. Hallazgos, ubicaciones, prioridades y lotes propuestos en el inventario técnico local.
+- **Fase 10 — PHP y componentes Symfony:** completada en alcance local acotado. Estadísticas/reportes usan conteos y agrupaciones SQL en vez de materializar colecciones para contar; un clasificador compartido identifica violaciones conocidas de unicidad y FK sin invocar métodos inexistentes sobre `Exception` genérica. Se agregaron pruebas de caracterización. La política común de logging/transacciones y una extracción adicional de reglas de negocio quedan para un lote PHP posterior con invariantes/atomicidad definidos.
+- **Fase 11 — Twig, HTML y JavaScript asociado:** mejorar plantillas y auditar JavaScript escrito en `.twig`, incluyendo calidad, librerías y ciclo de vida; extraer scripts a assets cuando sea seguro y comprobable.
+- **Fase 12 — `custom.css` y `custom.js`:** corregir problemas de estilos y scripts, duplicación y fragilidad, preservando comportamiento y compatibilidad de librerías.
+- **Fase 13 — Regresión y cierre:** revisar los flujos afectados, ejecutar validaciones proporcionales, documentar resultados y proponer fases correctivas si quedan defectos.
+
+El P1 de la cascada de investigación fue confirmado: JSON persistido se concatena como markup y jQuery lo interpreta como HTML. La corrección modifica la creación del DOM dentro de JavaScript inline y se reserva para **Fase 11**; sigue prioritaria y pendiente. Fase 10 no cambió Twig. La suite se ejecutó con PHP 7.4.33 en contenedores locales; la validación final global y del servidor real queda para Fase 13/revisión global. No se creó commit.
+
+La próxima fase, en otro chat, es **Fase 11 — Twig, HTML y JavaScript asociado**. No iniciar otras fases automáticamente. Al final de cada fase se actualizarán este README y los cuatro documentos locales de `docs/`. Antes de cada commit se mostrará el mensaje, contenido y motivo, y se esperará aceptación explícita.

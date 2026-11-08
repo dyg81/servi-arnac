@@ -129,4 +129,18 @@ class CertificacionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function contarPorMes($mes_inicial): int
+    {
+        $mes_posterior = clone $mes_inicial;
+
+        return (int) $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->where('c.fecha_solicitud >= :mes_inicial')
+            ->andWhere('c.fecha_solicitud < :mes_posterior')
+            ->setParameter('mes_inicial', $mes_inicial)
+            ->setParameter('mes_posterior', DATE_ADD($mes_posterior, DateInterval::createFromDateString('1 month')))
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

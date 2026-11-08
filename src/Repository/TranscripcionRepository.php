@@ -129,4 +129,18 @@ class TranscripcionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function contarPorMes($mes_inicial): int
+    {
+        $mes_posterior = clone $mes_inicial;
+
+        return (int) $this->createQueryBuilder('t')
+            ->select('COUNT(t.id)')
+            ->where('t.fecha_solicitud >= :mes_inicial')
+            ->andWhere('t.fecha_solicitud < :mes_posterior')
+            ->setParameter('mes_inicial', $mes_inicial)
+            ->setParameter('mes_posterior', DATE_ADD($mes_posterior, DateInterval::createFromDateString('1 month')))
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

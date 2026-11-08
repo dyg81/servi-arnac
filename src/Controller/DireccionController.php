@@ -108,22 +108,22 @@ class DireccionController extends AbstractController
 
             $data_anual[] = array(
                 'mes' => $mes,
-                'investigaciones' => count($this->entityManager->getRepository(Investigacion::class)->obtenerInvestigacionesPorMes($date)),
-                'transcripciones' => count($this->entityManager->getRepository(Transcripcion::class)->obtenerTranscripcionesPorMes($date)),
-                'reprografias' => count($this->entityManager->getRepository(Reprografia::class)->obtenerReprografiasPorMes($date)),
-                'certificaciones' => count($this->entityManager->getRepository(Certificacion::class)->obtenerCertificacionesPorMes($date)),
+                'investigaciones' => $this->entityManager->getRepository(Investigacion::class)->contarPorMes($date),
+                'transcripciones' => $this->entityManager->getRepository(Transcripcion::class)->contarPorMes($date),
+                'reprografias' => $this->entityManager->getRepository(Reprografia::class)->contarPorMes($date),
+                'certificaciones' => $this->entityManager->getRepository(Certificacion::class)->contarPorMes($date),
             );
         }
 
         return $this->render('direccion/estadisticas.html.twig', array(
-            'fondos_totales' => $this->entityManager->getRepository(Fondo::class)->findAll(),
-            'expedientes_totales' => $this->entityManager->getRepository(Expediente::class)->findAll(),
-            'libros_totales' => $this->entityManager->getRepository(Libro::class)->findAll(),
-            'clientes_totales' => $this->entityManager->getRepository(Cliente::class)->findAll(),
-            'investigaciones_totales' => $this->entityManager->getRepository(Investigacion::class)->findAll(),
-            'transcripciones_totales' => $this->entityManager->getRepository(Transcripcion::class)->findAll(),
-            'reprografias_totales' => $this->entityManager->getRepository(Reprografia::class)->findAll(),
-            'certificaciones_totales' => $this->entityManager->getRepository(Certificacion::class)->findAll(),
+            'fondos_totales' => $this->entityManager->getRepository(Fondo::class)->count([]),
+            'expedientes_totales' => $this->entityManager->getRepository(Expediente::class)->count([]),
+            'libros_totales' => $this->entityManager->getRepository(Libro::class)->count([]),
+            'clientes_totales' => $this->entityManager->getRepository(Cliente::class)->count([]),
+            'investigaciones_totales' => $this->entityManager->getRepository(Investigacion::class)->count([]),
+            'transcripciones_totales' => $this->entityManager->getRepository(Transcripcion::class)->count([]),
+            'reprografias_totales' => $this->entityManager->getRepository(Reprografia::class)->count([]),
+            'certificaciones_totales' => $this->entityManager->getRepository(Certificacion::class)->count([]),
             'fondos_mas_usados' => $this->entityManager->getRepository(Fondo::class)->obtenerFondosMasUsados(),
             'investigaciones_del_dia' => $this->entityManager->getRepository(Investigacion::class)->obtenerInvestigacionesDelDia(),
             'transcripciones_del_dia' => $this->entityManager->getRepository(Transcripcion::class)->obtenerTranscripcionesDelDia(),
@@ -141,15 +141,21 @@ class DireccionController extends AbstractController
      */
     public function reportes(): Response
     {
-        $fondos= [];
+        $fondos = [];
+        $expedientesPorFondoDeposito = $this->contadoresPorFondoYDeposito(
+            $this->entityManager->getRepository(Expediente::class)->contarPorFondoYDeposito()
+        );
+        $librosPorFondoDeposito = $this->contadoresPorFondoYDeposito(
+            $this->entityManager->getRepository(Libro::class)->contarPorFondoYDeposito()
+        );
 
         foreach ($this->entityManager->getRepository(Fondo::class)->findAll() as $fondo) {
             foreach ($fondo->getDepositos() as $deposito) {
                 $fondos[] = array(
                     'nombre' => $fondo->getNombre(),
                     'deposito' => 'DNAVE' . $deposito->getNumero(),
-                    'expedientes' => count($this->entityManager->getRepository(Expediente::class)->obtenerExpedientesPorFondoYDeposito($fondo->getId(), $deposito->getId())),
-                    'libros' => count($this->entityManager->getRepository(Libro::class)->obtenerLibrosPorFondoYDeposito($fondo->getId(), $deposito->getId()))
+                    'expedientes' => $expedientesPorFondoDeposito[$fondo->getId() . ':' . $deposito->getId()] ?? 0,
+                    'libros' => $librosPorFondoDeposito[$fondo->getId() . ':' . $deposito->getId()] ?? 0
                 );
             }
         }
@@ -160,6 +166,18 @@ class DireccionController extends AbstractController
             'clientes' => $this->entityManager->getRepository(Cliente::class)->findAll(),
             'fondos' => $fondos
         ]);
+    }
+
+    private function contadoresPorFondoYDeposito(array $filas): array
+    {
+        $contadores = [];
+
+        foreach ($filas as $fila) {
+            $clave = $fila['fondo_id'] . ':' . $fila['deposito_id'];
+            $contadores[$clave] = (int) $fila['cantidad'];
+        }
+
+        return $contadores;
     }
 
     /**
