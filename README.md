@@ -86,6 +86,12 @@ Para iniciar el entorno Docker de desarrollo (tras configurar `.env.local`):
 docker compose --env-file .env.local up --build
 ```
 
+Para crear el usuario administrador inicial (`admin`), ejecuta el comando desde la raíz del proyecto. Solicita una nueva contraseña sin mostrarla en pantalla y la codifica con el encoder `bcrypt` configurado en Symfony. Si ya existe el usuario `admin`, el comando informa el conflicto y no crea otro usuario.
+
+```sh
+php bin/console app:crear-admin
+```
+
 Antes de aplicar migraciones, confirmar respaldo, conexión y estado de esquema. Ejecuta las pruebas con `vendor/bin/phpunit`; el resultado y el alcance comprobado de la suite se registran en `docs/ESTADO_TRABAJO.md`.
 
 La suite unitaria no requiere DB. Para las pruebas HTTP/formulario y el ciclo de migraciones, usa la configuración temporal aislada: MariaDB corre en `tmpfs`, sin puertos expuestos ni volúmenes persistentes.
